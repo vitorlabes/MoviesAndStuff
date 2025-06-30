@@ -1,0 +1,17 @@
+﻿using System.Text.Json.Serialization;
+
+namespace MoviesAndStuff.Api.Data.Dtos
+{
+    public class MovieListDto
+    {
+        public long Id { get; set; }
+
+        public string Title { get; set; } = string.Empty;
+
+        public DateTime? WatchDate { get; set; }
+
+        public bool IsWatched { get; set; }
+
+        public string? GenreName { get; set; }
+    }
+}

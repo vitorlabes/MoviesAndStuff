@@ -1,0 +1,42 @@
+<div class="dropdown-container" [class.open]="isOpen">
+  @if (label) {
+  <label class="form-input">{{ label }}</label>
+  }
+  <div class="dropdown-wrapper">
+    <input #searchInput type="text" class="dropdown-input" [placeholder]="placeholder" [value]="displayValue"
+      (click)="toggleDropdown($event)" (keydown)="onKeyDown($event)" [readonly]="!searchable">
+
+    <div class="dropdown-arrow" [class.rotated]="isOpen" (click)="toggleDropdown($event)">
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+        <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+          stroke-linejoin="round" />
+      </svg>
+    </div>
+
+    @if (isOpen) {
+    <div class="dropdown-menu">
+      @if (searchable) {
+      <div class="dropdown-search">
+        <input #dropdownSearchInput type="text" class="search-input" placeholder="Search options..."
+          [value]="searchTerm" (input)="onSearchInput($event)" (keydown)="onKeyDown($event)">
+      </div>
+      }
+
+      <div class="dropdown-options">
+        @for (option of filteredOptions; track $index; let i = $index) {
+        <div class="dropdown-option" [class.selected]="isSelected(option)" [class.highlighted]="highlightedIndex === i"
+          [class.disabled]="option.disabled" (click)="selectOption(option, $event)" (mouseenter)="highlightedIndex = i">
+          {{ option.label }}
+        </div>
+        }
+
+        @if (filteredOptions.length === 0) {
+        <div class="no-options">
+          No options found
+        </div>
+        }
+      </div>
+    </div>
+    }
+  </div>
+</div>

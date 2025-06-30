@@ -1,0 +1,79 @@
+<div class="cinema-container bg-dark-gradient">
+  <div class="container py-5 position-relative">
+
+    <div class="d-flex justify-content-between align-items-start mb-4">
+
+      <h2 class="form-title mb-0">
+        <i class="bi bi-film"></i> Movie Collection
+      </h2>
+
+      <button class="btn btn-dark-purple" (click)="navigateToMovieForm()">
+        <i class="bi bi-plus-lg"></i> Add Movie
+      </button>
+
+    </div>
+
+    @if(isLoading){
+    <div class="d-flex justify-content-center align-items-center py-5">
+      <div class="text-center">
+        <div class="spiner0border text-light mb-3" role="status" style="width: 3rem; height: 3rem;">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="text-light">Loading movies...</p>
+      </div>
+    </div>
+    }
+
+    @if(!isLoading && movies.length > 0){
+    <div class="cinematic-table-container">
+      <table class="table table-cinematic table-hover">
+        <thead class="table-header-glow">
+          <tr>
+            <th class="ps-4">Title</th>
+            <th>Genre</th>
+            <th>Watched?</th>
+            <th>Year</th>
+            <th class="pe-4"></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (movie of movies; track movie.id) {
+          <tr class="movie-row">
+            <td class="ps-4 fw-bold">{{ movie.title }}</td>
+
+            <td><span class="genre-badge fw-bold">{{ movie.genreName }}</span></td>
+
+            <td class="text-center align-middle">
+              <div class="play-status" [class.watched]="movie.isWatched" [class.unwatched]="!movie.isWatched">
+                <i class="bi play-icon" [class.bi-play-circle-fill]="movie.isWatched"
+                  [class.bi-play-circle]="!movie.isWatched"></i>
+                <span class="status-text">{{ movie.isWatched ? 'Seen' : 'Queue' }}</span>
+              </div>
+            </td>
+
+            <td class="pe-4 fw-bold">{{ movie.watchDate | date:'dd/MM/yyyy' }}</td>
+            <td class="pe-4">
+              <div class="action-buttons">
+                <button class="action-btn edit-btn" title="Edit Movie">
+                  <i class="bi bi-pencil"></i>
+                </button>
+                <button class="action-btn edit-btn" title="Delete Movie">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+    }
+
+    @if(!isLoading && movies.length === 0) {
+    <div class="empty-state">
+      <i class="bi bi-film"></i>
+      <p>No movies in our collection yet</p>
+    </div>
+    }
+  </div>
+</div>

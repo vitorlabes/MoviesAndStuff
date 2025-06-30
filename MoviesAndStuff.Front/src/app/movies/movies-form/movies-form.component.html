@@ -1,0 +1,94 @@
+<div class="cinema-container bg-dark-gradient">
+  <div class="container py-5 position-relative">
+
+    <div class="d-flex justify-content-between align-items-start mb-4">
+      <h2 class="form-title mb-0">
+        <i class="bi bi-film"></i> Add Movie
+      </h2>
+      <div>
+        <button class="btn btn-dark-purple" (click)="returnToList()">
+          <i class="bi bi-x-lg"></i> Cancel
+        </button>
+        <button class="btn btn-dark-purple" (click)="createMovie()" style="margin-left: 0.5rem;">
+          <i class="bi bi-plus-lg"></i> Add
+        </button>
+      </div>
+    </div>
+
+    <div>
+      <form [formGroup]="movieForm">
+
+        <div class="row">
+
+          <div class="col-4">
+            <label class="form-input">Title</label>
+            <input type="text" for="title" id="title" formControlName="title">
+            @if(titleHasError){
+            <small class="text-danger">Title is mandatory</small>
+            }
+          </div>
+
+          <div class="col-4">
+            <app-dropdown [options]="genreDropdown" [selectedValue]="selectedGenre" label="Movie Genre"
+              placeholder="Select a genre..." [searchable]="true" (selectionChange)="onGenreChange($event)">
+            </app-dropdown>
+          </div>
+
+          <div class="col-4">
+            <label class="form-input">Director</label>
+            <input type="text" for="director" id="director" formControlName="director">
+          </div>
+
+        </div>
+
+        <div class="row">
+
+          <div class="col-4">
+            <label class="form-input">Watch Date</label>
+            <input type="date" for="watchDate" id="watchDate" formControlName="watchDate">
+          </div>
+
+          <div class="col-4">
+            <label class="form-input">Rating</label>
+            <div class="star-rating">
+              <input type="range" min="0" max="10" step="0.5" formControlName="rating" class="star-slider">
+            </div>
+            <div class="star-output">{{ movieForm.get('rating')?.value }} ★</div>
+          </div>
+
+          <div class="col-4">
+            <div class="d-flex align-items-center" style="height: 100%;">
+              <div class="checkbox-container d-flex align-items-center">
+                <input type="checkbox" id="isWatched" formControlName="isWatched" style="margin-right: 0.5rem;">
+                <label for="isWatched" class="form-input mb-0">Watched</label>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="row">
+
+          <div class="col-4">
+            <label class="form-input">Duration</label>
+            <input type="text" for="duration" id="duration" formControlName="duration">
+          </div>
+
+          <div class="col-4">
+            <label class="form-input">Premiere Date</label>
+            <input type="date" for="premiereDate" id="premiereDate" formControlName="premiereDate">
+          </div>
+
+        </div>
+
+        <div class="row">
+          <div class="col-12">
+            <label class="form-input">Review</label>
+            <textarea rows="3" id="review" formControlName="review" placeholder="Enter review..."></textarea>
+          </div>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</div>

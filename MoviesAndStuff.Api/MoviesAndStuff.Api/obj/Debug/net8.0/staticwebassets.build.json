@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "jCLuFNEwG8XAI8FGrbYBLPShAID3EFxmSFHTGdlUaRk=",
+  "Source": "MoviesAndStuff.Api",
+  "BasePath": "_content/MoviesAndStuff.Api",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}
