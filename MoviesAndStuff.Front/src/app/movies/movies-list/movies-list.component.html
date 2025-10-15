@@ -54,7 +54,7 @@
             <td class="pe-4 fw-bold">{{ movie.watchDate | date:'dd/MM/yyyy' }}</td>
             <td class="pe-4">
               <div class="action-buttons">
-                <button class="action-btn edit-btn" title="Edit Movie">
+                <button class="action-btn edit-btn" title="Edit Movie" (click)="navigateToMovieFormUpdate(movie.id)">
                   <i class="bi bi-pencil"></i>
                 </button>
                 <button class="action-btn edit-btn" title="Delete Movie">

@@ -1,10 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { MoviesService } from '../services/movies.service';
 import { Movie } from '../models/movies';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { MovieListDto } from '../dtos/movie-list-dto';
-
 
 @Component({
   selector: 'app-movies-list',
@@ -16,11 +15,10 @@ import { MovieListDto } from '../dtos/movie-list-dto';
 
 export class MoviesListComponent implements OnInit {
 
-  constructor(
-    private moviesService: MoviesService,
-    private router: Router) { }
+  private _moviesService = inject(MoviesService);
+  private _router = inject(Router)
 
-  public movies: MovieListDto[] = [];
+  protected movies: MovieListDto[] = [];
   protected isLoading: boolean = false;
 
   ngOnInit(): void {
@@ -29,7 +27,7 @@ export class MoviesListComponent implements OnInit {
 
   public getMoviesList() {
     this.isLoading = true;
-    this.moviesService.getMovieslist().subscribe({
+    this._moviesService.getMovieslist().subscribe({
       next: (response: MovieListDto[]) => {
         this.movies = response;
         this.isLoading = false;
@@ -41,8 +39,12 @@ export class MoviesListComponent implements OnInit {
     });
   }
 
-  navigateToMovieForm() {
-    this.router.navigate(['/movies/new'])
+  protected navigateToMovieForm() {
+    this._router.navigate(['/movies/new']);
+  }
+
+  protected navigateToMovieFormUpdate(id: number) {
+    this._router.navigate(['movies/edit', id]);
   }
 
 }

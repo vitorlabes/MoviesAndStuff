@@ -31,7 +31,8 @@ namespace MoviesAndStuff.Api.Services
                 .ToListAsync();
         }
 
-        public async Task<Movie?> GetByIdAsync(int id) => await _context.Movies.FindAsync(id);
+        public async Task<Movie?> GetByIdAsync(int id)
+            => await _context.Movies.FirstOrDefaultAsync(m => m.Id == id);
 
         public async Task<Movie> CreateAsync(Movie movie)
         {

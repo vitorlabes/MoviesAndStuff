@@ -37,6 +37,10 @@
   }
 }
 
+.table-cinematic tbody tr {
+  border-bottom: 1px solid rgba(98, 58, 149, 0.4);
+}
+
 .movie-row:hover {
   background: linear-gradient(135deg,
       rgba(98, 58, 149, 0.1) 0%,
@@ -64,7 +68,7 @@
   border-radius: 20px;
   transition: all 0.3s ease;
   border: 1px solid transparent;
-  margin: 0 auto;
+
   width: fit-content;
 
   .play-icon {

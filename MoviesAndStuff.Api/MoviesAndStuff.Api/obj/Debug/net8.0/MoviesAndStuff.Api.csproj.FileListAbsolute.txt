@@ -166,3 +166,4 @@ D:\Projects\Fullstack\MoviesAndStuff\MoviesAndStuff.Api\MoviesAndStuff.Api\obj\D
 D:\Projects\Fullstack\MoviesAndStuff\MoviesAndStuff.Api\MoviesAndStuff.Api\obj\Debug\net8.0\MoviesAndStuff.Api.pdb
 D:\Projects\Fullstack\MoviesAndStuff\MoviesAndStuff.Api\MoviesAndStuff.Api\obj\Debug\net8.0\MoviesAndStuff.Api.genruntimeconfig.cache
 D:\Projects\Fullstack\MoviesAndStuff\MoviesAndStuff.Api\MoviesAndStuff.Api\obj\Debug\net8.0\ref\MoviesAndStuff.Api.dll
+D:\Projects\Fullstack\MoviesAndStuff\MoviesAndStuff.Api\MoviesAndStuff.Api\obj\Debug\net8.0\MoviesAndStuff.Api.sourcelink.json

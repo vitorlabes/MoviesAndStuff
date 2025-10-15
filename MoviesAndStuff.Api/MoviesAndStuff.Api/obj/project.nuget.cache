@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "/jMWgJ0Q/cIawTYlTno01PFwi3iiZqnf0VHp+edZwSCoUGWSvGfmEzEqwsqFlhba9G6Kbghi9M9PnNT3EVODeQ==",
+  "dgSpecHash": "YBk3qmYFSy7RdayIPAm2XLDZS+G2x88GPvI0TpbiqlAv5zAaD5Jw00XyBXpTOqdL/IK/0d0XZ0CJDv3Ag8h6Ig==",
   "success": true,
-  "projectFilePath": "D:\\Projects\\Fullstack\\MoviesAndStuff\\MoviesAndStuff.APi\\MoviesAndStuff.Api\\MoviesAndStuff.Api.csproj",
+  "projectFilePath": "D:\\Projects\\Fullstack\\MoviesAndStuff\\MoviesAndStuff.Api\\MoviesAndStuff.Api\\MoviesAndStuff.Api.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Vitor\\.nuget\\packages\\azure.core\\1.38.0\\azure.core.1.38.0.nupkg.sha512",
     "C:\\Users\\Vitor\\.nuget\\packages\\azure.identity\\1.11.4\\azure.identity.1.11.4.nupkg.sha512",

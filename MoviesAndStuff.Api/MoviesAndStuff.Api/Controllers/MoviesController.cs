@@ -34,7 +34,6 @@ namespace MoviesAndStuff.Api.Controllers
         [HttpPost]
         public async Task<ActionResult> Create(Movie movie)
         {
-
             if(!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
