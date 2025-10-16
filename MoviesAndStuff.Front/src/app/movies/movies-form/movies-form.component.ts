@@ -21,8 +21,10 @@ export class MoviesFormComponent implements OnInit {
   private _route = inject(ActivatedRoute);
 
   private movie: Movie = new Movie();
+  private movieId: number = 0;
   protected genreList: Genre[] = [];
   protected genreDropdown: DropdownOption[] = [];
+  protected editingMode: boolean = false;
 
   //dropdown stuff
   protected selectedGenre: string = '';
@@ -55,21 +57,22 @@ export class MoviesFormComponent implements OnInit {
   * antes de preencher os valores do filme.
   */
   private initializeFormData(): void {
-    const id = +this._route.snapshot.params['id'];
+    this.movieId = +this._route.snapshot.params['id'];
 
-    if (!id) {
+    if (!this.movieId) {
       this.getGenresList();
       return;
     }
 
     forkJoin({
       genres: this._moviesService.getGenresList(),
-      movie: this._moviesService.getMovieById(id)
+      movie: this._moviesService.getMovieById(this.movieId)
     }).subscribe({
       next: ({ genres, movie }) => {
         this.genreList = genres;
         this.genreDropdown = this.mapGenresToDropdown(genres);
         this.patchFormWithMovieData(movie);
+        this.editingMode = true;
       },
       error: (err) => {
         console.error('Failed to load form data', err);
@@ -134,7 +137,7 @@ export class MoviesFormComponent implements OnInit {
   // }
 
   protected createMovie() {
-    this.assignValues()
+    this.assignValues();
     this._moviesService.createMovie(this.movie).subscribe({
       next: () => {
 
@@ -142,6 +145,13 @@ export class MoviesFormComponent implements OnInit {
       error: (error: any) => {
 
       }
+    })
+  }
+
+  protected updateMovie() {
+    this.assignValues();
+    this._moviesService.updateMovie(this.movieId, this.movie).subscribe({
+
     })
   }
 

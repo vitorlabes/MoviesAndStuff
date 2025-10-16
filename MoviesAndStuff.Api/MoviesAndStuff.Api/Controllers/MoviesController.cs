@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using MoviesAndStuff.Api.Data.Dtos;
 using MoviesAndStuff.Api.Models;
 using MoviesAndStuff.Api.Services;
@@ -21,7 +22,7 @@ namespace MoviesAndStuff.Api.Controllers
         [HttpGet]
         public async Task<ActionResult<List<MovieListDto>>> GetList()
         {
-           return Ok(await _service.GetMovieListAsync());
+            return Ok(await _service.GetMovieListAsync());
         }
 
         [HttpGet("{id}")]
@@ -34,7 +35,7 @@ namespace MoviesAndStuff.Api.Controllers
         [HttpPost]
         public async Task<ActionResult> Create(Movie movie)
         {
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
@@ -54,9 +55,21 @@ namespace MoviesAndStuff.Api.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult> Update(int id, Movie movie)
         {
-            if (id != movie.Id) return BadRequest();
-            await _service.UpdateAsync(movie);
-            return NoContent();
+            movie.Id = id;
+
+            try
+            {
+                await _service.UpdateAsync(movie);
+                return NoContent();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                return NotFound("Movie not found");
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "Internal server error");
+            }
         }
 
         #endregion Movies
