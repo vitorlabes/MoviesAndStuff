@@ -3,8 +3,8 @@ import { Component, OnInit, inject } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Movie } from '../models/movies';
 import { MoviesService } from '../services/movies.service';
-import { DropdownComponent } from "../../components/dropdown.component";
-import { DropdownOption } from '../../components/models/dropdown';
+import { DropdownComponent } from "../../components/dropdown/dropdown.component";
+import { DropdownOption } from '../../components/dropdown/models/dropdown';
 import { Genre } from '../models/genres';
 import { forkJoin } from 'rxjs';
 
@@ -15,7 +15,6 @@ import { forkJoin } from 'rxjs';
   styleUrl: './movies-form.component.scss'
 })
 export class MoviesFormComponent implements OnInit {
-
   private _moviesService = inject(MoviesService);
   private _router = inject(Router);
   private _route = inject(ActivatedRoute);
@@ -151,7 +150,6 @@ export class MoviesFormComponent implements OnInit {
   protected updateMovie() {
     this.assignValues();
     this._moviesService.updateMovie(this.movieId, this.movie).subscribe({
-
     })
   }
 

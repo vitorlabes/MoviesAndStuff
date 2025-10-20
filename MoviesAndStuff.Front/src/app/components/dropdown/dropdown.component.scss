@@ -3,7 +3,6 @@
   z-index: 1;
 }
 
-/* Dropdown Wrapper */
 .dropdown-wrapper {
   display: block;
   position: relative;
@@ -54,7 +53,6 @@
   font-style: italic;
 }
 
-/* Dropdown Arrow */
 .dropdown-arrow {
   position: absolute;
   right: 0.75rem;
@@ -74,7 +72,6 @@
   opacity: 1;
 }
 
-/* Dropdown Menu */
 .dropdown-menu {
   position: absolute;
   top: 100%;
@@ -111,7 +108,6 @@
   }
 }
 
-/* Search Input inside dropdown */
 .dropdown-search {
   padding: 0.5rem;
   border-bottom: 1px solid rgba(147, 107, 192, 0.2);
@@ -159,7 +155,6 @@
   font-style: italic;
 }
 
-/* Options Container */
 .dropdown-options {
   position: relative;
   z-index: 1002;
@@ -168,7 +163,6 @@
   overflow-x: hidden;
 }
 
-/* Custom Scrollbar */
 .dropdown-options::-webkit-scrollbar {
   width: 6px;
 }
@@ -187,13 +181,11 @@
   background: rgba(147, 107, 192, 0.6);
 }
 
-/* Firefox scrollbar support */
 .dropdown-options {
   scrollbar-width: thin;
   scrollbar-color: rgba(147, 107, 192, 0.4) rgba(54, 32, 84, 0.3);
 }
 
-/* Individual Option */
 .dropdown-option {
   padding: 0.6rem 0.75rem;
   color: #E0D4F7;

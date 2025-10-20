@@ -47,14 +47,15 @@ namespace MoviesAndStuff.Api.Services
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task<bool> DeleteAsync(long id)
         {
-            var movie = await _context.Movies.FindAsync(id);
-            if (movie != null)
-            {
-                _context.Movies.Remove(movie);
-                await _context.SaveChangesAsync();
-            }
+            Movie? movie = await _context.Movies.FindAsync(id);
+            if (movie is null)
+                return false;
+
+            _context.Movies.Remove(movie);
+            await _context.SaveChangesAsync();
+            return true;
         }
 
         #region Genre

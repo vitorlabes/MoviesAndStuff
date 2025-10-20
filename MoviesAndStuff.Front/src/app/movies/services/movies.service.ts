@@ -46,6 +46,13 @@ export class MoviesService {
       );
   }
 
+  deleteMovie(id: number): Observable<Movie> {
+    return this.http.delete<Movie>(`${this.api}/${id}`)
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
+
   getGenresList(): Observable<Genre[]> {
     return this.http.get<Genre[]>(`${this.api}/genres`)
       .pipe(

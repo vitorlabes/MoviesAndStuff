@@ -28,7 +28,7 @@ namespace MoviesAndStuff.Api.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult> Get(int id)
         {
-            var movie = await _service.GetByIdAsync(id);
+            Movie? movie = await _service.GetByIdAsync(id);
             return movie == null ? NotFound() : Ok(movie);
         }
 
@@ -42,7 +42,7 @@ namespace MoviesAndStuff.Api.Controllers
 
             try
             {
-                var created = await _service.CreateAsync(movie);
+                Movie? created = await _service.CreateAsync(movie);
                 return CreatedAtAction(nameof(Get), new { id = created.Id }, created);
             }
             catch (Exception ex)
@@ -53,7 +53,7 @@ namespace MoviesAndStuff.Api.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult> Update(int id, Movie movie)
+        public async Task<ActionResult> Update(long id, Movie movie)
         {
             movie.Id = id;
 
@@ -70,6 +70,13 @@ namespace MoviesAndStuff.Api.Controllers
             {
                 return StatusCode(500, "Internal server error");
             }
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> Delete(long id)
+        {
+            bool deleted = await _service.DeleteAsync(id);
+            return deleted ? NoContent() : NotFound();
         }
 
         #endregion Movies
