@@ -14,12 +14,23 @@ namespace MoviesAndStuff.Api.Services
             _context = context;
         }
 
-        //public async Task<List<Movie>> GetMovieListAsync() => await _context.Movies.ToListAsync();
-
-        public async Task<List<MovieListDto>> GetMovieListAsync()
+        /// <summary>
+        /// Gets movie list, and applies filter if applicable.
+        /// </summary>
+        public async Task<List<MovieListDto>> GetMovieListAsync(string? search)
         {
-            return await _context.Movies
-                .Include(m => m.Genre)
+            IQueryable<Movie>? query = _context.Movies.Include(m => m.Genre).AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                string normalizeSearch = search.ToLower().Trim();
+
+                query = query.Where(m =>
+                    m.Title.ToLower().Contains(normalizeSearch)
+                );
+            }
+
+            return await query
                 .Select(m => new MovieListDto
                 {
                     Id = m.Id,
@@ -31,7 +42,7 @@ namespace MoviesAndStuff.Api.Services
                 .ToListAsync();
         }
 
-        public async Task<Movie?> GetByIdAsync(int id)
+        public async Task<Movie?> GetByIdAsync(long id)
             => await _context.Movies.FirstOrDefaultAsync(m => m.Id == id);
 
         public async Task<Movie> CreateAsync(Movie movie)

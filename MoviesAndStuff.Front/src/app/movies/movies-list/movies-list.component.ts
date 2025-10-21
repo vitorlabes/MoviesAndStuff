@@ -4,11 +4,13 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { MovieListDto } from '../dtos/movie-list-dto';
 import { ConfirmModalComponent } from '../../components/confirm-modal/confirm-modal.component';
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { debounceTime, distinctUntilChanged, switchMap, Observable, catchError, of, startWith, map, tap } from 'rxjs';
 
 @Component({
   selector: 'app-movies-list',
   standalone: true,
-  imports: [CommonModule, ConfirmModalComponent],
+  imports: [CommonModule, ConfirmModalComponent, ReactiveFormsModule, FormsModule],
   templateUrl: './movies-list.component.html',
   styleUrl: './movies-list.component.scss'
 })
@@ -18,40 +20,57 @@ export class MoviesListComponent implements OnInit {
   private _router = inject(Router)
 
   public confirmModal = viewChild.required<ConfirmModalComponent>('confirmModal');
-
   private movieIdToDelete: number | null = null;
-  protected movies: MovieListDto[] = [];
-  protected isLoading: boolean = false;
+
+  protected isLoading: boolean = true;
+  protected movies$!: Observable<MovieListDto[]>;
+
+  public searchControl = new FormControl<string>('', { nonNullable: true });
+  public currentSearchTerm: string = '';
 
   ngOnInit(): void {
     this.getMoviesList();
   }
 
-  protected getMoviesList() {
-    this.isLoading = true;
-    this._moviesService.getMovieslist().subscribe({
-      next: (response: MovieListDto[]) => {
-        this.movies = response;
-        this.isLoading = false;
-      },
-      error: (err) => {
-        console.error('Failed to fetch movies:', err);
-        this.isLoading = false;
-      }
-    });
+  private getMoviesList(): void {
+    this.movies$ = this.searchControl.valueChanges.pipe(
+      startWith(''),
+      debounceTime(400),
+      map(search => search.trim()),
+      distinctUntilChanged(),
+
+      tap(trimmedSearch => {
+        this.currentSearchTerm = trimmedSearch;
+        this.isLoading = true;
+      }),
+
+      switchMap(trimmedSearch => {
+        const searchParam: string | null = trimmedSearch === '' ? null : trimmedSearch;
+
+        return this._moviesService.getMovieslist(searchParam).pipe(
+          tap(() => this.isLoading = false),
+          catchError(err => {
+            console.error('Failed to fetch movies', err);
+            this.isLoading = false;
+            return of([]);
+          })
+        );
+      })
+    );
   }
 
   protected deleteMovie(id: number) {
     this.isLoading = true;
     this._moviesService.deleteMovie(id).subscribe({
       next: () => {
-        this.movies = this.movies.filter(m => m.id != id);
+        this.searchControl.setValue(this.searchControl.value, { emitEvent: true });
       },
       error: (err) => {
         console.error('Error while deleting movie:', err);
+        this.isLoading = false;
         alert('Error while deleting movie');
       }
-    })
+    });
   }
 
   protected openDeleteModal(id: number) {
@@ -78,3 +97,4 @@ export class MoviesListComponent implements OnInit {
   }
 
 }
+

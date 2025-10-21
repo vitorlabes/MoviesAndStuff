@@ -1,4 +1,4 @@
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, catchError, throwError } from 'rxjs';
 import { Movie } from '../models/movies';
@@ -14,8 +14,15 @@ export class MoviesService {
 
   constructor(private http: HttpClient) { }
 
-  getMovieslist(): Observable<MovieListDto[]> {
+  getMovieslist(search: string | null = null): Observable<MovieListDto[]> {
+    let params = new HttpParams();
+
+    if (search) {
+      params = params.set('search', search);
+    }
+
     return this.http.get<MovieListDto[]>(this.api, {
+      params,
       withCredentials: true
     })
       .pipe(

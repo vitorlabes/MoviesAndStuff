@@ -19,14 +19,18 @@ namespace MoviesAndStuff.Api.Controllers
 
         #region Movies
 
+        /// <summary>
+        /// Returns movie list, optionally filtered by search term.
+        /// </summary>
+        /// <param name="search">Search term(optional) that filters by Title.</param>
         [HttpGet]
-        public async Task<ActionResult<List<MovieListDto>>> GetList()
+        public async Task<ActionResult<List<MovieListDto>>> GetList([FromQuery] string? search)
         {
-            return Ok(await _service.GetMovieListAsync());
+            return Ok(await _service.GetMovieListAsync(search));
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult> Get(int id)
+        public async Task<ActionResult> Get(long id)
         {
             Movie? movie = await _service.GetByIdAsync(id);
             return movie == null ? NotFound() : Ok(movie);

@@ -24,7 +24,6 @@ export class ConfirmModalComponent {
     this._currentTitle.set(customTitle || this.title());
     this.show.set(true);
 
-    // Previne scroll do body quando modal está aberto
     document.body.style.overflow = 'hidden';
   }
 
