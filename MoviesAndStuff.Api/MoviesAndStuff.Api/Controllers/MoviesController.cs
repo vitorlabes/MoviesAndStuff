@@ -24,9 +24,9 @@ namespace MoviesAndStuff.Api.Controllers
         /// </summary>
         /// <param name="search">Search term(optional) that filters by Title.</param>
         [HttpGet]
-        public async Task<ActionResult<List<MovieListDto>>> GetList([FromQuery] string? search)
+        public async Task<ActionResult<List<MovieListDto>>> GetList([FromQuery] string? search, [FromQuery] string? genreId)
         {
-            return Ok(await _service.GetMovieListAsync(search));
+            return Ok(await _service.GetMovieListAsync(search, genreId));
         }
 
         [HttpGet("{id}")]

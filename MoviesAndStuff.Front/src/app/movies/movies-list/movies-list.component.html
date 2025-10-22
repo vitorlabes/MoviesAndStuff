@@ -11,9 +11,13 @@
       </button>
     </div>
 
-    <div class="mb-3">
+    <div class="d-flex gap-3 align-items-center mb-3 flex-wrap">
       <input class="form-control text-light search-input" placeholder="Search movie by title..."
         [formControl]="searchControl">
+
+      <app-dropdown [options]="genreOptions" placeholder="Select genre..." label="Genre" [searchable]="true"
+        [selectedValue]="selectedGenreId" (selectionChange)="onGenreSelected($event)">
+      </app-dropdown>
     </div>
 
     @if(isLoading){

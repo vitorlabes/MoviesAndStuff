@@ -17,18 +17,18 @@ namespace MoviesAndStuff.Api.Services
         /// <summary>
         /// Gets movie list, and applies filter if applicable.
         /// </summary>
-        public async Task<List<MovieListDto>> GetMovieListAsync(string? search)
+        public async Task<List<MovieListDto>> GetMovieListAsync(string? search, string? genreId)
         {
             IQueryable<Movie>? query = _context.Movies.Include(m => m.Genre).AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(search))
             {
                 string normalizeSearch = search.ToLower().Trim();
-
-                query = query.Where(m =>
-                    m.Title.ToLower().Contains(normalizeSearch)
-                );
+                query = query.Where(m => m.Title.ToLower().Contains(normalizeSearch));
             }
+
+            if (!string.IsNullOrWhiteSpace(genreId))
+                query = query.Where(m => m.GenreId == genreId);
 
             return await query
                 .Select(m => new MovieListDto

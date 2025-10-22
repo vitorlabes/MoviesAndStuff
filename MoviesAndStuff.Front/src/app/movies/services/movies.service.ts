@@ -14,12 +14,14 @@ export class MoviesService {
 
   constructor(private http: HttpClient) { }
 
-  getMovieslist(search: string | null = null): Observable<MovieListDto[]> {
+  getMovieslist(search: string | null = null, genreId: string | null = null): Observable<MovieListDto[]> {
     let params = new HttpParams();
 
-    if (search) {
+    if (search)
       params = params.set('search', search);
-    }
+
+    if (genreId)
+      params = params.set('genreId', genreId);
 
     return this.http.get<MovieListDto[]>(this.api, {
       params,

@@ -150,12 +150,6 @@ export class DropdownComponent implements OnInit, OnDestroy, OnChanges {
         event.preventDefault();
         this.navigateOptions(-1);
         break;
-      // case 'Enter':
-      //   event.preventDefault();
-      //   if (this.highlightedIndex >= 0 && this.filteredOptions[this.highlightedIndex]) {
-      //     this.selectOption(this.filteredOptions[this.highlightedIndex]);
-      //   }
-      //   break;
       case 'Escape':
         this.closeDropdown();
         if (this.searchInput) {
