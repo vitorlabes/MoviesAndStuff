@@ -2,6 +2,7 @@
 using MoviesAndStuff.Api.Data;
 using MoviesAndStuff.Api.Models;
 using MoviesAndStuff.Api.Data.Dtos;
+using MoviesAndStuff.Api.Data.Enums;
 
 namespace MoviesAndStuff.Api.Services
 {
@@ -17,18 +18,11 @@ namespace MoviesAndStuff.Api.Services
         /// <summary>
         /// Gets movie list, and applies filter if applicable.
         /// </summary>
-        public async Task<List<MovieListDto>> GetMovieListAsync(string? search, string? genreId)
+        public async Task<List<MovieListDto>> GetMovieListAsync(string? search, string? genreId, WatchFilter watchFilter)
         {
             IQueryable<Movie>? query = _context.Movies.Include(m => m.Genre).AsQueryable();
-
-            if (!string.IsNullOrWhiteSpace(search))
-            {
-                string normalizeSearch = search.ToLower().Trim();
-                query = query.Where(m => m.Title.ToLower().Contains(normalizeSearch));
-            }
-
-            if (!string.IsNullOrWhiteSpace(genreId))
-                query = query.Where(m => m.GenreId == genreId);
+            
+            query = ApplyFilters(query, search, genreId, watchFilter);
 
             return await query
                 .Select(m => new MovieListDto
@@ -40,6 +34,27 @@ namespace MoviesAndStuff.Api.Services
                     GenreName = m.Genre != null ? m.Genre.name : null,
                 })
                 .ToListAsync();
+        }
+
+        private static IQueryable<Movie> ApplyFilters(IQueryable<Movie> query, string? search, string? genreId, WatchFilter watchFilter)
+        {
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                string normalizedSearch = search.ToLower().Trim();
+                query = query.Where(m => m.Title.ToLower().Contains(normalizedSearch));
+            }
+
+            if (!string.IsNullOrWhiteSpace(genreId))
+                query = query.Where(m => m.GenreId == genreId);
+
+            query = watchFilter switch
+            {
+                WatchFilter.Watched => query.Where(m => m.IsWatched),
+                WatchFilter.Queue => query.Where(m => !m.IsWatched),
+                _ => query
+            };
+
+            return query;
         }
 
         public async Task<Movie?> GetByIdAsync(long id)

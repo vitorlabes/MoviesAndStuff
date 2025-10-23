@@ -1,3 +1,4 @@
+import { WATCH_FILTER_OPTIONS, WatchFilterOption } from './../constants/watch-filter-options';
 import { Component, OnInit, inject, viewChild } from '@angular/core';
 import { MoviesService } from '../services/movies.service';
 import { CommonModule } from '@angular/common';
@@ -5,9 +6,10 @@ import { Router } from '@angular/router';
 import { MovieListDto } from '../dtos/movie-list-dto';
 import { ConfirmModalComponent } from '../../components/confirm-modal/confirm-modal.component';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { debounceTime, distinctUntilChanged, switchMap, Observable, catchError, of, startWith, map, tap, combineLatest } from 'rxjs';
+import { debounceTime, distinctUntilChanged, switchMap, Observable, catchError, of, startWith, map, tap, combineLatest, BehaviorSubject } from 'rxjs';
 import { DropdownComponent } from "../../components/dropdown/dropdown.component";
 import { DropdownOption } from '../../components/dropdown/models/dropdown';
+import { WatchFilter } from '../enums/watch-filter';
 
 @Component({
   selector: 'app-movies-list',
@@ -18,25 +20,37 @@ import { DropdownOption } from '../../components/dropdown/models/dropdown';
 })
 
 export class MoviesListComponent implements OnInit {
+  //Injects
   private _moviesService = inject(MoviesService);
   private _router = inject(Router)
 
+  //Delete
   public confirmModal = viewChild.required<ConfirmModalComponent>('confirmModal');
   private movieIdToDelete: number | null = null;
 
   protected isLoading: boolean = true;
+
   protected movies$!: Observable<MovieListDto[]>;
   protected genreOptions: DropdownOption[] = [];
 
+  //Filters
   protected selectedGenreId: string | null = null;
-  public searchControl = new FormControl<string>('', { nonNullable: true });
-  public currentSearchTerm: string = '';
+  protected searchControl = new FormControl<string>('', { nonNullable: true });
+  protected currentSearchTerm: string = '';
 
+  //Watch Filter
+  protected readonly watchFilterOptions = WATCH_FILTER_OPTIONS;
+  protected selectedWatchFilter = WatchFilter.All;
+  protected readonly WatchFilter = WatchFilter;
+  private watchFilterSubject = new BehaviorSubject<WatchFilter>(WatchFilter.All);
+
+  //Lifecycle
   ngOnInit(): void {
     this.getGenreDropdown();
     this.getMoviesList();
   }
 
+  //Private methods
   private getMoviesList(): void {
     this.movies$ = combineLatest([
       this.searchControl.valueChanges.pipe(
@@ -45,20 +59,24 @@ export class MoviesListComponent implements OnInit {
         distinctUntilChanged(),
         map(search => search.trim())
       ),
-      of(this.selectedGenreId)
+      of(this.selectedGenreId),
+      this.watchFilterSubject.asObservable()
     ]).pipe(
       tap(() => this.isLoading = true),
-      switchMap(([search, genreId]) => {
-        const searchParam = search === '' ? null : search;
-        return this._moviesService.getMovieslist(searchParam, genreId).pipe(
+      switchMap(([search, genreId, watchFilter]) =>
+        this._moviesService.getMoviesList({
+          search: search || undefined,
+          genreId: genreId || undefined,
+          watchFilter
+        }).pipe(
           tap(() => this.isLoading = false),
           catchError(err => {
             console.error('Failed to fetch movies', err);
             this.isLoading = false;
             return of([]);
           })
-        );
-      })
+        )
+      )
     );
   }
 
@@ -74,9 +92,15 @@ export class MoviesListComponent implements OnInit {
     });
   }
 
+  //Protected methods
   protected onGenreSelected(genreId: string | null): void {
     this.selectedGenreId = genreId;
     this.getMoviesList();
+  }
+
+  protected setWatchFilter(filter: WatchFilter): void {
+    this.selectedWatchFilter = filter;
+    this.watchFilterSubject.next(filter);
   }
 
   protected deleteMovie(id: number): void {
@@ -108,6 +132,7 @@ export class MoviesListComponent implements OnInit {
     }
   }
 
+  //Navigation
   protected navigateToMovieForm(): void {
     this._router.navigate(['/movies/new']);
   }
@@ -117,4 +142,3 @@ export class MoviesListComponent implements OnInit {
   }
 
 }
-

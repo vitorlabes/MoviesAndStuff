@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MoviesAndStuff.Api.Data.Dtos;
+using MoviesAndStuff.Api.Data.Enums;
 using MoviesAndStuff.Api.Models;
 using MoviesAndStuff.Api.Services;
 
@@ -24,9 +25,9 @@ namespace MoviesAndStuff.Api.Controllers
         /// </summary>
         /// <param name="search">Search term(optional) that filters by Title.</param>
         [HttpGet]
-        public async Task<ActionResult<List<MovieListDto>>> GetList([FromQuery] string? search, [FromQuery] string? genreId)
+        public async Task<ActionResult<List<MovieListDto>>> GetList([FromQuery] string? search, [FromQuery] string? genreId, [FromQuery] WatchFilter watchFilter = WatchFilter.All)
         {
-            return Ok(await _service.GetMovieListAsync(search, genreId));
+            return Ok(await _service.GetMovieListAsync(search, genreId, watchFilter));
         }
 
         [HttpGet("{id}")]

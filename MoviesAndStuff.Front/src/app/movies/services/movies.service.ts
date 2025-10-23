@@ -4,6 +4,7 @@ import { Observable, catchError, throwError } from 'rxjs';
 import { Movie } from '../models/movies';
 import { Genre } from '../models/genres';
 import { MovieListDto } from '../dtos/movie-list-dto';
+import { WatchFilter } from '../enums/watch-filter';
 
 @Injectable({
   providedIn: 'root'
@@ -14,22 +15,26 @@ export class MoviesService {
 
   constructor(private http: HttpClient) { }
 
-  getMovieslist(search: string | null = null, genreId: string | null = null): Observable<MovieListDto[]> {
-    let params = new HttpParams();
+  getMoviesList(params: {
+    search?: string; genreId?: string; watchFilter?: WatchFilter;
+  }): Observable<MovieListDto[]> {
+    let httpParams = new HttpParams();
 
-    if (search)
-      params = params.set('search', search);
+    if (params.search)
+      httpParams = httpParams.set('search', params.search);
 
-    if (genreId)
-      params = params.set('genreId', genreId);
+    if (params.genreId)
+      httpParams = httpParams.set('genreId', params.genreId);
+
+    if (params.watchFilter && params.watchFilter !== WatchFilter.All)
+      httpParams = httpParams.set('watchFilter', params.watchFilter);
 
     return this.http.get<MovieListDto[]>(this.api, {
-      params,
+      params: httpParams,
       withCredentials: true
-    })
-      .pipe(
-        catchError(this.handleError)
-      );
+    }).pipe(
+      catchError(this.handleError)
+    );
   }
 
   getMovieById(id: number): Observable<Movie> {
