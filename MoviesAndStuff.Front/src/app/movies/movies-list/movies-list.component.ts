@@ -103,6 +103,17 @@ export class MoviesListComponent implements OnInit {
     this.watchFilterSubject.next(filter);
   }
 
+  protected toggleWatched(movie: MovieListDto): void {
+    this._moviesService.toggleWatched(movie.id).subscribe({
+      next: () => {
+        movie.isWatched = movie.isWatched === 1 ? 0 : 1;
+      },
+      error: (err) => {
+        console.error('Error toggling watched status:', err);
+      }
+    })
+  }
+
   protected deleteMovie(id: number): void {
     this.isLoading = true;
     this._moviesService.deleteMovie(id).subscribe({
@@ -117,6 +128,7 @@ export class MoviesListComponent implements OnInit {
     });
   }
 
+  //Modal
   protected openDeleteModal(id: number): void {
     this.movieIdToDelete = id;
     this.confirmModal().open(

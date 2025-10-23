@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using MoviesAndStuff.Api.Data;
 using MoviesAndStuff.Api.Services;
+using MoviesAndStuff.Api.Services.Interfaces;
 using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -18,7 +19,10 @@ builder.Services.AddControllers()
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddScoped<MovieService>();
+builder.Services.AddScoped<IMovieService, MovieService>();
+
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 builder.Services.AddCors(options =>
 {
@@ -35,9 +39,6 @@ builder.WebHost.ConfigureKestrel(serverOptions => {
         listenOptions.UseHttps();
     });
 });
-
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 

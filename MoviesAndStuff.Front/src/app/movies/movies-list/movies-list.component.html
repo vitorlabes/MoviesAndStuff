@@ -71,7 +71,8 @@
             <td class="ps-4 fw-bold">{{ movie.title }}</td>
             <td><span class="genre-badge fw-bold">{{ movie.genreName }}</span></td>
             <td class="text-center align-middle">
-              <div class="play-status" [class.watched]="movie.isWatched" [class.unwatched]="!movie.isWatched">
+              <div class="play-status" [class.watched]="movie.isWatched" [class.unwatched]="!movie.isWatched"
+                (click)="toggleWatched(movie)" style="cursor: pointer;">
                 <i class="bi play-icon" [class.bi-play-circle-fill]="movie.isWatched"
                   [class.bi-play-circle]="!movie.isWatched"></i>
                 <span class="status-text">{{ movie.isWatched ? 'Seen' : 'Queue' }}</span>

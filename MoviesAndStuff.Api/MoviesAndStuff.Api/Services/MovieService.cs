@@ -3,10 +3,11 @@ using MoviesAndStuff.Api.Data;
 using MoviesAndStuff.Api.Models;
 using MoviesAndStuff.Api.Data.Dtos;
 using MoviesAndStuff.Api.Data.Enums;
+using MoviesAndStuff.Api.Services.Interfaces;
 
 namespace MoviesAndStuff.Api.Services
 {
-    public class MovieService
+    public class MovieService : IMovieService
     {
         private readonly AppDbContext _context;
 
@@ -71,6 +72,19 @@ namespace MoviesAndStuff.Api.Services
         {
             _context.Movies.Update(movie);
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<bool> ToggleWatchedAsync(long id)
+        {
+            var movie = await _context.Movies.FindAsync(id);
+
+            if (movie == null)
+                return false;
+
+            movie.IsWatched = !movie.IsWatched;
+
+            await _context.SaveChangesAsync();
+            return true;
         }
 
         public async Task<bool> DeleteAsync(long id)

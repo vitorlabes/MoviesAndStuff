@@ -4,6 +4,7 @@ using MoviesAndStuff.Api.Data.Dtos;
 using MoviesAndStuff.Api.Data.Enums;
 using MoviesAndStuff.Api.Models;
 using MoviesAndStuff.Api.Services;
+using MoviesAndStuff.Api.Services.Interfaces;
 
 namespace MoviesAndStuff.Api.Controllers
 {
@@ -11,9 +12,9 @@ namespace MoviesAndStuff.Api.Controllers
     [Route("api/[controller]")]
     public class MoviesController : ControllerBase
     {
-        private readonly MovieService _service;
+        private readonly IMovieService _service;
 
-        public MoviesController(MovieService service)
+        public MoviesController(IMovieService service)
         {
             _service = service;
         }
@@ -75,6 +76,17 @@ namespace MoviesAndStuff.Api.Controllers
             {
                 return StatusCode(500, "Internal server error");
             }
+        }
+
+        [HttpPatch("{id}/watched")]
+        public async Task<ActionResult> UpdateWatchStatus(long id)
+        {
+            var result = await _service.ToggleWatchedAsync(id);
+
+            if (!result)
+                return NotFound();
+
+            return NoContent();
         }
 
         [HttpDelete("{id}")]

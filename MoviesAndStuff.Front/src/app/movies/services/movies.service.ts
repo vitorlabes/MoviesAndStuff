@@ -60,6 +60,15 @@ export class MoviesService {
       );
   }
 
+  toggleWatched(id: number): Observable<void> {
+    return this.http.patch<void>(`${this.api}/${id}/watched`, {
+      withCredentials: true
+    })
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
+
   deleteMovie(id: number): Observable<Movie> {
     return this.http.delete<Movie>(`${this.api}/${id}`)
       .pipe(
