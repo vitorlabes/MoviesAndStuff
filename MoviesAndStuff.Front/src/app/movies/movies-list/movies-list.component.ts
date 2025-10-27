@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
 import { MovieListDto } from '../dtos/movie-list-dto';
 import { ConfirmModalComponent } from '../../components/confirm-modal/confirm-modal.component';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { debounceTime, distinctUntilChanged, switchMap, Observable, catchError, of, startWith, map, tap, combineLatest, BehaviorSubject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, switchMap, Observable, catchError, of, startWith, map, tap, combineLatest, BehaviorSubject, shareReplay } from 'rxjs';
 import { DropdownComponent } from "../../components/dropdown/dropdown.component";
 import { DropdownOption } from '../../components/dropdown/models/dropdown';
 import { WatchFilter } from '../enums/watch-filter';
@@ -76,7 +76,8 @@ export class MoviesListComponent implements OnInit {
             return of([]);
           })
         )
-      )
+      ),
+      shareReplay(1)
     );
   }
 

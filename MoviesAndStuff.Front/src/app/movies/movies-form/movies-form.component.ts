@@ -121,20 +121,6 @@ export class MoviesFormComponent implements OnInit {
     return titleControl ? titleControl.invalid && (titleControl.dirty || titleControl.touched) : false;
   }
 
-  // get isFormValid(): boolean {
-  //   if (!this.movieForm.valid) {
-  //     return false;
-  //   }
-
-  //   const { title } = this.movieForm.value
-
-  //   if (!title || title.trim() === '') {
-  //     return false;
-  //   }
-
-  //   return true;
-  // }
-
   protected createMovie() {
     this.assignValues();
     this._moviesService.createMovie(this.movie).subscribe({

@@ -1,0 +1,26 @@
+<aside [class.open]="isOpen()" class="sidebar">
+
+  <div class="sidebar-header">
+    <h2>Movies & Stuff</h2>
+    <button class="toggle-btn" (click)="onToggle()" aria-label="Toggle menu">
+      {{ isOpen() ? '❮' : '❯' }}
+    </button>
+  </div>
+
+  <nav class="sidebar-nav">
+    <ul>
+      @for (item of menuItems; track item.route) {
+      <li>
+        <a [routerLink]="item.route" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: item.route === '/' }"
+          class="nav-link" [class.collapsed]="!isOpen()">
+          <span class="icon">{{ item.icon }}</span>
+          @if (isOpen()) {
+          <span class="label">{{ item.label }}</span>
+          }
+        </a>
+      </li>
+      }
+    </ul>
+  </nav>
+
+</aside>
