@@ -32,7 +32,7 @@ namespace MoviesAndStuff.Api.Services
                     Title = m.Title,
                     WatchDate = m.WatchDate,
                     IsWatched = m.IsWatched,
-                    GenreName = m.Genre != null ? m.Genre.name : null,
+                    GenreName = m.Genre != null ? m.Genre.Name : null,
                 })
                 .ToListAsync();
         }

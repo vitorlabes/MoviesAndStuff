@@ -2,12 +2,12 @@
 {
     public class Genre
     {
-        public string id { get; set; } = string.Empty;
+        public string Id { get; set; } = string.Empty;
 
-        public string name { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
 
-        public int order {  get; set; }
+        public int Order {  get; set; }
 
-        public bool active { get; set; }     
+        public bool Active { get; set; }     
     }
 }
