@@ -120,6 +120,7 @@ export class MoviesListComponent implements OnInit {
     this._moviesService.deleteMovie(id).subscribe({
       next: () => {
         this.searchControl.setValue(this.searchControl.value, { emitEvent: true });
+        this.getMoviesList();
       },
       error: (err) => {
         console.error('Error while deleting movie:', err);

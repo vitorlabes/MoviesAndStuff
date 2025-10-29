@@ -8,8 +8,7 @@
       <button class="btn btn-dark-purple" (click)="returnToList()">
         <i class="bi bi-x-lg"></i> Cancel
       </button>
-      <button class="btn btn-dark-purple" (click)="editingMode ? updateMovie() : createMovie()"
-        style="margin-left: 0.5rem;">
+      <button class="btn btn-dark-purple" (click)="saveMovie()" style="margin-left: 0.5rem;">
         <i class="bi" [class.bi-plus-lg]="!editingMode" [class.bi-check-lg]="editingMode"></i>
         {{ editingMode ? 'Update' : 'Add'}}
       </button>

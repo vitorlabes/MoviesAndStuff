@@ -7,6 +7,7 @@ import { DropdownComponent } from "../../components/dropdown/dropdown.component"
 import { DropdownOption } from '../../components/dropdown/models/dropdown';
 import { Genre } from '../models/genres';
 import { forkJoin } from 'rxjs';
+import { ToastService } from '../../components/toast/toast.service';
 
 @Component({
   selector: 'app-movies-form',
@@ -18,6 +19,7 @@ export class MoviesFormComponent implements OnInit {
   private _moviesService = inject(MoviesService);
   private _router = inject(Router);
   private _route = inject(ActivatedRoute);
+  private _toastService = inject(ToastService);
 
   private movie: Movie = new Movie();
   private movieId: number = 0;
@@ -110,7 +112,6 @@ export class MoviesFormComponent implements OnInit {
       next: (genres) => {
         this.genreList = genres;
         this.genreDropdown = this.mapGenresToDropdown(genres);
-
       },
       error: (err) => console.error('Failed to fetch genres:', err)
     });
@@ -121,36 +122,49 @@ export class MoviesFormComponent implements OnInit {
     return titleControl ? titleControl.invalid && (titleControl.dirty || titleControl.touched) : false;
   }
 
-  protected createMovie() {
-    this.assignValues();
-    this._moviesService.createMovie(this.movie).subscribe({
+  protected saveMovie(): void {
+    const isUpdate = !!this.editingMode || !!this.movieId;
+
+    if (this.movieForm.invalid) {
+      this._toastService.error('Please fill all required fields');
+      this.movieForm.markAllAsTouched();
+      return;
+    }
+
+    const movieData = this.mapFormToMovie();
+    const request$ = isUpdate
+      ? this._moviesService.updateMovie(this.movieId, movieData)
+      : this._moviesService.createMovie(movieData);
+
+    request$.subscribe({
       next: () => {
-
+        const action = isUpdate ? 'updated' : 'added';
+        const emoji = isUpdate ? '✨' : '🎬';
+        this._toastService.success(`${emoji} Movie ${action} successfully!`);
+        this.returnToList();
       },
-      error: (error: any) => {
-
+      error: (err) => {
+        console.error(`Error ${isUpdate ? 'updating' : 'creating'} movie:`, err);
+        this._toastService.error(`Failed to ${isUpdate ? 'update' : 'add'} movie. Please try again.`);
       }
-    })
+    });
   }
 
-  protected updateMovie() {
-    this.assignValues();
-    this._moviesService.updateMovie(this.movieId, this.movie).subscribe({
-    })
-  }
+  private mapFormToMovie(): Movie {
+    const { title, review, director, duration, rating, premiereDate, watchDate, isWatched } = this.movieForm.value;
 
-  private assignValues() {
-    this.movie.title = this.movieForm.controls['title'].value ?? '';
-    this.movie.review = this.movieForm.controls['review'].value ?? '';
-    this.movie.director = this.movieForm.controls['director'].value ?? '';
-    this.movie.genreId = this.selectedGenre;
-    this.movie.duration = this.movieForm.controls['duration'].value ?? '';
-    this.movie.rating = this.movieForm.controls['rating'].value ?? 0;
-    const rawPremiere = this.movieForm.controls['premiereDate'].value;
-    this.movie.premiereDate = rawPremiere ? new Date(rawPremiere) : new Date();
-    const rawWatch = this.movieForm.controls['watchDate'].value;
-    this.movie.watchDate = rawWatch ? new Date(rawWatch) : new Date();
-    this.movie.isWatched = this.movieForm.controls['isWatched'].value ?? false;
+    return {
+      ...this.movie,
+      title: title ?? '',
+      review: review ?? '',
+      director: director ?? '',
+      genreId: this.selectedGenre,
+      duration: duration ?? '',
+      rating: rating ?? 0,
+      premiereDate: premiereDate ? new Date(premiereDate) : new Date(),
+      watchDate: watchDate ? new Date(watchDate) : new Date(),
+      isWatched: isWatched ?? false
+    };
   }
 
   returnToList() {
