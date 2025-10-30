@@ -61,7 +61,7 @@ export class MoviesService {
   }
 
   toggleWatched(id: number): Observable<void> {
-    return this.http.patch<void>(`${this.api}/${id}/watched`, {
+    return this.http.patch<void>(`${this.api}/${id}/watched`, null, {
       withCredentials: true
     })
       .pipe(

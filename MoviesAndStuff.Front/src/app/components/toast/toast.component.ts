@@ -1,7 +1,7 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { trigger, transition, style, animate } from '@angular/animations';
-import { Toast } from './interfaces/toast';
+import { ToastService } from './toast.service';
 
 @Component({
   selector: 'app-toast',
@@ -22,19 +22,7 @@ import { Toast } from './interfaces/toast';
   ]
 })
 export class ToastComponent {
-  public toasts = signal<Toast[]>([]);
-  private nextId = 1;
-
-  public show(message: string, type: 'success' | 'error' | 'info' = 'success') {
-    const toast: Toast = { id: this.nextId++, message, type };
-    this.toasts.update(list => [...list, toast]);
-
-    setTimeout(() => this.remove(toast.id), 3000);
-  }
-
-  public remove(id: number) {
-    this.toasts.update(list => list.filter(t => t.id !== id));
-  }
+  protected readonly toastService = inject(ToastService);
 
   public getIcon(type: string): string {
     switch (type) {
@@ -43,5 +31,9 @@ export class ToastComponent {
       case 'info': return 'bi-info-circle-fill';
       default: return 'bi-info-circle-fill';
     }
+  }
+
+  public remove(id: number) {
+    this.toastService.remove(id);
   }
 }

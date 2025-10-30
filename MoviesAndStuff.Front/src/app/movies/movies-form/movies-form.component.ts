@@ -1,89 +1,79 @@
-import { ActivatedRoute, Router } from '@angular/router';
-import { Component, inject, effect, signal, computed } from '@angular/core';
+import { Component, computed, effect, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Movie } from '../models/movies';
+import { ActivatedRoute, Router } from '@angular/router';
 import { MoviesService } from '../services/movies.service';
-import { DropdownComponent } from "../../components/dropdown/dropdown.component";
-import { Genre } from '../models/genres';
 import { ToastService } from '../../components/toast/toast.service';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { DropdownComponent } from '../../components/dropdown/dropdown.component';
+import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { switchMap, of } from 'rxjs';
+import { Movie } from '../models/movies';
+import { Genre } from '../models/genres';
 
 @Component({
   selector: 'app-movies-form',
+  standalone: true,
   imports: [ReactiveFormsModule, DropdownComponent],
   templateUrl: './movies-form.component.html',
   styleUrl: './movies-form.component.scss'
 })
 export class MoviesFormComponent {
-  private _moviesService = inject(MoviesService);
-  private _router = inject(Router);
-  private _route = inject(ActivatedRoute);
-  private _toastService = inject(ToastService);
+  // Injeções
+  private readonly _router = inject(Router);
+  private readonly _route = inject(ActivatedRoute);
+  private readonly _moviesService = inject(MoviesService);
+  private readonly _toast = inject(ToastService);
 
-  private movie = new Movie();
-  private movieId = signal(+this._route.snapshot.params['id'] || 0);
+  // Signals de estado base
+  protected readonly movieId = signal<number>(+this._route.snapshot.params['id'] || 0);
 
-  private genresSignal = toSignal(
+  // Signals derivados de dados externos
+  protected readonly genres = toSignal(
     this._moviesService.getGenresList(),
-    { initialValue: [] }
+    { initialValue: [] as Genre[] }
   );
 
-  private movieSignal = toSignal(
+  protected readonly movie = toSignal<Movie | null>(
     of(this.movieId()).pipe(
-      switchMap(id => id > 0
-        ? this._moviesService.getMovieById(id)
-        : of(null)
-      )
+      switchMap(id => id > 0 ? this._moviesService.getMovieById(id) : of(null))
     ),
     { initialValue: null }
   );
 
-  protected genreList = signal<Genre[]>([]);
-  protected editingMode = computed(() => this.movieId() > 0);
-  protected selectedGenre = signal<string>('');
+  // Derivados
+  protected readonly editingMode = computed(() => this.movieId() > 0);
+  protected readonly genreDropdown = computed(() =>
+    (this.genres() ?? []).map(g => ({ value: g.id, label: g.name }))
+  );
 
-  protected genreDropdown = computed(() => {
-    const genres = this.genreList();
-    return genres.map(genre => ({
-      value: genre.id,
-      label: genre.name
-    }));
-  });
+  protected readonly selectedGenre = signal<string | null>(null);
 
-  public movieForm = new FormGroup({
-    title: new FormControl<string>('', Validators.required),
-    review: new FormControl<string>(''),
-    director: new FormControl<string>(''),
-    genreId: new FormControl<string>(''),
-    duration: new FormControl<string>(''),
-    rating: new FormControl<number>(0),
-    premiereDate: new FormControl<Date>(new Date()),
-    watchDate: new FormControl<Date>(new Date()),
-    isWatched: new FormControl<boolean>(false)
+  // Formulário
+  protected readonly movieForm = new FormGroup({
+    title: new FormControl('', Validators.required),
+    review: new FormControl(''),
+    director: new FormControl(''),
+    genreId: new FormControl(''),
+    duration: new FormControl(''),
+    rating: new FormControl(0),
+    premiereDate: new FormControl(new Date()),
+    watchDate: new FormControl(new Date()),
+    isWatched: new FormControl(false)
   });
 
   constructor() {
-    // Effect 1: Carrega genres quando disponível
+    // Atualiza form quando dados do filme chegam
     effect(() => {
-      const genres = this.genresSignal();
-      if (genres && genres.length > 0) {
-        this.genreList.set(genres);
-      }
-    });
+      const movie = this.movie();
+      const genres = this.genres();
 
-    // Effect 2: Carrega dados do filme se estiver em modo de edição
-    effect(() => {
-      const movie = this.movieSignal();
-      const genres = this.genresSignal();
-
-      if (movie && genres && genres.length > 0) {
-        this.patchFormWithMovieData(movie);
+      if (movie && (genres?.length ?? 0) > 0) {
+        this.patchFormWithMovie(movie);
       }
     });
   }
 
-  private patchFormWithMovieData(movie: Movie): void {
+  // 🧠 Atualiza formulário com dados existentes
+  private patchFormWithMovie(movie: Movie): void {
     this.movieForm.patchValue({
       title: movie.title,
       review: movie.review,
@@ -91,69 +81,62 @@ export class MoviesFormComponent {
       genreId: movie.genreId,
       duration: movie.duration,
       rating: movie.rating,
-      premiereDate: movie.premiereDate,
-      watchDate: movie.watchDate,
-      isWatched: movie.isWatched
+      premiereDate: movie.premiereDate ? new Date(movie.premiereDate) : new Date(),
+      watchDate: movie.watchDate ? new Date(movie.watchDate) : new Date(),
+      isWatched: movie.isWatched ?? false
     });
-    this.selectedGenre.set(movie.genreId);
+    this.selectedGenre.set(movie.genreId ?? null);
   }
 
-  onGenreChange(value: string) {
+  // 🔄 Muda o gênero via dropdown
+  protected onGenreChange(value: string) {
     this.selectedGenre.set(value);
     this.movieForm.patchValue({ genreId: value });
   }
 
-  get titleHasError(): boolean {
+  // 🚫 Validação
+  protected get titleHasError(): boolean {
     const control = this.movieForm.get('title');
-    return control ? control.invalid && (control.dirty || control.touched) : false;
+    return !!(control && control.invalid && (control.dirty || control.touched));
   }
 
+  // 💾 Salvar filme
   protected saveMovie(): void {
-    const isUpdate = this.editingMode();
-
     if (this.movieForm.invalid) {
-      this._toastService.error('Please fill all required fields');
+      this._toast.error('Please fill all required fields');
       this.movieForm.markAllAsTouched();
       return;
     }
 
     const movieData = this.mapFormToMovie();
-    const request$ = isUpdate
+    const save$ = this.editingMode()
       ? this._moviesService.updateMovie(this.movieId(), movieData)
       : this._moviesService.createMovie(movieData);
 
-    request$.subscribe({
+    save$.subscribe({
       next: () => {
-        const action = isUpdate ? 'updated' : 'added';
-        const emoji = isUpdate ? '✨' : '🎬';
-        this._toastService.success(`${emoji} Movie ${action} successfully!`);
+        const action = this.editingMode() ? 'updated' : 'added';
+        const emoji = this.editingMode() ? '✨' : '🎬';
+        this._toast.success(`${emoji} Movie ${action} successfully!`);
         this.returnToList();
       },
       error: (err) => {
         console.error(err);
-        this._toastService.error(`Failed to ${isUpdate ? 'update' : 'add'} movie. Please try again.`);
+        this._toast.error(`Failed to ${this.editingMode() ? 'update' : 'add'} movie.`);
       }
     });
   }
 
   private mapFormToMovie(): Movie {
-    const { title, review, director, duration, rating, premiereDate, watchDate, isWatched } = this.movieForm.value;
-
+    const formValue = this.movieForm.value;
     return {
-      ...this.movie,
-      title: title ?? '',
-      review: review ?? '',
-      director: director ?? '',
-      genreId: this.selectedGenre(),
-      duration: duration ?? '',
-      rating: rating ?? 0,
-      premiereDate: premiereDate ? new Date(premiereDate) : new Date(),
-      watchDate: watchDate ? new Date(watchDate) : new Date(),
-      isWatched: isWatched ?? false
-    };
+      ...(this.movie() ?? {}),
+      ...formValue,
+      genreId: this.selectedGenre()
+    } as Movie;
   }
 
-  returnToList() {
+  protected returnToList() {
     this._router.navigate(['/movies']);
   }
 }

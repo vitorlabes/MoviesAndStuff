@@ -5,7 +5,7 @@
       <i class="bi bi-film"></i> Movie Collection
     </h2>
 
-    <button class="btn btn-dark-purple" (click)="navigateToMovieForm()">
+    <button class="btn btn-dark-purple" (click)="navigateToNew()">
       <i class="bi bi-plus-lg"></i> Add Movie
     </button>
   </div>
@@ -17,22 +17,22 @@
     </div>
 
     <div class="col-md-4 col-sm-12">
-      <app-dropdown [options]="genreOptions" placeholder="Select genre..." [searchable]="true"
-        [selectedValue]="selectedGenreId" (selectionChange)="onGenreSelected($event)">
+      <app-dropdown [options]="genres()" placeholder="Select genre..." [searchable]="true"
+        [selectedValue]="selectedGenre()" (selectionChange)="onGenreSelected($event)">
       </app-dropdown>
     </div>
   </div>
 
   <div class="filter-toggle-group my-3 d-flex justify-content-center gap-2">
     @for (option of watchFilterOptions; track option.value) {
-    <button type="button" class="toggle-btn" [class.active]="selectedWatchFilter === option.value"
+    <button type="button" class="toggle-btn" [class.active]="selectedFilter() === option.value"
       (click)="setWatchFilter(option.value)">
       <i class="bi" [ngClass]="option.icon"></i> {{ option.label }}
     </button>
     }
   </div>
 
-  @if(isLoading){
+  @if(isLoading()) {
   <div class="d-flex justify-content-center align-items-center py-5">
     <div class="text-center">
       <div class="spinner-border text-light mb-3" role="status" style="width: 3rem; height: 3rem;">
@@ -43,16 +43,15 @@
   </div>
   }
 
-  @if(movies$ | async; as movieList){
-  @if(!isLoading){
-  @if(movieList.length === 0 && currentSearchTerm){
+  @if(!isLoading()) {
+  @if(showEmptySearch()) {
   <div class="empty-state">
     <i class="bi bi-search"></i>
-    <p>No results found for "{{ currentSearchTerm }}"</p>
+    <p>No results found for "{{ currentSearch() }}"</p>
   </div>
   }
 
-  @if(movieList.length > 0){
+  @if(hasResults()) {
   <div class="cinematic-table-container">
     <table class="table table-cinematic table-hover">
       <thead class="table-header-glow">
@@ -65,7 +64,7 @@
         </tr>
       </thead>
       <tbody>
-        @for (movie of movieList; track movie.id) {
+        @for (movie of movies(); track movie.id) {
         <tr class="movie-row">
           <td class="ps-4 fw-bold">{{ movie.title }}</td>
           <td><span class="genre-badge fw-bold">{{ movie.genreName }}</span></td>
@@ -73,14 +72,15 @@
             <div class="play-status" [class.watched]="movie.isWatched" [class.unwatched]="!movie.isWatched"
               (click)="toggleWatched(movie)" style="cursor: pointer;">
               <i class="bi play-icon" [class.bi-play-circle-fill]="movie.isWatched"
-                [class.bi-play-circle]="!movie.isWatched"></i>
+                [class.bi-play-circle]="!movie.isWatched">
+              </i>
               <span class="status-text">{{ movie.isWatched ? 'Seen' : 'Queue' }}</span>
             </div>
           </td>
           <td class="pe-4 fw-bold">{{ movie.watchDate | date:'dd/MM/yyyy' }}</td>
           <td class="pe-4">
             <div class="action-buttons">
-              <button class="action-btn edit-btn" title="Edit Movie" (click)="navigateToMovieFormUpdate(movie.id)">
+              <button class="action-btn edit-btn" title="Edit Movie" (click)="navigateToEdit(movie.id)">
                 <i class="bi bi-pencil"></i>
               </button>
               <button class="action-btn delete-btn" title="Delete Movie" (click)="openDeleteModal(movie.id)">
@@ -95,12 +95,11 @@
   </div>
   }
 
-  @if(movieList.length === 0 && !currentSearchTerm){
+  @if(showEmptyState()) {
   <div class="empty-state">
     <i class="bi bi-film"></i>
     <p>No movies in our collection yet</p>
   </div>
-  }
   }
   }
 

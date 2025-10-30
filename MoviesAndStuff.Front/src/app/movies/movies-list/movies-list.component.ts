@@ -1,138 +1,146 @@
-import { WATCH_FILTER_OPTIONS, WatchFilterOption } from './../constants/watch-filter-options';
-import { Component, OnInit, inject, viewChild } from '@angular/core';
-import { MoviesService } from '../services/movies.service';
+import { Component, OnInit, computed, effect, inject, signal, viewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { FormControl, ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { debounceTime, distinctUntilChanged, map, startWith } from 'rxjs';
+import { MoviesService } from '../services/movies.service';
 import { MovieListDto } from '../dtos/movie-list-dto';
+import { DropdownComponent } from '../../components/dropdown/dropdown.component';
 import { ConfirmModalComponent } from '../../components/confirm-modal/confirm-modal.component';
-import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { debounceTime, distinctUntilChanged, switchMap, Observable, catchError, of, startWith, map, tap, combineLatest, BehaviorSubject, shareReplay } from 'rxjs';
-import { DropdownComponent } from "../../components/dropdown/dropdown.component";
 import { DropdownOption } from '../../components/dropdown/models/dropdown';
 import { WatchFilter } from '../enums/watch-filter';
+import { WATCH_FILTER_OPTIONS } from '../constants/watch-filter-options';
 
 @Component({
   selector: 'app-movies-list',
   standalone: true,
-  imports: [CommonModule, ConfirmModalComponent, ReactiveFormsModule, FormsModule, DropdownComponent],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, DropdownComponent, ConfirmModalComponent],
   templateUrl: './movies-list.component.html',
   styleUrl: './movies-list.component.scss'
 })
-
 export class MoviesListComponent implements OnInit {
-  //Injects
-  private _moviesService = inject(MoviesService);
-  private _router = inject(Router)
+  // Injeções
+  private readonly _moviesService = inject(MoviesService);
+  private readonly _router = inject(Router);
 
-  //Delete
-  public confirmModal = viewChild.required<ConfirmModalComponent>('confirmModal');
-  private movieIdToDelete: number | null = null;
+  // ViewChild
+  protected readonly confirmModal = viewChild.required<ConfirmModalComponent>('confirmModal');
 
-  protected isLoading: boolean = true;
+  // Signals de estado
+  protected readonly isLoading = signal(true);
+  protected readonly movies = signal<MovieListDto[]>([]);
+  protected readonly genres = signal<DropdownOption[]>([]);
+  protected readonly selectedGenre = signal<string | null>(null);
+  protected readonly selectedFilter = signal<WatchFilter>(WatchFilter.All);
+  protected readonly movieIdToDelete = signal<number | null>(null);
 
-  protected movies$!: Observable<MovieListDto[]>;
-  protected genreOptions: DropdownOption[] = [];
+  // Search control
+  protected readonly searchControl = new FormControl<string>('', { nonNullable: true });
+  private readonly searchTerm = toSignal(
+    this.searchControl.valueChanges.pipe(
+      startWith(''),
+      debounceTime(400),
+      distinctUntilChanged(),
+      map(term => term.trim())
+    )
+  );
 
-  //Filters
-  protected selectedGenreId: string | null = null;
-  protected searchControl = new FormControl<string>('', { nonNullable: true });
-  protected currentSearchTerm: string = '';
+  // Computed
+  protected readonly hasResults = computed(() => this.movies().length > 0);
+  protected readonly currentSearch = computed(() => this.searchTerm() ?? '');
+  protected readonly showEmptySearch = computed(() =>
+    !this.isLoading() && !this.hasResults() && this.currentSearch().length > 0
+  );
+  protected readonly showEmptyState = computed(() =>
+    !this.isLoading() && !this.hasResults() && this.currentSearch().length === 0
+  );
 
-  //Watch Filter
+  // Constantes
   protected readonly watchFilterOptions = WATCH_FILTER_OPTIONS;
-  protected selectedWatchFilter = WatchFilter.All;
   protected readonly WatchFilter = WatchFilter;
-  private watchFilterSubject = new BehaviorSubject<WatchFilter>(WatchFilter.All);
 
-  //Lifecycle
+  constructor() {
+    // Recarrega filmes sempre que filtros mudam
+    effect(() => {
+      const term = this.currentSearch();
+      const genre = this.selectedGenre();
+      const filter = this.selectedFilter();
+      this.loadMovies(term, genre, filter);
+    });
+  }
+
   ngOnInit(): void {
-    this.getGenreDropdown();
-    this.getMoviesList();
+    this.loadGenres();
   }
 
-  //Private methods
-  private getMoviesList(): void {
-    this.movies$ = combineLatest([
-      this.searchControl.valueChanges.pipe(
-        startWith(''),
-        debounceTime(400),
-        distinctUntilChanged(),
-        map(search => search.trim())
-      ),
-      of(this.selectedGenreId),
-      this.watchFilterSubject.asObservable()
-    ]).pipe(
-      tap(() => this.isLoading = true),
-      switchMap(([search, genreId, watchFilter]) =>
-        this._moviesService.getMoviesList({
-          search: search || undefined,
-          genreId: genreId || undefined,
-          watchFilter
-        }).pipe(
-          tap(() => this.isLoading = false),
-          catchError(err => {
-            console.error('Failed to fetch movies', err);
-            this.isLoading = false;
-            return of([]);
-          })
-        )
-      ),
-      shareReplay(1)
-    );
+  private loadMovies(search: string, genreId: string | null, filter: WatchFilter): void {
+    this.isLoading.set(true);
+    this._moviesService.getMoviesList({
+      search: search || undefined,
+      genreId: genreId || undefined,
+      watchFilter: filter
+    }).subscribe({
+      next: (movies) => {
+        this.movies.set(movies);
+        this.isLoading.set(false);
+      },
+      error: (err) => {
+        console.error('Failed to fetch movies', err);
+        this.movies.set([]);
+        this.isLoading.set(false);
+      }
+    });
   }
 
-  private getGenreDropdown(): void {
+  private loadGenres(): void {
     this._moviesService.getGenresList().subscribe({
       next: (genres) => {
-        this.genreOptions = [
+        this.genres.set([
           { label: 'All genres', value: null },
           ...genres.map(g => ({ label: g.name, value: g.id }))
-        ];
+        ]);
       },
       error: (err) => console.error('Failed to load genres', err)
     });
   }
 
-  //Protected methods
-  protected onGenreSelected(genreId: string | null): void {
-    this.selectedGenreId = genreId;
-    this.getMoviesList();
+  // Interações
+  protected onGenreSelected(value: string | null): void {
+    this.selectedGenre.set(value);
   }
 
   protected setWatchFilter(filter: WatchFilter): void {
-    this.selectedWatchFilter = filter;
-    this.watchFilterSubject.next(filter);
+    this.selectedFilter.set(filter);
   }
 
   protected toggleWatched(movie: MovieListDto): void {
     this._moviesService.toggleWatched(movie.id).subscribe({
       next: () => {
-        movie.isWatched = movie.isWatched === 1 ? 0 : 1;
+        this.movies.update(list =>
+          list.map(m => (m.id === movie.id ? { ...m, isWatched: !m.isWatched } : m))
+        );
       },
-      error: (err) => {
-        console.error('Error toggling watched status:', err);
-      }
-    })
+      error: (err) => console.error('Error toggling watched status:', err)
+    });
   }
 
   protected deleteMovie(id: number): void {
-    this.isLoading = true;
+    this.isLoading.set(true);
     this._moviesService.deleteMovie(id).subscribe({
       next: () => {
-        this.searchControl.setValue(this.searchControl.value, { emitEvent: true });
-        this.getMoviesList();
+        this.movies.update(list => list.filter(m => m.id !== id));
+        this.isLoading.set(false);
       },
       error: (err) => {
-        console.error('Error while deleting movie:', err);
-        this.isLoading = false;
-        alert('Error while deleting movie');
+        console.error('Error deleting movie', err);
+        this.isLoading.set(false);
       }
     });
   }
 
-  //Modal
   protected openDeleteModal(id: number): void {
-    this.movieIdToDelete = id;
+    this.movieIdToDelete.set(id);
     this.confirmModal().open(
       `Are you sure you want to delete this movie? This action cannot be undone.`,
       'Delete Movie'
@@ -140,19 +148,18 @@ export class MoviesListComponent implements OnInit {
   }
 
   protected confirmDelete(): void {
-    if (this.movieIdToDelete != null) {
-      this.deleteMovie(this.movieIdToDelete);
-      this.movieIdToDelete = null;
+    const id = this.movieIdToDelete();
+    if (id !== null) {
+      this.deleteMovie(id);
+      this.movieIdToDelete.set(null);
     }
   }
 
-  //Navigation
-  protected navigateToMovieForm(): void {
+  protected navigateToNew(): void {
     this._router.navigate(['/movies/new']);
   }
 
-  protected navigateToMovieFormUpdate(id: number): void {
+  protected navigateToEdit(id: number): void {
     this._router.navigate(['movies/edit', id]);
   }
-
 }

@@ -1,5 +1,5 @@
 <div class="toast-container">
-  @for (toast of toasts(); track toast.id) {
+  @for (toast of toastService.toasts(); track toast.id) {
   <div class="toast" [class]="'toast-' + toast.type" @slideIn>
     <div class="toast-content">
       <i class="bi" [class]="getIcon(toast.type)"></i>
