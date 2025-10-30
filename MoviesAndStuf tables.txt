@@ -4,7 +4,7 @@ CREATE TABLE Movies (
     Review VARCHAR(200) NULL,
     Director VARCHAR(50) NULL,
     GenreId VARCHAR(15) NULL,
-    Duration VARCHAR(5) NULL,
+    Duration INTEGER NULL,
 	Rating DECIMAL (3,1) NULL,
     PremiereDate DATE NULL,
 	WatchDate DATE NULL,

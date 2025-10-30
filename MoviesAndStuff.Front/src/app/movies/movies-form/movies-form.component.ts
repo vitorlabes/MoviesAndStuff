@@ -1,32 +1,37 @@
 import { Component, computed, effect, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
+import { of, switchMap } from 'rxjs';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { MoviesService } from '../services/movies.service';
 import { ToastService } from '../../components/toast/toast.service';
-import { DropdownComponent } from '../../components/dropdown/dropdown.component';
-import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { switchMap, of } from 'rxjs';
 import { Movie } from '../models/movies';
 import { Genre } from '../models/genres';
+import { DropdownComponent } from '../../components/dropdown/dropdown.component';
+import { DurationPipe } from '../../pipes/duration.pipe';
+import { DurationInputComponent } from '../../components/duration-input/duration-input.component';
 
 @Component({
   selector: 'app-movies-form',
   standalone: true,
-  imports: [ReactiveFormsModule, DropdownComponent],
+  imports: [
+    ReactiveFormsModule,
+    DropdownComponent,
+    DurationPipe,
+    DurationInputComponent
+  ],
   templateUrl: './movies-form.component.html',
   styleUrl: './movies-form.component.scss'
 })
+
 export class MoviesFormComponent {
-  // Injeções
   private readonly _router = inject(Router);
   private readonly _route = inject(ActivatedRoute);
   private readonly _moviesService = inject(MoviesService);
   private readonly _toast = inject(ToastService);
 
-  // Signals de estado base
   protected readonly movieId = signal<number>(+this._route.snapshot.params['id'] || 0);
 
-  // Signals derivados de dados externos
   protected readonly genres = toSignal(
     this._moviesService.getGenresList(),
     { initialValue: [] as Genre[] }
@@ -39,7 +44,6 @@ export class MoviesFormComponent {
     { initialValue: null }
   );
 
-  // Derivados
   protected readonly editingMode = computed(() => this.movieId() > 0);
   protected readonly genreDropdown = computed(() =>
     (this.genres() ?? []).map(g => ({ value: g.id, label: g.name }))
@@ -47,21 +51,23 @@ export class MoviesFormComponent {
 
   protected readonly selectedGenre = signal<string | null>(null);
 
-  // Formulário
   protected readonly movieForm = new FormGroup({
-    title: new FormControl('', Validators.required),
-    review: new FormControl(''),
-    director: new FormControl(''),
-    genreId: new FormControl(''),
-    duration: new FormControl(''),
-    rating: new FormControl(0),
-    premiereDate: new FormControl(new Date()),
-    watchDate: new FormControl(new Date()),
-    isWatched: new FormControl(false)
+    title: new FormControl<string>('', Validators.required),
+    review: new FormControl<string>(''),
+    director: new FormControl<string>(''),
+    genreId: new FormControl<string>(''),
+    duration: new FormControl<number | null>(null, [
+      Validators.min(1),
+      Validators.max(999 * 60 + 59)
+    ]),
+    rating: new FormControl<number>(0),
+    premiereDate: new FormControl<Date>(new Date()),
+    watchDate: new FormControl<Date>(new Date()),
+    isWatched: new FormControl<boolean>(false)
   });
 
   constructor() {
-    // Atualiza form quando dados do filme chegam
+    // Updates form with movie data
     effect(() => {
       const movie = this.movie();
       const genres = this.genres();
@@ -72,7 +78,6 @@ export class MoviesFormComponent {
     });
   }
 
-  // 🧠 Atualiza formulário com dados existentes
   private patchFormWithMovie(movie: Movie): void {
     this.movieForm.patchValue({
       title: movie.title,
@@ -88,22 +93,24 @@ export class MoviesFormComponent {
     this.selectedGenre.set(movie.genreId ?? null);
   }
 
-  // 🔄 Muda o gênero via dropdown
   protected onGenreChange(value: string) {
     this.selectedGenre.set(value);
     this.movieForm.patchValue({ genreId: value });
   }
 
-  // 🚫 Validação
   protected get titleHasError(): boolean {
     const control = this.movieForm.get('title');
     return !!(control && control.invalid && (control.dirty || control.touched));
   }
 
-  // 💾 Salvar filme
+  protected get durationHasError(): boolean {
+    const control = this.movieForm.get('duration');
+    return !!(control && control.invalid && (control.dirty || control.touched));
+  }
+
   protected saveMovie(): void {
     if (this.movieForm.invalid) {
-      this._toast.error('Please fill all required fields');
+      this._toast.error('Please fill all required fields correctly');
       this.movieForm.markAllAsTouched();
       return;
     }
@@ -132,7 +139,8 @@ export class MoviesFormComponent {
     return {
       ...(this.movie() ?? {}),
       ...formValue,
-      genreId: this.selectedGenre()
+      genreId: this.selectedGenre(),
+      duration: formValue.duration ?? 0
     } as Movie;
   }
 

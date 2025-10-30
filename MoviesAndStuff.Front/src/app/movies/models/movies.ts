@@ -4,7 +4,7 @@ export class Movie {
   review: string = "";
   director: string = "";
   genreId: string = "";
-  duration: string = "";
+  duration: number = 0;
   rating: number = 0;
   premiereDate: Date = new Date();
   watchDate: Date = new Date();

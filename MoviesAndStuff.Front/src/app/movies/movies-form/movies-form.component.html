@@ -2,7 +2,7 @@
 
   <div class="d-flex justify-content-between align-items-start mb-4">
     <h2 class="form-title mb-0">
-      <i class="bi bi-film"></i> Add Movie
+      <i class="bi bi-film"></i> {{ editingMode() ? 'Edit' : 'Add' }} Movie
     </h2>
     <div>
       <button class="btn btn-dark-purple" (click)="returnToList()">
@@ -66,7 +66,15 @@
     <div class="row">
       <div class="col-4">
         <label class="form-input">Duration</label>
-        <input type="text" id="duration" formControlName="duration">
+        <app-duration-input formControlName="duration"></app-duration-input>
+        @if(durationHasError){
+        <small class="text-danger">Enter a valid duration (HH:MM)</small>
+        }
+        @if(movieForm.get('duration')?.value){
+        <small class="text-muted d-block mt-1">
+          {{ movieForm.get('duration')?.value | duration }}
+        </small>
+        }
       </div>
 
       <div class="col-4">
