@@ -1,13 +1,13 @@
 import { ActivatedRoute, Router } from '@angular/router';
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, inject, effect, signal, computed } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Movie } from '../models/movies';
 import { MoviesService } from '../services/movies.service';
 import { DropdownComponent } from "../../components/dropdown/dropdown.component";
-import { DropdownOption } from '../../components/dropdown/models/dropdown';
 import { Genre } from '../models/genres';
-import { forkJoin } from 'rxjs';
 import { ToastService } from '../../components/toast/toast.service';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { switchMap, of } from 'rxjs';
 
 @Component({
   selector: 'app-movies-form',
@@ -15,26 +15,41 @@ import { ToastService } from '../../components/toast/toast.service';
   templateUrl: './movies-form.component.html',
   styleUrl: './movies-form.component.scss'
 })
-export class MoviesFormComponent implements OnInit {
+export class MoviesFormComponent {
   private _moviesService = inject(MoviesService);
   private _router = inject(Router);
   private _route = inject(ActivatedRoute);
   private _toastService = inject(ToastService);
 
-  private movie: Movie = new Movie();
-  private movieId: number = 0;
-  protected genreList: Genre[] = [];
-  protected genreDropdown: DropdownOption[] = [];
-  protected editingMode: boolean = false;
+  private movie = new Movie();
+  private movieId = signal(+this._route.snapshot.params['id'] || 0);
 
-  //dropdown stuff
-  protected selectedGenre: string = '';
+  private genresSignal = toSignal(
+    this._moviesService.getGenresList(),
+    { initialValue: [] }
+  );
 
-  /** Evento disparado ao mudar o valor do dropdown */
-  onGenreChange(value: string) {
-    this.selectedGenre = value;
-  }
-  //dropdown stuff end
+  private movieSignal = toSignal(
+    of(this.movieId()).pipe(
+      switchMap(id => id > 0
+        ? this._moviesService.getMovieById(id)
+        : of(null)
+      )
+    ),
+    { initialValue: null }
+  );
+
+  protected genreList = signal<Genre[]>([]);
+  protected editingMode = computed(() => this.movieId() > 0);
+  protected selectedGenre = signal<string>('');
+
+  protected genreDropdown = computed(() => {
+    const genres = this.genreList();
+    return genres.map(genre => ({
+      value: genre.id,
+      label: genre.name
+    }));
+  });
 
   public movieForm = new FormGroup({
     title: new FormControl<string>('', Validators.required),
@@ -46,50 +61,28 @@ export class MoviesFormComponent implements OnInit {
     premiereDate: new FormControl<Date>(new Date()),
     watchDate: new FormControl<Date>(new Date()),
     isWatched: new FormControl<boolean>(false)
-  })
+  });
 
-  ngOnInit(): void {
-    this.initializeFormData();
-  }
+  constructor() {
+    // Effect 1: Carrega genres quando disponível
+    effect(() => {
+      const genres = this.genresSignal();
+      if (genres && genres.length > 0) {
+        this.genreList.set(genres);
+      }
+    });
 
-  /**
-  * Carrega os dados necessários para o formulário (gêneros + filme)
-  * de forma sincronizada, garantindo que o dropdown já tenha opções
-  * antes de preencher os valores do filme.
-  */
-  private initializeFormData(): void {
-    this.movieId = +this._route.snapshot.params['id'];
+    // Effect 2: Carrega dados do filme se estiver em modo de edição
+    effect(() => {
+      const movie = this.movieSignal();
+      const genres = this.genresSignal();
 
-    if (!this.movieId) {
-      this.getGenresList();
-      return;
-    }
-
-    forkJoin({
-      genres: this._moviesService.getGenresList(),
-      movie: this._moviesService.getMovieById(this.movieId)
-    }).subscribe({
-      next: ({ genres, movie }) => {
-        this.genreList = genres;
-        this.genreDropdown = this.mapGenresToDropdown(genres);
+      if (movie && genres && genres.length > 0) {
         this.patchFormWithMovieData(movie);
-        this.editingMode = true;
-      },
-      error: (err) => {
-        console.error('Failed to load form data', err);
       }
     });
   }
 
-  /** Mapeia os gêneros retornados pela API para o formato aceito pelo dropdown */
-  private mapGenresToDropdown(genres: Genre[]): DropdownOption[] {
-    return genres.map(genre => ({
-      value: genre.id,
-      label: genre.name
-    }));
-  }
-
-  /** Aplica os dados do filme ao formulário */
   private patchFormWithMovieData(movie: Movie): void {
     this.movieForm.patchValue({
       title: movie.title,
@@ -101,29 +94,22 @@ export class MoviesFormComponent implements OnInit {
       premiereDate: movie.premiereDate,
       watchDate: movie.watchDate,
       isWatched: movie.isWatched
-    })
-
-    this.selectedGenre = movie.genreId;
+    });
+    this.selectedGenre.set(movie.genreId);
   }
 
-  /** Carrega apenas a lista de gêneros (modo criar novo filme) */
-  private getGenresList(): void {
-    this._moviesService.getGenresList().subscribe({
-      next: (genres) => {
-        this.genreList = genres;
-        this.genreDropdown = this.mapGenresToDropdown(genres);
-      },
-      error: (err) => console.error('Failed to fetch genres:', err)
-    });
+  onGenreChange(value: string) {
+    this.selectedGenre.set(value);
+    this.movieForm.patchValue({ genreId: value });
   }
 
   get titleHasError(): boolean {
-    const titleControl = this.movieForm.get('title');
-    return titleControl ? titleControl.invalid && (titleControl.dirty || titleControl.touched) : false;
+    const control = this.movieForm.get('title');
+    return control ? control.invalid && (control.dirty || control.touched) : false;
   }
 
   protected saveMovie(): void {
-    const isUpdate = !!this.editingMode || !!this.movieId;
+    const isUpdate = this.editingMode();
 
     if (this.movieForm.invalid) {
       this._toastService.error('Please fill all required fields');
@@ -133,7 +119,7 @@ export class MoviesFormComponent implements OnInit {
 
     const movieData = this.mapFormToMovie();
     const request$ = isUpdate
-      ? this._moviesService.updateMovie(this.movieId, movieData)
+      ? this._moviesService.updateMovie(this.movieId(), movieData)
       : this._moviesService.createMovie(movieData);
 
     request$.subscribe({
@@ -144,7 +130,7 @@ export class MoviesFormComponent implements OnInit {
         this.returnToList();
       },
       error: (err) => {
-        console.error(`Error ${isUpdate ? 'updating' : 'creating'} movie:`, err);
+        console.error(err);
         this._toastService.error(`Failed to ${isUpdate ? 'update' : 'add'} movie. Please try again.`);
       }
     });
@@ -158,7 +144,7 @@ export class MoviesFormComponent implements OnInit {
       title: title ?? '',
       review: review ?? '',
       director: director ?? '',
-      genreId: this.selectedGenre,
+      genreId: this.selectedGenre(),
       duration: duration ?? '',
       rating: rating ?? 0,
       premiereDate: premiereDate ? new Date(premiereDate) : new Date(),
@@ -168,7 +154,6 @@ export class MoviesFormComponent implements OnInit {
   }
 
   returnToList() {
-    this._router.navigate(['/movies'])
+    this._router.navigate(['/movies']);
   }
-
 }

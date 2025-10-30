@@ -21,7 +21,6 @@ export class SidebarComponent {
 
   menuItems: MenuItem[] = [
     { label: 'Movies', icon: '🎬', route: '/movies' },
-    { label: 'New', icon: '➕', route: '/movies/new' },
     { label: 'Series', icon: '📺', route: '/series' },
     { label: 'Favorites', icon: '⭐', route: '/favorites' },
     { label: 'Statistics', icon: '📊', route: '/stats' }

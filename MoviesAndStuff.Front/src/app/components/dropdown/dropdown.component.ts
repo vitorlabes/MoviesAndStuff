@@ -1,4 +1,4 @@
-import { Component, ElementRef, HostListener, OnDestroy, OnInit, inject, input, output, viewChild, signal, effect } from '@angular/core';
+import { Component, ElementRef, HostListener, OnDestroy, inject, input, output, viewChild, signal, effect, computed } from '@angular/core';
 import { DropdownOption } from './models/dropdown';
 import { Subject, debounceTime, distinctUntilChanged, takeUntil } from 'rxjs';
 
@@ -8,7 +8,7 @@ import { Subject, debounceTime, distinctUntilChanged, takeUntil } from 'rxjs';
   templateUrl: './dropdown.component.html',
   styleUrl: './dropdown.component.scss'
 })
-export class DropdownComponent implements OnInit, OnDestroy {
+export class DropdownComponent implements OnDestroy {
   private _eleRef = inject(ElementRef);
 
   // Inputs
@@ -26,39 +26,50 @@ export class DropdownComponent implements OnInit, OnDestroy {
 
   // ViewChild
   public searchInput = viewChild.required<ElementRef>('searchInput');
-  public dropdownSearchInput = viewChild.required<ElementRef>('dropdownSearchInput');
+  public dropdownSearchInput = viewChild<ElementRef>('dropdownSearchInput');
 
-  // States
+  // States (signals)
   public isOpen = signal(false);
   public searchTerm = signal('');
-  public filteredOptions = signal<DropdownOption[]>([]);
   public highlightedIndex = signal(-1);
-  public displayValue = signal('');
+
+  // Computed signals
+  public filteredOptions = computed(() => {
+    const term = this.searchTerm().trim().toLowerCase();
+    const opts = this.options();
+
+    if (!term) {
+      return opts;
+    }
+
+    return opts.filter(option =>
+      option.label.toLowerCase().includes(term)
+    );
+  });
+
+  public displayValue = computed(() => {
+    const selected = this.options().find(opt => opt.value === this.selectedValue());
+    return selected ? selected.label : '';
+  });
 
   private searchSubject = new Subject<string>();
   private destroy$ = new Subject<void>();
   private clickedInside = false;
-  private clickInside = false;
 
   constructor() {
-    effect(() => {
-      this.filteredOptions.set([...this.options()]);
-      this.updateDisplayValue();
-    });
-
-    effect(() => {
-      this.updateDisplayValue();
-    });
-  }
-
-  ngOnInit(): void {
     this.searchSubject.pipe(
       debounceTime(300),
       distinctUntilChanged(),
       takeUntil(this.destroy$)
     ).subscribe(term => {
-      this.filterOptions(term);
       this.searchChange.emit(term);
+    });
+
+    effect(() => {
+      this.filteredOptions();
+      if (this.highlightedIndex() >= this.filteredOptions().length) {
+        this.highlightedIndex.set(-1);
+      }
     });
   }
 
@@ -81,22 +92,16 @@ export class DropdownComponent implements OnInit, OnDestroy {
     }
   }
 
-  handleDocumentClick = (event: Event) => {
-    if (!this._eleRef.nativeElement.contains(event.target)) {
-      this.closeDropdown();
-    }
-  }
-
   openDropdown() {
     if (this.disabled()) return;
 
     this.isOpen.set(true);
     this.highlightedIndex.set(-1);
-    this.filteredOptions.set([...this.options()]);
+    this.searchTerm.set('');
 
     setTimeout(() => {
       if (this.searchable() && this.dropdownSearchInput()) {
-        this.dropdownSearchInput().nativeElement.focus();
+        this.dropdownSearchInput()?.nativeElement.focus();
       }
     }, 0);
   }
@@ -105,40 +110,6 @@ export class DropdownComponent implements OnInit, OnDestroy {
     this.isOpen.set(false);
     this.searchTerm.set('');
     this.highlightedIndex.set(-1);
-  }
-
-  onWrapperClick(event: Event) {
-    event.preventDefault();
-    event.stopPropagation();
-    this.clickedInside = true;
-
-    if (this.disabled()) return;
-
-    if (!this.isOpen()) {
-      this.openDropdown();
-    } else {
-      this.closeDropdown();
-    }
-  }
-
-  onInputFocus() {
-    if (!this.clickedInside && !this.isOpen()) {
-      this.openDropdown();
-    }
-    this.clickedInside = false;
-  }
-
-  onInputBlur() {
-    setTimeout(() => {
-      if (!this.clickedInside) {
-        this.closeDropdown();
-      }
-      this.clickedInside = false;
-    }, 200);
-  }
-
-  onDropdownMouseDown() {
-    this.clickedInside = true;
   }
 
   onSearchInput(event: Event) {
@@ -158,6 +129,15 @@ export class DropdownComponent implements OnInit, OnDestroy {
         event.preventDefault();
         this.navigateOptions(-1);
         break;
+      case 'Enter':
+        event.preventDefault();
+        if (this.isOpen() && this.highlightedIndex() >= 0) {
+          const option = this.filteredOptions()[this.highlightedIndex()];
+          if (option && !option.disabled) {
+            this.selectOption(option, event as any);
+          }
+        }
+        break;
       case 'Escape':
         this.closeDropdown();
         if (this.searchInput()) {
@@ -175,6 +155,8 @@ export class DropdownComponent implements OnInit, OnDestroy {
 
     const maxIndex = this.filteredOptions().length - 1;
 
+    if (maxIndex < 0) return;
+
     if (direction > 0) {
       this.highlightedIndex.set(
         this.highlightedIndex() < maxIndex ? this.highlightedIndex() + 1 : 0
@@ -186,7 +168,7 @@ export class DropdownComponent implements OnInit, OnDestroy {
     }
   }
 
-  selectOption(option: DropdownOption, event: MouseEvent) {
+  selectOption(option: DropdownOption, event: MouseEvent | KeyboardEvent) {
     if (option.disabled) return;
 
     event.stopPropagation();
@@ -194,38 +176,21 @@ export class DropdownComponent implements OnInit, OnDestroy {
     this.selectionChange.emit(option.value);
     this.closeDropdown();
 
-    if (this.searchInput()) {
-      this.searchInput().nativeElement.focus();
-    }
+    setTimeout(() => {
+      if (this.searchInput()) {
+        this.searchInput().nativeElement.focus();
+      }
+    }, 0);
   }
 
-  isSelected(option: DropdownOption) {
+  isSelected(option: DropdownOption): boolean {
     return this.selectedValue() === option.value;
   }
 
-  private filterOptions(term: string) {
-    if (!term.trim()) {
-      this.filteredOptions.set([...this.options()]);
-    } else {
-      this.filteredOptions.set(
-        this.options().filter(option =>
-          option.label.toLowerCase().includes(term.toLowerCase())
-        )
-      );
-    }
-    this.highlightedIndex.set(-1);
-  }
-
-  private updateDisplayValue() {
-    const selected = this.options().find(opt => opt.value === this.selectedValue());
-    this.displayValue.set(selected ? selected.label : '');
-  }
-
   @HostListener('document:click', ['$event'])
-  handleOutsideClick() {
-    if (!this.clickInside && this.isOpen()) {
+  handleOutsideClick(event: Event) {
+    if (!this._eleRef.nativeElement.contains(event.target)) {
       this.closeDropdown();
     }
-    this.clickInside = false;
   }
 }

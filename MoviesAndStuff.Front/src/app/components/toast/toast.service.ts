@@ -1,23 +1,22 @@
-import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
+import { Injectable, signal } from '@angular/core';
 import { ToastData } from './interfaces/toast-data';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ToastService {
-  private toastSubject = new Subject<ToastData>();
-  public toast$ = this.toastSubject.asObservable();
+  private _toast = signal<ToastData | null>(null);
+  public toast = this._toast.asReadonly();
 
   public success(message: string) {
-    this.toastSubject.next({ message, type: 'success' });
+    this._toast.set({ message, type: 'success' });
   }
 
   public error(message: string) {
-    this.toastSubject.next({ message, type: 'error' });
+    this._toast.set({ message, type: 'error' });
   }
 
   public info(message: string) {
-    this.toastSubject.next({ message, type: 'info' });
+    this._toast.set({ message, type: 'info' });
   }
 }

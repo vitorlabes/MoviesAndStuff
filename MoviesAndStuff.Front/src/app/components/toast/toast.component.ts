@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { trigger, transition, style, animate } from '@angular/animations';
 import { Toast } from './interfaces/toast';
@@ -22,25 +22,18 @@ import { Toast } from './interfaces/toast';
   ]
 })
 export class ToastComponent {
-  public toasts: Toast[] = [];
+  public toasts = signal<Toast[]>([]);
   private nextId = 1;
 
   public show(message: string, type: 'success' | 'error' | 'info' = 'success') {
-    const toast: Toast = {
-      id: this.nextId++,
-      type,
-      message
-    };
+    const toast: Toast = { id: this.nextId++, message, type };
+    this.toasts.update(list => [...list, toast]);
 
-    this.toasts.push(toast);
-
-    setTimeout(() => {
-      this.remove(toast.id);
-    }, 3000);
+    setTimeout(() => this.remove(toast.id), 3000);
   }
 
   public remove(id: number) {
-    this.toasts = this.toasts.filter(t => t.id !== id);
+    this.toasts.update(list => list.filter(t => t.id !== id));
   }
 
   public getIcon(type: string): string {
