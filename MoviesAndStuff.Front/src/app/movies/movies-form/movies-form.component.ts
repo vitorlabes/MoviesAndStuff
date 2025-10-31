@@ -57,7 +57,6 @@ export class MoviesFormComponent {
     director: new FormControl<string>(''),
     genreId: new FormControl<string>(''),
     duration: new FormControl<number | null>(null, [
-      Validators.min(1),
       Validators.max(999 * 60 + 59)
     ]),
     rating: new FormControl<number>(0),
@@ -105,8 +104,14 @@ export class MoviesFormComponent {
 
   protected get durationHasError(): boolean {
     const control = this.movieForm.get('duration');
-    return !!(control && control.invalid && (control.dirty || control.touched));
+    return !!(
+      control &&
+      control.value !== null &&
+      control.invalid &&
+      (control.dirty || control.touched)
+    );
   }
+
 
   protected saveMovie(): void {
     if (this.movieForm.invalid) {
@@ -140,7 +145,7 @@ export class MoviesFormComponent {
       ...(this.movie() ?? {}),
       ...formValue,
       genreId: this.selectedGenre(),
-      duration: formValue.duration ?? 0
+      duration: formValue.duration
     } as Movie;
   }
 

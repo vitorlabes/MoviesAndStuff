@@ -68,7 +68,7 @@
         <label class="form-input">Duration</label>
         <app-duration-input formControlName="duration"></app-duration-input>
         @if(durationHasError){
-        <small class="text-danger">Enter a valid duration (HH:MM)</small>
+        <small class="text-danger">Invalid duration (HH:MM)</small>
         }
         @if(movieForm.get('duration')?.value){
         <small class="text-muted d-block mt-1">

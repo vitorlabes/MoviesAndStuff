@@ -28,10 +28,13 @@ export class DurationInputComponent implements ControlValueAccessor {
     const input = event.target as HTMLInputElement;
     let value = input.value.replace(/\D/g, '');
 
-    // 4 digit limit
-    if (value.length > 4) {
-      value = value.substring(0, 4);
+    if (!value) {
+      this.displayValue.set('');
+      this.onChange(null);
+      return;
     }
+
+    if (value.length > 4) value = value.substring(0, 4);
 
     let formatted = value;
     if (value.length >= 3) {
