@@ -169,4 +169,3 @@ D:\Projects\Fullstack\MoviesAndStuff\MoviesAndStuff.APi\MoviesAndStuff.Api\obj\D
 D:\Projects\Fullstack\MoviesAndStuff\MoviesAndStuff.APi\MoviesAndStuff.Api\obj\Debug\net8.0\staticwebassets.build.json.cache
 D:\Projects\Fullstack\MoviesAndStuff\MoviesAndStuff.APi\MoviesAndStuff.Api\obj\Debug\net8.0\staticwebassets.build.endpoints.json
 D:\Projects\Fullstack\MoviesAndStuff\MoviesAndStuff.APi\MoviesAndStuff.Api\obj\Debug\net8.0\MoviesAn.5A9884EC.Up2Date
-D:\Projects\Fullstack\MoviesAndStuff\MoviesAndStuff.APi\MoviesAndStuff.Api\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt

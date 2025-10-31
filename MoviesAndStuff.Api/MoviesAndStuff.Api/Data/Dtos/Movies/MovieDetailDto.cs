@@ -1,38 +1,17 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace MoviesAndStuff.Api.Models
+﻿namespace MoviesAndStuff.Api.Data.Dtos.Movies
 {
-    public class Movie
+    public class MovieDetailDto
     {
         public long Id { get; set; }
-
-        [Required]
-        [StringLength(100)]
         public string Title { get; set; } = string.Empty;
-
-        [StringLength(500)]
         public string? Review { get; set; }
-
-        [StringLength(50)]
         public string? Director { get; set; }
-
         public long? GenreId { get; set; }
-
-        [Range(1, 59999)]
+        public string? GenreName { get; set; }
         public int? Duration { get; set; }
-
-        [Range(0, 10)]
         public decimal? Rating { get; set; }
-
         public DateTime? PremiereDate { get; set; }
-
         public DateTime? WatchDate { get; set; }
-
         public bool IsWatched { get; set; }
-
-        public DateTime CreatedAt { get; set; }
-
-        // Navigation property
-        public Genre? Genre { get; set; }
     }
 }

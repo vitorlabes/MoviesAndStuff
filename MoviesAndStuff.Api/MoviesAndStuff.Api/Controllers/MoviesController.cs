@@ -1,9 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using MoviesAndStuff.Api.Data.Dtos;
+using MoviesAndStuff.Api.Data.Dtos.Movies;
 using MoviesAndStuff.Api.Data.Enums;
-using MoviesAndStuff.Api.Models;
-using MoviesAndStuff.Api.Services;
 using MoviesAndStuff.Api.Services.Interfaces;
 
 namespace MoviesAndStuff.Api.Controllers
@@ -19,27 +17,37 @@ namespace MoviesAndStuff.Api.Controllers
             _service = service;
         }
 
-        #region Movies
-
         /// <summary>
-        /// Returns movie list, optionally filtered by search term.
+        /// Gets movie list, optionally filtered by search term, genre, and watch status
         /// </summary>
-        /// <param name="search">Search term(optional) that filters by Title.</param>
+        /// <param name="search">Search term that filters by Title</param>
+        /// <param name="genreId">Filter by genre ID</param>
+        /// <param name="watchFilter">Filter by watch status (All, Watched, Queue)</param>
         [HttpGet]
-        public async Task<ActionResult<List<MovieListDto>>> GetList([FromQuery] string? search, [FromQuery] string? genreId, [FromQuery] WatchFilter watchFilter = WatchFilter.All)
+        public async Task<ActionResult<List<MovieListDto>>> GetAll(
+            [FromQuery] string? search = null,
+            [FromQuery] long? genreId = null,
+            [FromQuery] WatchFilter watchFilter = WatchFilter.All)
         {
-            return Ok(await _service.GetMovieListAsync(search, genreId, watchFilter));
+            var movies = await _service.GetAllAsync(search, genreId, watchFilter);
+            return Ok(movies);
         }
 
+        /// <summary>
+        /// Gets a specific movie by ID
+        /// </summary>
         [HttpGet("{id}")]
-        public async Task<ActionResult> Get(long id)
+        public async Task<ActionResult<MovieDetailDto>> GetById(long id)
         {
-            Movie? movie = await _service.GetByIdAsync(id);
+            MovieDetailDto? movie = await _service.GetByIdAsync(id);
             return movie == null ? NotFound() : Ok(movie);
         }
 
+        /// <summary>
+        /// Creates a new movie
+        /// </summary>
         [HttpPost]
-        public async Task<ActionResult> Create(Movie movie)
+        public async Task<ActionResult<MovieDetailDto>> Create(CreateMovieDto dto)
         {
             if (!ModelState.IsValid)
             {
@@ -48,25 +56,38 @@ namespace MoviesAndStuff.Api.Controllers
 
             try
             {
-                Movie? created = await _service.CreateAsync(movie);
-                return CreatedAtAction(nameof(Get), new { id = created.Id }, created);
+                MovieDetailDto? created = await _service.CreateAsync(dto);
+                return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
             }
             catch (Exception ex)
             {
-                var innerException = ex.InnerException?.Message;
-                return BadRequest(innerException ?? ex.Message);
+                return StatusCode(500, ex.Message);
             }
         }
 
+        /// <summary>
+        /// Updates an existing movie
+        /// </summary>
         [HttpPut("{id}")]
-        public async Task<ActionResult> Update(long id, Movie movie)
+        public async Task<ActionResult> Update(long id, UpdateMovieDto dto)
         {
-            movie.Id = id;
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
 
             try
             {
-                await _service.UpdateAsync(movie);
-                return NoContent();
+                bool updated = await _service.UpdateAsync(id, dto);
+                return updated ? NoContent() : NotFound();
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -78,32 +99,25 @@ namespace MoviesAndStuff.Api.Controllers
             }
         }
 
+        /// <summary>
+        /// Toggles the watched status of a movie
+        /// </summary>
         [HttpPatch("{id}/watched")]
-        public async Task<ActionResult> UpdateWatchStatus(long id)
+        public async Task<ActionResult> ToggleWatchStatus(long id)
         {
-            var result = await _service.ToggleWatchedAsync(id);
-
-            if (!result)
-                return NotFound();
-
-            return NoContent();
+            bool result = await _service.ToggleWatchedAsync(id);
+            return result ? NoContent() : NotFound();
         }
 
+        /// <summary>
+        /// Deletes a movie
+        /// </summary>
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(long id)
         {
             bool deleted = await _service.DeleteAsync(id);
             return deleted ? NoContent() : NotFound();
         }
-
-        #endregion Movies
-
-        #region Genre
-
-        [HttpGet("genres")]
-        public async Task<ActionResult> GetGenreList() => Ok(await _service.GetGenresList());
-
-        #endregion Genre
 
     }
 }

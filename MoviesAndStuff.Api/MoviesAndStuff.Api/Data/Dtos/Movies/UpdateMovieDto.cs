@@ -1,11 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace MoviesAndStuff.Api.Models
+namespace MoviesAndStuff.Api.Data.Dtos.Movies
 {
-    public class Movie
+    public class UpdateMovieDto
     {
-        public long Id { get; set; }
-
         [Required]
         [StringLength(100)]
         public string Title { get; set; } = string.Empty;
@@ -29,10 +27,5 @@ namespace MoviesAndStuff.Api.Models
         public DateTime? WatchDate { get; set; }
 
         public bool IsWatched { get; set; }
-
-        public DateTime CreatedAt { get; set; }
-
-        // Navigation property
-        public Genre? Genre { get; set; }
     }
 }
