@@ -37,7 +37,7 @@ export class MoviesFormComponent {
   protected readonly movieId = signal<number>(+this._route.snapshot.params['id'] || 0);
 
   protected readonly genres = toSignal(
-    this._genresService.getGenresList(),
+    this._genresService.getGenresList({ mediaTypeId: 'MOVIE', isActive: true }),
     { initialValue: [] as Genre[] }
   );
 
@@ -53,13 +53,13 @@ export class MoviesFormComponent {
     (this.genres() ?? []).map(g => ({ value: g.id, label: g.name }))
   );
 
-  protected readonly selectedGenre = signal<string | null>(null);
+  protected readonly selectedGenre = signal<number | null>(null);
 
   protected readonly movieForm = new FormGroup({
     title: new FormControl<string>('', Validators.required),
     review: new FormControl<string>(''),
     director: new FormControl<string>(''),
-    genreId: new FormControl<string>(''),
+    genreId: new FormControl<number | null>(0, Validators.required),
     duration: new FormControl<number | null>(null, [
       Validators.max(999 * 60 + 59)
     ]),
@@ -95,7 +95,7 @@ export class MoviesFormComponent {
     this.selectedGenre.set(movie.genreId ?? null);
   }
 
-  protected onGenreChange(value: string) {
+  protected onGenreChange(value: number) {
     this.selectedGenre.set(value);
     this.movieForm.patchValue({ genreId: value });
   }

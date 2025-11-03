@@ -3,7 +3,7 @@ export interface MovieDetailDto {
   title: string;
   review?: string;
   director?: string;
-  genreId?: string;
+  genreId?: number;
   genreName?: string;
   duration?: number;
   rating?: number;

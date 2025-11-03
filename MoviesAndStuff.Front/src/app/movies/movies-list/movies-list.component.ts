@@ -63,8 +63,6 @@ export class MoviesListComponent implements OnInit {
   protected readonly WatchFilter = WatchFilter;
 
   constructor() {
-
-    // Reload movies when filters change
     effect(() => {
       const term = this.currentSearch();
       const genre = this.selectedGenre();
@@ -97,7 +95,7 @@ export class MoviesListComponent implements OnInit {
   }
 
   private loadGenres(): void {
-    this._genresService.getGenresList().subscribe({
+    this._genresService.getGenresList({ mediaTypeId: 'MOVIE', isActive: true }).subscribe({
       next: (genres) => {
         this.genres.set([
           { label: 'All genres', value: null },
@@ -108,7 +106,6 @@ export class MoviesListComponent implements OnInit {
     });
   }
 
-  // Interações
   protected onGenreSelected(value: string | null): void {
     this.selectedGenre.set(value);
   }

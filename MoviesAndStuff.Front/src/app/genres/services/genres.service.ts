@@ -1,49 +1,33 @@
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
+import { Injectable, inject } from '@angular/core';
 import { Observable, catchError, throwError } from 'rxjs';
 import { Genre } from '../models/genres';
+import { ErrorHandlerService } from '../../shared/error-handler.service';
 
 @Injectable({
   providedIn: 'root'
 })
 
 export class GenresService {
+  private readonly errorHandler = inject(ErrorHandlerService);
+  private readonly http = inject(HttpClient);
+
   private api = 'https://localhost:5102/api/genres';
 
-  constructor(private http: HttpClient) { }
+  getGenresList(params?: { mediaTypeId?: string; isActive?: boolean }): Observable<Genre[]> {
+    let httpParams = new HttpParams();
 
-  getGenresList(): Observable<Genre[]> {
-    return this.http.get<Genre[]>(`${this.api}/`)
-      .pipe(
-        catchError(this.handleError)
-      );
+    if (params?.mediaTypeId)
+      httpParams = httpParams.set('mediaTypeId', params.mediaTypeId);
+
+    if (params?.isActive !== undefined)
+      httpParams = httpParams.set('isActive', params.isActive.toString());
+
+    return this.http.get<Genre[]>(this.api, {
+      params: httpParams,
+      withCredentials: true
+    }).pipe(
+      catchError(error => this.errorHandler.handleError(error, 'Genre'))
+    );
   }
-
-
-
-  private handleError(error: HttpErrorResponse): Observable<never> {
-    let errorMessage = 'An unknown error occurred';
-
-    if (error.error instanceof ErrorEvent) {
-      errorMessage = `Client Error: ${error.error.message}`;
-    } else {
-      switch (error.status) {
-        case 400:
-          errorMessage = 'Bad Request: Please check your input data';
-          break;
-        case 404:
-          errorMessage = 'Movie not found';
-          break;
-        case 500:
-          errorMessage = 'Internal Server Error: Please try again later';
-          break;
-        default:
-          errorMessage = `Server Error: ${error.status} - ${error.message}`;
-      }
-    }
-
-    console.error('MovieService Error:', errorMessage);
-    return throwError(() => new Error(errorMessage));
-  }
-
 }
