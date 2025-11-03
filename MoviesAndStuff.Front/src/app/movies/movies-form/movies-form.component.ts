@@ -5,7 +5,6 @@ import { of, switchMap } from 'rxjs';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MoviesService } from '../services/movies.service';
 import { ToastService } from '../../components/toast/toast.service';
-import { Movie } from '../models/movies';
 import { Genre } from '../../genres/models/genres';
 import { DropdownComponent } from '../../components/dropdown/dropdown.component';
 import { DurationPipe } from '../../pipes/duration.pipe';
@@ -71,7 +70,6 @@ export class MoviesFormComponent {
   });
 
   constructor() {
-    // Updates form with movie data
     effect(() => {
       const movie = this.movie();
       const genres = this.genres();
