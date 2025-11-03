@@ -6,10 +6,14 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { MoviesService } from '../services/movies.service';
 import { ToastService } from '../../components/toast/toast.service';
 import { Movie } from '../models/movies';
-import { Genre } from '../models/genres';
+import { Genre } from '../../genres/models/genres';
 import { DropdownComponent } from '../../components/dropdown/dropdown.component';
 import { DurationPipe } from '../../pipes/duration.pipe';
 import { DurationInputComponent } from '../../components/duration-input/duration-input.component';
+import { MovieDetailDto } from '../dtos/movie-detail-dto';
+import { CreateMovieDto } from '../dtos/movie-create-dto';
+import { UpdateMovieDto } from '../dtos/movie-update-dto';
+import { GenresService } from '../../genres/services/genres.service';
 
 @Component({
   selector: 'app-movies-form',
@@ -28,16 +32,17 @@ export class MoviesFormComponent {
   private readonly _router = inject(Router);
   private readonly _route = inject(ActivatedRoute);
   private readonly _moviesService = inject(MoviesService);
+  private readonly _genresService = inject(GenresService)
   private readonly _toast = inject(ToastService);
 
   protected readonly movieId = signal<number>(+this._route.snapshot.params['id'] || 0);
 
   protected readonly genres = toSignal(
-    this._moviesService.getGenresList(),
+    this._genresService.getGenresList(),
     { initialValue: [] as Genre[] }
   );
 
-  protected readonly movie = toSignal<Movie | null>(
+  protected readonly movie = toSignal<MovieDetailDto | null>(
     of(this.movieId()).pipe(
       switchMap(id => id > 0 ? this._moviesService.getMovieById(id) : of(null))
     ),
@@ -77,7 +82,7 @@ export class MoviesFormComponent {
     });
   }
 
-  private patchFormWithMovie(movie: Movie): void {
+  private patchFormWithMovie(movie: MovieDetailDto): void {
     this.movieForm.patchValue({
       title: movie.title,
       review: movie.review,
@@ -112,7 +117,6 @@ export class MoviesFormComponent {
     );
   }
 
-
   protected saveMovie(): void {
     if (this.movieForm.invalid) {
       this._toast.error('Please fill all required fields correctly');
@@ -120,10 +124,9 @@ export class MoviesFormComponent {
       return;
     }
 
-    const movieData = this.mapFormToMovie();
     const save$ = this.editingMode()
-      ? this._moviesService.updateMovie(this.movieId(), movieData)
-      : this._moviesService.createMovie(movieData);
+      ? this._moviesService.updateMovie(this.movieId(), this.mapFormToUpdateDto())
+      : this._moviesService.createMovie(this.mapFormToCreateDto());
 
     save$.subscribe({
       next: () => {
@@ -139,14 +142,34 @@ export class MoviesFormComponent {
     });
   }
 
-  private mapFormToMovie(): Movie {
-    const formValue = this.movieForm.value;
+  private mapFormToCreateDto(): CreateMovieDto {
+    const form = this.movieForm.value;
     return {
-      ...(this.movie() ?? {}),
-      ...formValue,
-      genreId: this.selectedGenre(),
-      duration: formValue.duration
-    } as Movie;
+      title: form.title!,
+      review: form.review || undefined,
+      director: form.director || undefined,
+      genreId: this.selectedGenre() || undefined,
+      duration: form.duration || undefined,
+      rating: form.rating || undefined,
+      premiereDate: form.premiereDate || undefined,
+      watchDate: form.watchDate || undefined,
+      isWatched: form.isWatched ?? false
+    };
+  }
+
+  private mapFormToUpdateDto(): UpdateMovieDto {
+    const form = this.movieForm.value;
+    return {
+      title: form.title!,
+      review: form.review || undefined,
+      director: form.director || undefined,
+      genreId: this.selectedGenre() || undefined,
+      duration: form.duration || undefined,
+      rating: form.rating || undefined,
+      premiereDate: form.premiereDate || undefined,
+      watchDate: form.watchDate || undefined,
+      isWatched: form.isWatched ?? false
+    };
   }
 
   protected returnToList() {

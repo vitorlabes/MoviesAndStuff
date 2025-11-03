@@ -2,9 +2,11 @@ import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http'
 import { Injectable } from '@angular/core';
 import { Observable, catchError, throwError } from 'rxjs';
 import { Movie } from '../models/movies';
-import { Genre } from '../models/genres';
 import { MovieListDto } from '../dtos/movie-list-dto';
 import { WatchFilter } from '../enums/watch-filter';
+import { CreateMovieDto } from '../dtos/movie-create-dto';
+import { UpdateMovieDto } from '../dtos/movie-update-dto';
+import { MovieDetailDto } from '../dtos/movie-detail-dto';
 
 @Injectable({
   providedIn: 'root'
@@ -37,22 +39,22 @@ export class MoviesService {
     );
   }
 
-  getMovieById(id: number): Observable<Movie> {
-    return this.http.get<Movie>(`${this.api}/${id}`)
+  getMovieById(id: number): Observable<MovieDetailDto> {
+    return this.http.get<MovieDetailDto>(`${this.api}/${id}`)
       .pipe(
         catchError(this.handleError)
       );
   }
 
-  createMovie(movie: Movie): Observable<Movie> {
-    return this.http.post<Movie>(this.api, movie)
+  createMovie(movie: CreateMovieDto): Observable<CreateMovieDto> {
+    return this.http.post<CreateMovieDto>(this.api, movie)
       .pipe(
         catchError(this.handleError)
       );
   }
 
-  updateMovie(id: number, movie: Movie): Observable<Movie> {
-    return this.http.put<Movie>(`${this.api}/${id}`, movie, {
+  updateMovie(id: number, movie: UpdateMovieDto): Observable<UpdateMovieDto> {
+    return this.http.put<UpdateMovieDto>(`${this.api}/${id}`, movie, {
       withCredentials: true
     })
       .pipe(
@@ -75,16 +77,6 @@ export class MoviesService {
         catchError(this.handleError)
       );
   }
-
-  getGenresList(): Observable<Genre[]> {
-    return this.http.get<Genre[]>(`${this.api}/genres`)
-      .pipe(
-        catchError(this.handleError)
-      );
-  }
-
-
-
 
 
 

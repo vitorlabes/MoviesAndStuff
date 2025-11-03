@@ -11,6 +11,7 @@ import { ConfirmModalComponent } from '../../components/confirm-modal/confirm-mo
 import { DropdownOption } from '../../components/dropdown/models/dropdown';
 import { WatchFilter } from '../enums/watch-filter';
 import { WATCH_FILTER_OPTIONS } from '../constants/watch-filter-options';
+import { GenresService } from '../../genres/services/genres.service';
 
 @Component({
   selector: 'app-movies-list',
@@ -20,14 +21,15 @@ import { WATCH_FILTER_OPTIONS } from '../constants/watch-filter-options';
   styleUrl: './movies-list.component.scss'
 })
 export class MoviesListComponent implements OnInit {
-  // Injeções
+  // Services
   private readonly _moviesService = inject(MoviesService);
+  private readonly _genresService = inject(GenresService);
   private readonly _router = inject(Router);
 
   // ViewChild
   protected readonly confirmModal = viewChild.required<ConfirmModalComponent>('confirmModal');
 
-  // Signals de estado
+  // Signals
   protected readonly isLoading = signal(true);
   protected readonly movies = signal<MovieListDto[]>([]);
   protected readonly genres = signal<DropdownOption[]>([]);
@@ -56,12 +58,13 @@ export class MoviesListComponent implements OnInit {
     !this.isLoading() && !this.hasResults() && this.currentSearch().length === 0
   );
 
-  // Constantes
+  // Const
   protected readonly watchFilterOptions = WATCH_FILTER_OPTIONS;
   protected readonly WatchFilter = WatchFilter;
 
   constructor() {
-    // Recarrega filmes sempre que filtros mudam
+
+    // Reload movies when filters change
     effect(() => {
       const term = this.currentSearch();
       const genre = this.selectedGenre();
@@ -94,7 +97,7 @@ export class MoviesListComponent implements OnInit {
   }
 
   private loadGenres(): void {
-    this._moviesService.getGenresList().subscribe({
+    this._genresService.getGenresList().subscribe({
       next: (genres) => {
         this.genres.set([
           { label: 'All genres', value: null },
