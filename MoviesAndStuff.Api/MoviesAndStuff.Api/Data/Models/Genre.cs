@@ -22,5 +22,6 @@ namespace MoviesAndStuff.Api.Models
         // Navigation properties
         public ICollection<GenreMediaType> GenreMediaTypes { get; set; } = new List<GenreMediaType>();
         public ICollection<Movie> Movies { get; set; } = new List<Movie>();
+        public ICollection<Game> Games { get; set; } = new List<Game>();
     }
 }

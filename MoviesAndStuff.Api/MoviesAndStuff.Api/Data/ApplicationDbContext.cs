@@ -12,6 +12,7 @@ namespace MoviesAndStuff.Api.Data
         public DbSet<Genre> Genres { get; set; }
         public DbSet<GenreMediaType> GenreMediaTypes { get; set; }
         public DbSet<Movie> Movies { get; set; }
+        public DbSet<Game> Games { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -129,6 +130,25 @@ namespace MoviesAndStuff.Api.Data
 
                 entity.HasOne(e => e.Genre)
                     .WithMany(g => g.Movies)
+                    .HasForeignKey(e => e.GenreId)
+                    .OnDelete(DeleteBehavior.SetNull);
+
+                entity.HasIndex(e => e.GenreId);
+            });
+
+            // Game Configuration
+            modelBuilder.Entity<Game>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Title).IsRequired().HasMaxLength(100);
+                entity.Property(e => e.Review).HasMaxLength(500);
+                entity.Property(e => e.Developer).HasMaxLength(50);
+                entity.Property(e => e.Rating).HasColumnType("DECIMAL(3,1)");
+                entity.Property(e => e.IsPlayed).HasDefaultValue(false);
+                entity.Property(e => e.CreatedAt).HasDefaultValueSql("GETDATE()");
+
+                entity.HasOne(e => e.Genre)
+                    .WithMany(g => g.Games)
                     .HasForeignKey(e => e.GenreId)
                     .OnDelete(DeleteBehavior.SetNull);
 

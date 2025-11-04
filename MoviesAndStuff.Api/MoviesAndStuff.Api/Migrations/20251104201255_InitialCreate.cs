@@ -44,6 +44,33 @@ namespace MoviesAndStuff.Api.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Games",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Title = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Review = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
+                    Developer = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    GenreId = table.Column<long>(type: "bigint", nullable: true),
+                    Rating = table.Column<decimal>(type: "DECIMAL(3,1)", nullable: true),
+                    ReleaseDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    PlayDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsPlayed = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Games", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Games_Genres_GenreId",
+                        column: x => x.GenreId,
+                        principalTable: "Genres",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Movies",
                 columns: table => new
                 {
@@ -158,6 +185,11 @@ namespace MoviesAndStuff.Api.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_Games_GenreId",
+                table: "Games",
+                column: "GenreId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_GenreMediaTypes_GenreId_MediaTypeId",
                 table: "GenreMediaTypes",
                 columns: new[] { "GenreId", "MediaTypeId" },
@@ -189,6 +221,9 @@ namespace MoviesAndStuff.Api.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "Games");
+
             migrationBuilder.DropTable(
                 name: "GenreMediaTypes");
 

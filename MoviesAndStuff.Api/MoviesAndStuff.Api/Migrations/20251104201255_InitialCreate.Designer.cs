@@ -12,7 +12,7 @@ using MoviesAndStuff.Api.Data;
 namespace MoviesAndStuff.Api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251031214854_InitialCreate")]
+    [Migration("20251104201255_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -24,6 +24,56 @@ namespace MoviesAndStuff.Api.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("MoviesAndStuff.Api.Data.Models.Game", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
+
+                    b.Property<string>("Developer")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<long?>("GenreId")
+                        .HasColumnType("bigint");
+
+                    b.Property<bool>("IsPlayed")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<DateTime?>("PlayDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal?>("Rating")
+                        .HasColumnType("DECIMAL(3,1)");
+
+                    b.Property<DateTime?>("ReleaseDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Review")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GenreId");
+
+                    b.ToTable("Games");
+                });
 
             modelBuilder.Entity("MoviesAndStuff.Api.Data.Models.GenreMediaType", b =>
                 {
@@ -468,6 +518,16 @@ namespace MoviesAndStuff.Api.Migrations
                     b.ToTable("Movies");
                 });
 
+            modelBuilder.Entity("MoviesAndStuff.Api.Data.Models.Game", b =>
+                {
+                    b.HasOne("MoviesAndStuff.Api.Models.Genre", "Genre")
+                        .WithMany("Games")
+                        .HasForeignKey("GenreId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Genre");
+                });
+
             modelBuilder.Entity("MoviesAndStuff.Api.Data.Models.GenreMediaType", b =>
                 {
                     b.HasOne("MoviesAndStuff.Api.Models.Genre", "Genre")
@@ -504,6 +564,8 @@ namespace MoviesAndStuff.Api.Migrations
 
             modelBuilder.Entity("MoviesAndStuff.Api.Models.Genre", b =>
                 {
+                    b.Navigation("Games");
+
                     b.Navigation("GenreMediaTypes");
 
                     b.Navigation("Movies");
