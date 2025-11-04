@@ -9,6 +9,7 @@ import { Genre } from '../../genres/models/genres';
 import { DropdownComponent } from '../../components/dropdown/dropdown.component';
 import { DurationPipe } from '../../pipes/duration.pipe';
 import { DurationInputComponent } from '../../components/duration-input/duration-input.component';
+import { StarRatingComponent } from '../../components/star-rating/star-rating.component';
 import { MovieDetailDto } from '../dtos/movie-detail-dto';
 import { CreateMovieDto } from '../dtos/movie-create-dto';
 import { UpdateMovieDto } from '../dtos/movie-update-dto';
@@ -21,12 +22,12 @@ import { GenresService } from '../../genres/services/genres.service';
     ReactiveFormsModule,
     DropdownComponent,
     DurationPipe,
-    DurationInputComponent
+    DurationInputComponent,
+    StarRatingComponent
   ],
   templateUrl: './movies-form.component.html',
   styleUrl: './movies-form.component.scss'
 })
-
 export class MoviesFormComponent {
   private readonly _router = inject(Router);
   private readonly _route = inject(ActivatedRoute);
