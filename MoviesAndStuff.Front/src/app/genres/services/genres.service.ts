@@ -1,8 +1,8 @@
-import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { Observable, catchError, throwError } from 'rxjs';
-import { Genre } from '../models/genres';
+import { Observable, catchError } from 'rxjs';
 import { ErrorHandlerService } from '../../shared/error-handler.service';
+import { Genre } from '../models/genres';
 
 @Injectable({
   providedIn: 'root'

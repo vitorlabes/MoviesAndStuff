@@ -1,6 +1,6 @@
-import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { Observable, catchError, throwError } from 'rxjs';
+import { Observable, catchError } from 'rxjs';
 import { Movie } from '../models/movies';
 import { MovieListDto } from '../dtos/movie-list-dto';
 import { WatchFilter } from '../enums/watch-filter';
@@ -71,8 +71,8 @@ export class MoviesService {
       );
   }
 
-  deleteMovie(id: number): Observable<Movie> {
-    return this.http.delete<Movie>(`${this.api}/${id}`)
+  deleteMovie(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.api}/${id}`)
       .pipe(
         catchError(error => this.errorHandler.handleError(error, 'Movie'))
       );

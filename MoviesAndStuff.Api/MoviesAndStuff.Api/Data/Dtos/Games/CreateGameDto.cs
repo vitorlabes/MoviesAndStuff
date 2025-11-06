@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace MoviesAndStuff.Api.Data.Dtos.Movies
+namespace MoviesAndStuff.Api.Data.Dtos.Games
 {
     public class CreateGameDto
     {

@@ -1,44 +1,44 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BaseMediaListComponent } from '../../shared/components/base-media-list/base-media-list.component';
-import { MovieListDto } from '../dtos/movie-list-dto';
-import { WatchFilter } from '../enums/watch-filter';
-import { WATCH_FILTER_OPTIONS } from '../constants/watch-filter-options';
-import { MoviesService } from '../services/movies.service';
+import { GameListDto } from '../dtos/game-list-dto';
+import { PlayFilter } from '../enums/play-filter';
+import { PLAY_FILTER_OPTIONS } from '../constants/play-filter-options';
+import { GamesService } from '../services/games.service';
 import { ConfirmModalComponent } from '../../components/confirm-modal/confirm-modal.component';
 import { DropdownComponent } from '../../components/dropdown/dropdown.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MediaListConfig } from '../../shared/components/models/base-media-list.models';
 
 @Component({
-  selector: 'app-movies-list',
+  selector: 'app-games-list',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, FormsModule, DropdownComponent, ConfirmModalComponent],
   templateUrl: '../../shared/components/base-media-list/base-media-list.component.html',
   styleUrls: ['../../shared/components/base-media-list/base-media-list.component.scss']
 })
-export class MoviesListComponent extends BaseMediaListComponent<MovieListDto, WatchFilter> {
-  protected readonly config: MediaListConfig<WatchFilter> = {
-    mediaTypeId: 'MOVIE',
-    routePrefix: '/movies',
-    icon: 'bi-film',
-    collectionName: 'Movie Collection',
-    singularName: 'Movie',
-    searchPlaceholder: 'Search movie by title...',
-    emptyStateMessage: 'No movies in your collection yet.',
-    loadingMessage: 'Loading movies...',
-    filterOptions: WATCH_FILTER_OPTIONS,
-    defaultFilter: WatchFilter.All,
-    statusProperty: 'isWatched',
-    statusLabel: { active: 'Seen', inactive: 'Queue' },
-    dateProperty: 'watchDate',
+export class GamesListComponent extends BaseMediaListComponent<GameListDto, PlayFilter> {
+  protected readonly config: MediaListConfig<PlayFilter> = {
+    mediaTypeId: 'GAME',
+    routePrefix: '/games',
+    icon: 'bi-controller',
+    collectionName: 'Game Collection',
+    singularName: 'Game',
+    searchPlaceholder: 'Search game by title...',
+    emptyStateMessage: 'No games in your collection yet.',
+    loadingMessage: 'Loading games...',
+    filterOptions: PLAY_FILTER_OPTIONS,
+    defaultFilter: PlayFilter.All,
+    statusProperty: 'isPlayed',
+    statusLabel: { active: 'Played', inactive: 'Queue' },
+    dateProperty: 'playDate',
     showDateColumn: true,
-    dateColumnLabel: 'Watched On'
+    dateColumnLabel: 'Played On'
   };
 
-  private readonly _moviesService = inject(MoviesService);
+  private readonly _gamesService = inject(GamesService);
 
-  protected loadItems(search: string, genreId: string | null, filter: WatchFilter): void {
+  protected loadItems(search: string, genreId: string | null, filter: PlayFilter): void {
     this.isLoading.set(true);
 
     const params = {
@@ -47,7 +47,7 @@ export class MoviesListComponent extends BaseMediaListComponent<MovieListDto, Wa
       watchFilter: filter
     }
 
-    this._moviesService.getMoviesList(params).subscribe({
+    this._gamesService.getGamesList(params).subscribe({
       next: (data) => {
         this.items.set(data);
         this.isLoading.set(false);
@@ -60,18 +60,18 @@ export class MoviesListComponent extends BaseMediaListComponent<MovieListDto, Wa
     });
   }
 
-  protected toggleStatus(item: MovieListDto): void {
-    this._moviesService.toggleWatched(item.id).subscribe({
+  protected toggleStatus(item: GameListDto): void {
+    this._gamesService.togglePlayed(item.id).subscribe({
       next: () => {
         this.items.update(list =>
-          list.map(i => (i.id === item.id ? { ...i, isWatched: !i.isWatched } : i))
+          list.map(i => (i.id === item.id ? { ...i, isPlayed: !i.isPlayed } : i))
         );
       }
     });
   }
 
   protected deleteItem(id: number): void {
-    this._moviesService.deleteMovie(id).subscribe({
+    this._gamesService.deleteGame(id).subscribe({
       next: () => this.items.update(list => list.filter(i => i.id !== id))
     });
   }

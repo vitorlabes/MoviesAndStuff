@@ -3,5 +3,5 @@ export class MovieListDto {
   title: string = "";
   watchDate: string = "";
   isWatched: boolean = false;
-  genreName?: string = "";
+  genreName: string = "";
 }

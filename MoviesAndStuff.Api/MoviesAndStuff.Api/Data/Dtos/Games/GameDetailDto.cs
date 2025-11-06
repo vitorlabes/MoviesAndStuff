@@ -1,4 +1,4 @@
-﻿namespace MoviesAndStuff.Api.Data.Dtos.Movies
+﻿namespace MoviesAndStuff.Api.Data.Dtos.Games
 {
     public class GameDetailDto
     {
