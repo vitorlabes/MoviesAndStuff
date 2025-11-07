@@ -1,76 +1,41 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MoviesAndStuff.Api.Data;
-using MoviesAndStuff.Api.Models;
-using MoviesAndStuff.Api.Data.Enums;
-using MoviesAndStuff.Api.Services.Interfaces;
 using MoviesAndStuff.Api.Data.Dtos.Movies;
+using MoviesAndStuff.Api.Data.Enums;
+using MoviesAndStuff.Api.Models;
+using MoviesAndStuff.Api.Services.Interfaces;
+using System.Linq.Expressions;
 
 namespace MoviesAndStuff.Api.Services
 {
-    public class MovieService : IMovieService
+    public class MovieService : BaseMediaService<Movie, MovieListDto, MovieDetailDto, CreateMovieDto, UpdateMovieDto, WatchFilter>, IMovieService
     {
-        private readonly AppDbContext _context;
+        public MovieService(AppDbContext context) : base(context) {}
 
-        public MovieService(AppDbContext context)
+        protected override IQueryable<Movie> GetBaseQuery()
         {
-            _context = context;
+            return Context.Movies.Include(m => m.Genre);
         }
 
-        /// <summary>
-        /// Gets movie list, and applies filter if applicable.
-        /// </summary>
-        public async Task<List<MovieListDto>> GetAllAsync(string? search, long? genreId, WatchFilter watchFilter)
+        protected override IQueryable<Movie> GetDetailQuery()
         {
-            var query = _context.Movies
-                .Include(m => m.Genre)
-                .AsQueryable();
-
-            query = ApplyFilters(query, search, genreId, watchFilter);
-
-            return await query
-                .Select(m => new MovieListDto
-                {
-                    Id = m.Id,
-                    Title = m.Title,
-                    WatchDate = m.WatchDate,
-                    IsWatched = m.IsWatched,
-                    GenreName = m.Genre != null ? m.Genre.Name : null
-                })
-                .ToListAsync();
+            return Context.Movies.Include(m => m.Genre);
         }
 
-        private static IQueryable<Movie> ApplyFilters(IQueryable<Movie> query, string? search, long? genreId, WatchFilter watchFilter)
+        protected override Expression<Func<Movie, MovieListDto>> MapToListDto()
         {
-            if (!string.IsNullOrWhiteSpace(search))
+            return m => new MovieListDto
             {
-                string normalizedSearch = search.ToLower().Trim();
-                query = query.Where(m => m.Title.ToLower().Contains(normalizedSearch));
-            }
-
-            if (genreId.HasValue)
-            {
-                query = query.Where(m => m.GenreId == genreId.Value);
-            }
-
-            query = watchFilter switch
-            {
-                WatchFilter.Watched => query.Where(m => m.IsWatched),
-                WatchFilter.Queue => query.Where(m => !m.IsWatched),
-                _ => query
+                Id = m.Id,
+                Title = m.Title,
+                WatchDate = m.WatchDate,
+                IsWatched = m.IsWatched,
+                GenreName = m.Genre != null ? m.Genre.Name : null
             };
-
-            return query;
         }
 
-        public async Task<MovieDetailDto?> GetByIdAsync(long id)
+        protected override MovieDetailDto MapToDetailDto(Movie movie)
         {
-            Movie? movie = await _context.Movies
-                .Include(m => m.Genre)
-                .FirstOrDefaultAsync(m => m.Id == id);
-
-            if (movie == null)
-                return null;
-
             return new MovieDetailDto
             {
                 Id = movie.Id,
@@ -87,18 +52,9 @@ namespace MoviesAndStuff.Api.Services
             };
         }
 
-        public async Task<MovieDetailDto> CreateAsync(CreateMovieDto dto)
+        protected override Movie MapToEntity(CreateMovieDto dto)
         {
-            if (dto.GenreId.HasValue)
-            {
-                bool genreExists = await _context.Genres.AnyAsync(g => g.Id == dto.GenreId.Value);
-                if (!genreExists)
-                {
-                    throw new ArgumentException("Invalid Genre ID");
-                }
-            }
-
-            var movie = new Movie
+            return new Movie
             {
                 Title = dto.Title,
                 Review = dto.Review,
@@ -108,32 +64,12 @@ namespace MoviesAndStuff.Api.Services
                 Rating = dto.Rating,
                 PremiereDate = dto.PremiereDate,
                 WatchDate = dto.WatchDate,
-                IsWatched = dto.IsWatched,
-                CreatedAt = DateTime.UtcNow
+                IsWatched = dto.IsWatched
             };
-
-            _context.Movies.Add(movie);
-            await _context.SaveChangesAsync();
-
-            return (await GetByIdAsync(movie.Id))!;
         }
 
-        public async Task<bool> UpdateAsync(long id, UpdateMovieDto dto)
+        protected override void UpdateEntityFromDto(Movie movie, UpdateMovieDto dto)
         {
-            Movie? movie = await _context.Movies.FindAsync(id);
-
-            if (movie == null)
-                return false;
-
-            if (dto.GenreId.HasValue)
-            {
-                bool genreExists = await _context.Genres.AnyAsync(g => g.Id == dto.GenreId.Value);
-                if (!genreExists)
-                {
-                    throw new ArgumentException("Invalid Genre ID");
-                }
-            }
-
             movie.Title = dto.Title;
             movie.Review = dto.Review;
             movie.Director = dto.Director;
@@ -143,40 +79,21 @@ namespace MoviesAndStuff.Api.Services
             movie.PremiereDate = dto.PremiereDate;
             movie.WatchDate = dto.WatchDate;
             movie.IsWatched = dto.IsWatched;
-
-            await _context.SaveChangesAsync();
-            return true;
         }
 
-        public async Task<bool> ToggleWatchedAsync(long id)
+        protected override void ToggleEntityStatus(Movie movie)
         {
-            Movie? movie = await _context.Movies.FindAsync(id);
-
-            if (movie == null)
-                return false;
-
             movie.IsWatched = !movie.IsWatched;
 
             if (movie.IsWatched && !movie.WatchDate.HasValue)
             {
                 movie.WatchDate = DateTime.UtcNow;
             }
-
-            await _context.SaveChangesAsync();
-            return true;
         }
 
-        public async Task<bool> DeleteAsync(long id)
+        protected override long GetEntityId(Movie movie)
         {
-            var movie = await _context.Movies.FindAsync(id);
-
-            if (movie == null)
-                return false;
-
-            _context.Movies.Remove(movie);
-            await _context.SaveChangesAsync();
-
-            return true;
+            return movie.Id;
         }
     }
 }

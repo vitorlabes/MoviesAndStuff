@@ -1,68 +1,41 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MoviesAndStuff.Api.Data;
-using MoviesAndStuff.Api.Services.Interfaces;
-using MoviesAndStuff.Api.Data.Models;
 using MoviesAndStuff.Api.Data.Dtos.Games;
+using MoviesAndStuff.Api.Data.Enums;
+using MoviesAndStuff.Api.Data.Models;
+using MoviesAndStuff.Api.Services.Interfaces;
+using System.Linq.Expressions;
 
 namespace MoviesAndStuff.Api.Services
 {
-    public class GameService : IGameService
+    public class GameService : BaseMediaService<Game, GameListDto, GameDetailDto, CreateGameDto, UpdateGameDto, PlayFilter?>, IGameService
     {
-        private readonly AppDbContext _context;
+        public GameService(AppDbContext context) : base(context) {}
 
-        public GameService(AppDbContext context)
+        protected override IQueryable<Game> GetBaseQuery()
         {
-            _context = context;
+            return Context.Games.Include(g => g.Genre);
         }
 
-        /// <summary>
-        /// Gets game list, and applies filter if applicable.
-        /// </summary>
-        public async Task<List<GameListDto>> GetAllAsync(string? search, long? genreId)
-        {         
-            var query = _context.Games
-                .Include(m => m.Genre)
-                .AsQueryable();
-
-            query = ApplyFilters(query, search, genreId);
-
-            return await query
-                .Select(m => new GameListDto
-                {
-                    Id = m.Id,
-                    Title = m.Title,
-                    PlayDate = m.PlayDate,
-                    IsPlayed = m.IsPlayed,
-                    GenreName = m.Genre != null ? m.Genre.Name : null
-                })
-                .ToListAsync();
+        protected override IQueryable<Game> GetDetailQuery()
+        {
+            return Context.Games.Include(g => g.Genre);
         }
 
-        private static IQueryable<Game> ApplyFilters(IQueryable<Game> query, string? search, long? genreId)
+        protected override Expression<Func<Game, GameListDto>> MapToListDto()
         {
-            if (!string.IsNullOrWhiteSpace(search))
+            return g => new GameListDto
             {
-                string normalizedSearch = search.ToLower().Trim();
-                query = query.Where(m => m.Title.ToLower().Contains(normalizedSearch));
-            }
-
-            if (genreId.HasValue)
-            {
-                query = query.Where(m => m.GenreId == genreId.Value);
-            }
-
-            return query;
+                Id = g.Id,
+                Title = g.Title,
+                PlayDate = g.PlayDate,
+                IsPlayed = g.IsPlayed,
+                GenreName = g.Genre != null ? g.Genre.Name : null
+            };
         }
 
-        public async Task<GameDetailDto?> GetByIdAsync(long id)
+        protected override GameDetailDto MapToDetailDto(Game game)
         {
-            Game? game = await _context.Games
-                .Include(m => m.Genre)
-                .FirstOrDefaultAsync(m => m.Id == id);
-
-            if (game == null)
-                return null;
-
             return new GameDetailDto
             {
                 Id = game.Id,
@@ -78,18 +51,9 @@ namespace MoviesAndStuff.Api.Services
             };
         }
 
-        public async Task<GameDetailDto> CreateAsync(CreateGameDto dto)
+        protected override Game MapToEntity(CreateGameDto dto)
         {
-            if (dto.GenreId.HasValue)
-            {
-                bool genreExists = await _context.Genres.AnyAsync(g => g.Id == dto.GenreId.Value);
-                if (!genreExists)
-                {
-                    throw new ArgumentException("Invalid Genre ID");
-                }
-            }
-
-            var game = new Game
+            return new Game
             {
                 Title = dto.Title,
                 Review = dto.Review,
@@ -98,32 +62,12 @@ namespace MoviesAndStuff.Api.Services
                 Rating = dto.Rating,
                 ReleaseDate = dto.ReleaseDate,
                 PlayDate = dto.PlayDate,
-                IsPlayed = dto.IsPlayed,
-                CreatedAt = DateTime.UtcNow
+                IsPlayed = dto.IsPlayed
             };
-
-            _context.Games.Add(game);
-            await _context.SaveChangesAsync();
-
-            return (await GetByIdAsync(game.Id))!;
         }
 
-        public async Task<bool> UpdateAsync(long id, UpdateGameDto dto)
+        protected override void UpdateEntityFromDto(Game game, UpdateGameDto dto)
         {
-            Game? game = await _context.Games.FindAsync(id);
-
-            if (game == null)
-                return false;
-
-            if (dto.GenreId.HasValue)
-            {
-                bool genreExists = await _context.Genres.AnyAsync(g => g.Id == dto.GenreId.Value);
-                if (!genreExists)
-                {
-                    throw new ArgumentException("Invalid Genre ID");
-                }
-            }
-
             game.Title = dto.Title;
             game.Review = dto.Review;
             game.Developer = dto.Developer;
@@ -132,40 +76,21 @@ namespace MoviesAndStuff.Api.Services
             game.ReleaseDate = dto.ReleaseDate;
             game.PlayDate = dto.PlayDate;
             game.IsPlayed = dto.IsPlayed;
-
-            await _context.SaveChangesAsync();
-            return true;
         }
 
-        public async Task<bool> TogglePlayedAsync(long id)
+        protected override void ToggleEntityStatus(Game game)
         {
-            Game? game = await _context.Games.FindAsync(id);
-
-            if (game == null)
-                return false;
-
             game.IsPlayed = !game.IsPlayed;
 
             if (game.IsPlayed && !game.PlayDate.HasValue)
             {
                 game.PlayDate = DateTime.UtcNow;
             }
-
-            await _context.SaveChangesAsync();
-            return true;
         }
 
-        public async Task<bool> DeleteAsync(long id)
+        protected override long GetEntityId(Game game)
         {
-            var game = await _context.Games.FindAsync(id);
-
-            if (game == null)
-                return false;
-
-            _context.Games.Remove(game);
-            await _context.SaveChangesAsync();
-
-            return true;
+            return game.Id;
         }
     }
 }
