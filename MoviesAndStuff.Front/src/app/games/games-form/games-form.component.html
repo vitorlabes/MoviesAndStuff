@@ -1,0 +1,79 @@
+<div class="container-fluid py-4">
+
+  <div class="d-flex justify-content-between align-items-start mb-4">
+    <h2 class="form-title mb-0">
+      <i class="bi bi-film"></i> {{ editingMode() ? 'Edit' : 'Add' }} Movie
+    </h2>
+    <div>
+      <button class="btn btn-dark-purple" (click)="returnToList()">
+        <i class="bi bi-x-lg"></i> Cancel
+      </button>
+      <button class="btn btn-dark-purple" (click)="saveGame()" style="margin-left: 0.5rem;">
+        <i class="bi" [class.bi-plus-lg]="!editingMode()" [class.bi-check-lg]="editingMode()"></i>
+        {{ editingMode() ? 'Update' : 'Add' }}
+      </button>
+    </div>
+  </div>
+
+  <form [formGroup]="gameForm">
+    <div class="row">
+
+      <div class="col-4">
+        <label class="form-input">Title</label>
+        <input type="text" id="title" formControlName="title">
+        @if(titleHasError){
+        <small class="text-danger">Title is mandatory</small>
+        }
+      </div>
+
+      <div class="col-4">
+        <app-dropdown [options]="genreDropdown()" [selectedValue]="selectedGenre()" label="Movie Genre"
+          placeholder="Select a genre..." [searchable]="true" (selectionChange)="onGenreChange($event)">
+        </app-dropdown>
+      </div>
+
+      <div class="col-4">
+        <label class="form-input">Director</label>
+        <input type="text" id="director" formControlName="director">
+      </div>
+
+    </div>
+
+    <div class="row">
+      <div class="col-4">
+        <label class="form-input">Watch Date</label>
+        <input type="date" id="watchDate" formControlName="watchDate">
+      </div>
+
+      <div class="col-4">
+        <label class="form-input">Rating</label>
+        <app-star-rating formControlName="rating"></app-star-rating>
+      </div>
+
+      <div class="col-4">
+        <div class="d-flex align-items-center" style="height: 100%;">
+          <div class="checkbox-container d-flex align-items-center">
+            <input type="checkbox" id="isWatched" formControlName="isWatched" style="margin-right: 0.5rem;">
+            <label for="isWatched" class="form-input mb-0">Watched</label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+
+      <div class="col-4">
+        <label class="form-input">Premiere Date</label>
+        <input type="date" id="premiereDate" formControlName="premiereDate">
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-12">
+        <label class="form-input">Review</label>
+        <textarea rows="3" id="review" formControlName="review" placeholder="Enter review..."></textarea>
+      </div>
+    </div>
+  </form>
+
+</div>

@@ -3,6 +3,7 @@ import { MainLayoutComponent } from './layout/main-layout/main-layout.component'
 import { MoviesListComponent } from './movies/movies-list/movies-list.component';
 import { MoviesFormComponent } from './movies/movies-form/movies-form.component';
 import { GamesListComponent } from './games/games-list/games-list.component';
+import { GamesFormComponent } from './games/games-form/games-form.component';
 
 export const routes: Routes = [
   {
@@ -14,7 +15,9 @@ export const routes: Routes = [
       { path: 'movies/new', component: MoviesFormComponent },
       { path: 'movies/edit/:id', component: MoviesFormComponent },
 
-      { path: 'games', component: GamesListComponent }
+      { path: 'games', component: GamesListComponent },
+      { path: 'games/new', component: GamesFormComponent },
+      { path: 'games/edit/:id', component: GamesFormComponent }
     ]
   }
 ];

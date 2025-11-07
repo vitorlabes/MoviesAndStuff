@@ -24,7 +24,7 @@ namespace MoviesAndStuff.Api.Controllers
         public GamesController(IGameService service) : base(service) {}
 
         /// <summary>
-        /// Override GetAll to handle optional PlayFilter (since games don't have a required filter)
+        /// Override GetAll to handle optional PlayFilter
         /// </summary>
         [HttpGet]
         public override async Task<ActionResult<List<GameListDto>>> GetAll(

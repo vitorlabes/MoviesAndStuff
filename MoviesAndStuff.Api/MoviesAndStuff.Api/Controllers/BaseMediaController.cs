@@ -5,7 +5,7 @@ using MoviesAndStuff.Api.Services.Interfaces;
 namespace MoviesAndStuff.Api.Controllers
 {
     /// <summary>
-    /// Base controller for media entities (Movies, Games, etc.)
+    /// Base controller for media entities (Movies, Games)
     /// Provides common CRUD operations with configurable behavior
     /// </summary>
     /// <typeparam name="TEntity">The entity type (Movie, Game)</typeparam>

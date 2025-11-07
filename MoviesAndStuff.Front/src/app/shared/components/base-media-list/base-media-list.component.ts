@@ -76,7 +76,6 @@ export abstract class BaseMediaListComponent<TDto extends MediaItem, TFilter> im
   protected abstract toggleStatus(item: TDto): void;
   protected abstract deleteItem(id: number): void;
 
-  // Comuns
   private loadGenres(): void {
     this.genresService.getGenresList({
       mediaTypeId: this.config.mediaTypeId,

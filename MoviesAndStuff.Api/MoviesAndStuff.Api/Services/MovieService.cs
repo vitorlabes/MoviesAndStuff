@@ -8,7 +8,7 @@ using System.Linq.Expressions;
 
 namespace MoviesAndStuff.Api.Services
 {
-    public class MovieService : BaseMediaService<Movie, MovieListDto, MovieDetailDto, CreateMovieDto, UpdateMovieDto, WatchFilter>, IMovieService
+    public class MovieService : BaseMediaService<Movie, MovieListDto, MovieDetailDto, CreateMovieDto, UpdateMovieDto, WatchFilter?>, IMovieService
     {
         public MovieService(AppDbContext context) : base(context) {}
 

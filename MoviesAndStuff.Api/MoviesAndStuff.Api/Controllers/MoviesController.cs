@@ -18,10 +18,22 @@ namespace MoviesAndStuff.Api.Controllers
         MovieDetailDto,
         CreateMovieDto,
         UpdateMovieDto,
-        WatchFilter,
+        WatchFilter?,
         IMovieService>
     {
         public MoviesController(IMovieService service) : base(service) {}
+
+        /// <summary>
+        /// Override GetAll to handle optional WatchFilter
+        /// </summary>
+        [HttpGet]
+        public override async Task<ActionResult<List<MovieListDto>>> GetAll(
+            [FromQuery] string? search = null,
+            [FromQuery] long? genreId = null,
+            [FromQuery] WatchFilter? filter = null)
+        {
+            return await base.GetAll(search, genreId, filter);
+        }
 
         /// <summary>
         /// Custom route for toggling watched status

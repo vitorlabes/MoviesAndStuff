@@ -3,5 +3,5 @@ using MoviesAndStuff.Api.Data.Enums;
 
 namespace MoviesAndStuff.Api.Services.Interfaces
 {
-    public interface IMovieService : IBaseMediaService<MovieListDto, MovieDetailDto, CreateMovieDto, UpdateMovieDto, WatchFilter> {}
+    public interface IMovieService : IBaseMediaService<MovieListDto, MovieDetailDto, CreateMovieDto, UpdateMovieDto, WatchFilter?> {}
 }
