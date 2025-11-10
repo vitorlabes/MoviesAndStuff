@@ -11,13 +11,13 @@
   </div>
 
   <!-- Search bar -->
-  <div class="row align-items-center mb-3">
-    <div class="col-md-8 col-sm-12">
+  <div class="row align-items-center mb-3 g-2">
+    <div class="col-md-8">
       <input class="form-control text-light search-input" [placeholder]="config.searchPlaceholder"
         [formControl]="searchControl">
     </div>
 
-    <div class="col-md-4 col-sm-12">
+    <div class="col-md-4">
       <app-dropdown [options]="genres()" placeholder="Select genre..." [searchable]="true"
         [selectedValue]="selectedGenre()" (selectionChange)="onGenreSelected($event)">
       </app-dropdown>
@@ -25,7 +25,7 @@
   </div>
 
   <!-- Status filter -->
-  <div class="filter-toggle-group my-3 d-flex justify-content-center gap-2">
+  <div class="filter-toggle-group my-3 d-flex justify-content-center gap-2 flex-wrap">
     @for (option of config.filterOptions; track option.value) {
     <button type="button" class="toggle-btn" [class.active]="selectedFilter() === option.value"
       (click)="setFilter(option.value)">
@@ -57,69 +57,55 @@
 
   <!-- Table -->
   @if(hasResults()) {
-  <div class="cinematic-table-container">
-    <table class="table table-cinematic table-hover">
-      <thead class="table-header-glow">
-        <tr>
-          <th class="ps-4">Title</th>
-          <th>Genre</th>
-          <th>Status</th>
-          @if(config.showDateColumn) {
-          <th>{{ config.dateColumnLabel }}</th>
-          }
-          <th class="pe-4"></th>
-        </tr>
-      </thead>
-      <tbody>
-        @for (item of items(); track item.id) {
-        <tr class="movie-row">
+  <app-media-table [items]="items()" [isLoading]="false">
 
-          <td class="ps-4 fw-bold">{{ item.title }}</td>
+    <!-- Title Column -->
+    <ng-template appTableColumn header="Title" width="20%" headerClass="ps-4" cellClass="ps-4" let-item>
+      <span class="fw-bold">{{ item.title }}</span>
+    </ng-template>
 
-          <td>
-            <span class="genre-badge fw-bold">{{ item.genreName || 'N/A' }}</span>
-          </td>
+    <!-- Genre Column -->
+    <ng-template appTableColumn header="Genre" width="20%" headerClass="text-center" cellClass="text-center" let-item>
+      <span class="genre-badge">{{ item.genreName || 'N/A' }}</span>
+    </ng-template>
 
-          <!-- Status -->
-          <td class="text-center align-middle">
-            <div class="play-status" [class.watched]="getItemStatus(item)" [class.unwatched]="!getItemStatus(item)"
-              (click)="toggleStatus(item)" style="cursor: pointer;"
-              [title]="'Toggle ' + (getItemStatus(item) ? config.statusLabel.inactive : config.statusLabel.active)">
-              <i class="bi play-icon" [class.bi-play-circle-fill]="getItemStatus(item)"
-                [class.bi-play-circle]="!getItemStatus(item)">
-              </i>
-              <span class="status-text">
-                {{ getItemStatus(item) ? config.statusLabel.active : config.statusLabel.inactive }}
-              </span>
-            </div>
-          </td>
+    <!-- Status Column -->
+    <ng-template appTableColumn header="Status" width="20%" headerClass="text-center" cellClass="text-center" let-item>
+      <div class="play-status mx-auto" [class.watched]="getItemStatus(item)" [class.unwatched]="!getItemStatus(item)"
+        (click)="toggleStatus(item); $event.stopPropagation()" role="button" tabindex="0"
+        [attr.aria-label]="'Toggle ' + (getItemStatus(item) ? config.statusLabel.inactive : config.statusLabel.active)">
+        <i class="bi play-icon" [class.bi-play-circle-fill]="getItemStatus(item)"
+          [class.bi-play-circle]="!getItemStatus(item)">
+        </i>
+        <span class="status-text">
+          {{ getItemStatus(item) ? config.statusLabel.active : config.statusLabel.inactive }}
+        </span>
+      </div>
+    </ng-template>
 
-          <!-- Data (watchDate || playDate) -->
-          @if(config.showDateColumn) {
-          <td class="pe-4 fw-bold">
-            {{ getItemDate(item) | date:'dd/MM/yyyy' }}
-          </td>
-          }
+    <!-- Date Column (conditional) -->
+    @if(config.showDateColumn) {
+    <ng-template appTableColumn [header]="config.dateColumnLabel || 'Date'" width="20%" headerClass="text-end pe-4"
+      cellClass="text-end pe-4" let-item>
+      <span class="fw-bold">{{ getItemDate(item) | date:'dd/MM/yyyy' }}</span>
+    </ng-template>
+    }
 
-          <!-- Actions -->
-          <td class="pe-4">
-            <div class="action-buttons">
-              <button class="action-btn edit-btn" [title]="'Edit ' + config.singularName"
-                (click)="navigateToEdit(item.id)">
-                <i class="bi bi-pencil"></i>
-              </button>
-              <button class="action-btn delete-btn" [title]="'Delete ' + config.singularName"
-                (click)="openDeleteModal(item.id)">
-                <i class="bi bi-trash"></i>
-              </button>
-            </div>
-          </td>
+    <!-- Actions Column -->
+    <ng-template appTableColumn header="" width="20%" headerClass="text-end pe-4" cellClass="text-end pe-4" let-item>
+      <div class="action-buttons">
+        <button class="action-btn edit-btn" [attr.aria-label]="'Edit ' + config.singularName"
+          (click)="navigateToEdit(item.id); $event.stopPropagation()">
+          <i class="bi bi-pencil"></i>
+        </button>
+        <button class="action-btn delete-btn" [attr.aria-label]="'Delete ' + config.singularName"
+          (click)="openDeleteModal(item.id); $event.stopPropagation()">
+          <i class="bi bi-trash"></i>
+        </button>
+      </div>
+    </ng-template>
 
-        </tr>
-        }
-      </tbody>
-    </table>
-  </div>
+  </app-media-table>
   }
 
   <!-- Empty state -->

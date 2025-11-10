@@ -1,19 +1,18 @@
 import { Component, OnInit, computed, effect, inject, signal, viewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { FormControl } from '@angular/forms';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { debounceTime, distinctUntilChanged, map, startWith } from 'rxjs';
 import { DropdownOption } from '../../../components/dropdown/models/dropdown';
 import { ConfirmModalComponent } from '../../../components/confirm-modal/confirm-modal.component';
 import { GenresService } from '../../../genres/services/genres.service';
-import { CommonModule } from '@angular/common';
-import { DropdownComponent } from '../../../components/dropdown/dropdown.component';
 import { MediaItem, MediaListConfig } from '../models/base-media-list.models';
+import { BASE_MEDIA_LIST_IMPORTS } from '../models/base-media-list.imports';
 
 @Component({
   selector: 'app-base-media-list',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, DropdownComponent, ConfirmModalComponent],
+  imports: [...BASE_MEDIA_LIST_IMPORTS],
   templateUrl: './base-media-list.component.html',
   styleUrls: ['./base-media-list.component.scss']
 })

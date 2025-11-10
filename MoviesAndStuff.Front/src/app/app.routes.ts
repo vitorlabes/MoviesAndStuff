@@ -1,9 +1,5 @@
 import { Routes } from '@angular/router';
 import { MainLayoutComponent } from './layout/main-layout/main-layout.component';
-import { MoviesListComponent } from './movies/movies-list/movies-list.component';
-import { MoviesFormComponent } from './movies/movies-form/movies-form.component';
-import { GamesListComponent } from './games/games-list/games-list.component';
-import { GamesFormComponent } from './games/games-form/games-form.component';
 
 export const routes: Routes = [
   {
@@ -11,13 +7,14 @@ export const routes: Routes = [
     component: MainLayoutComponent,
     children: [
       { path: '', redirectTo: 'movies', pathMatch: 'full' },
-      { path: 'movies', component: MoviesListComponent },
-      { path: 'movies/new', component: MoviesFormComponent },
-      { path: 'movies/edit/:id', component: MoviesFormComponent },
-
-      { path: 'games', component: GamesListComponent },
-      { path: 'games/new', component: GamesFormComponent },
-      { path: 'games/edit/:id', component: GamesFormComponent }
+      {
+        path: 'movies',
+        loadChildren: () => import('./movies/movies.routes').then(m => m.MOVIES_ROUTES)
+      },
+      {
+        path: 'games',
+        loadChildren: () => import('./games/games.routes').then(m => m.GAMES_ROUTES)
+      }
     ]
   }
 ];

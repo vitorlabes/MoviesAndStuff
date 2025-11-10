@@ -1,0 +1,34 @@
+<div class="cinematic-table-container">
+  <table class="table table-cinematic table-hover mb-0">
+    <thead class="table-header-glow">
+      <tr>
+        @for (column of columns(); track column.header()) {
+        <th [style.width]="column.width()" [class]="column.headerClass()">
+          {{ column.header() }}
+        </th>
+        }
+      </tr>
+    </thead>
+    <tbody>
+      @if (isLoading()) {
+      <tr>
+        <td [attr.colspan]="columns().length" class="text-center py-4">
+          <div class="spinner-border text-light" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+        </td>
+      </tr>
+      } @else {
+      @for (item of items(); track trackByFn($index, item)) {
+      <tr class="movie-row" (click)="onRowClick(item)">
+        @for (column of columns(); track column.header()) {
+        <td [class]="column.cellClass()">
+          <ng-container *ngTemplateOutlet="column.template; context: { $implicit: item, index: $index }" />
+        </td>
+        }
+      </tr>
+      }
+      }
+    </tbody>
+  </table>
+</div>

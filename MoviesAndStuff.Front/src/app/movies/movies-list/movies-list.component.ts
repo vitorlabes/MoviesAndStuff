@@ -1,40 +1,20 @@
 import { Component, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { BaseMediaListComponent } from '../../shared/components/base-media-list/base-media-list.component';
 import { MovieListDto } from '../dtos/movie-list-dto';
 import { WatchFilter } from '../enums/watch-filter';
-import { WATCH_FILTER_OPTIONS } from '../constants/watch-filter-options';
 import { MoviesService } from '../services/movies.service';
-import { ConfirmModalComponent } from '../../components/confirm-modal/confirm-modal.component';
-import { DropdownComponent } from '../../components/dropdown/dropdown.component';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MediaListConfig } from '../../shared/components/models/base-media-list.models';
+import { BASE_MEDIA_LIST_IMPORTS } from '../../shared/components/models/base-media-list.imports';
+import { MOVIE_LIST_CONFIG } from '../constants/movie-list.config';
 
 @Component({
   selector: 'app-movies-list',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FormsModule, DropdownComponent, ConfirmModalComponent],
+  imports: [...BASE_MEDIA_LIST_IMPORTS],
   templateUrl: '../../shared/components/base-media-list/base-media-list.component.html',
   styleUrls: ['../../shared/components/base-media-list/base-media-list.component.scss']
 })
 export class MoviesListComponent extends BaseMediaListComponent<MovieListDto, WatchFilter> {
-  protected readonly config: MediaListConfig<WatchFilter> = {
-    mediaTypeId: 'MOVIE',
-    routePrefix: '/movies',
-    icon: 'bi-film',
-    collectionName: 'Movie Collection',
-    singularName: 'Movie',
-    searchPlaceholder: 'Search movie by title...',
-    emptyStateMessage: 'No movies in your collection yet.',
-    loadingMessage: 'Loading movies...',
-    filterOptions: WATCH_FILTER_OPTIONS,
-    defaultFilter: WatchFilter.All,
-    statusProperty: 'isWatched',
-    statusLabel: { active: 'Seen', inactive: 'Queue' },
-    dateProperty: 'watchDate',
-    showDateColumn: true,
-    dateColumnLabel: 'Watched On'
-  };
+  protected readonly config = MOVIE_LIST_CONFIG
 
   private readonly _moviesService = inject(MoviesService);
 
