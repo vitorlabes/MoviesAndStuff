@@ -1,307 +1,177 @@
-/* Title styling */
-.form-title {
-  color: #fff;
-  text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
-  font-weight: 300;
-  letter-spacing: 1px;
-}
+@import 'styles/variables';
+@import 'styles/mixins';
 
-/* ===== BUTTON STYLES ===== */
-/* Dark Purple Gradient Button */
-.btn-dark-purple {
-  background: linear-gradient(135deg,
-      hsl(270, 50%, 20%) 0%,
-      hsl(270, 30%, 15%) 50%,
-      hsl(270, 50%, 10%) 100%);
-  color: white;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 50px;
-  padding: 0.5rem 1.5rem;
-  font-weight: 500;
-  letter-spacing: 0.5px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.btn-dark-purple:hover {
-  background: linear-gradient(135deg,
-      hsl(270, 50%, 25%) 0%,
-      hsl(270, 30%, 20%) 50%,
-      hsl(270, 50%, 15%) 100%);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
-  border-color: rgba(255, 255, 255, 0.2);
-}
-
-.btn-dark-purple:active {
-  transform: translateY(0);
-  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.3);
-}
-
-.btn-dark-purple i {
-  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.3));
-}
-
-/* ===== FORM STYLES ===== */
-/* Form label styling */
-.form-input {
-  display: block;
-  margin-bottom: 0.5rem;
-  color: #E0D4F7;
-  font-weight: 500;
-  font-size: 0.9rem;
-  letter-spacing: 0.3px;
-  text-transform: uppercase;
-  opacity: 0.9;
-}
-
-/* Base input styling */
-.input-base {
-  width: 100%;
-  padding: 0.5rem 0.75rem;
-  background: linear-gradient(135deg,
-      rgba(98, 58, 149, 0.15) 0%,
-      rgba(76, 45, 117, 0.1) 50%,
-      rgba(54, 32, 84, 0.15) 100%);
-  border: 1px solid rgba(147, 107, 192, 0.3);
-  border-radius: 6px;
-  color: #E0D4F7;
-  font-size: 0.95rem;
-  font-weight: 400;
-  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
-  line-height: 1.4;
-}
-
-.input-base:focus {
-  outline: none;
-  background: linear-gradient(135deg,
-      rgba(98, 58, 149, 0.25) 0%,
-      rgba(76, 45, 117, 0.2) 50%,
-      rgba(54, 32, 84, 0.25) 100%);
-  border-color: rgba(147, 107, 192, 0.6);
-  box-shadow:
-    inset 0 1px 3px rgba(0, 0, 0, 0.2),
-    0 0 0 2px rgba(147, 107, 192, 0.2),
-    0 2px 8px rgba(147, 107, 192, 0.1);
-  transform: translateY(-1px);
-}
-
-.input-base:hover {
-  border-color: rgba(147, 107, 192, 0.4);
-  background: linear-gradient(135deg,
-      rgba(98, 58, 149, 0.2) 0%,
-      rgba(76, 45, 117, 0.15) 50%,
-      rgba(54, 32, 84, 0.2) 100%);
-}
-
-.input-base::placeholder {
-  color: rgba(224, 212, 247, 0.5);
-  font-style: italic;
-}
-
-/* Apply base input styles to specific input types */
-input[type="text"],
-input[type="number"],
-input[type="date"],
-textarea {
-  @extend .input-base;
-}
-
-/* ===== GLOBAL FORM ELEMENTS ===== */
-/* Textarea specific styling */
-textarea {
-  resize: vertical;
-  min-height: 80px;
-  font-family: inherit;
-}
-
-/* Date Input Specific Styling */
-input[type="date"] {
-  color-scheme: dark;
-}
-
-input[type="date"]::-webkit-calendar-picker-indicator {
-  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='%23E0D4F7' d='M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM2 2a1 1 0 0 0-1 1v1h14V3a1 1 0 0 0-1-1H2zm13 3H1v9a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V5z'/%3e%3c/svg%3e");
-  background-size: 14px 14px;
-  background-repeat: no-repeat;
-  background-position: center;
-  width: 18px;
-  height: 18px;
-  cursor: pointer;
-  opacity: 0.7;
-  transition: opacity 0.2s ease;
-  filter: brightness(0.8) contrast(1.2);
-}
-
-input[type="date"]::-webkit-calendar-picker-indicator:hover {
-  opacity: 1;
-  filter: brightness(1) contrast(1.2);
-}
-
-/* Number Input Arrows Styling */
-input[type="number"]::-webkit-outer-spin-button,
-input[type="number"]::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-
-/* Checkbox styling */
-input[type="checkbox"] {
-  appearance: none;
-  -webkit-appearance: none;
-  width: 18px;
-  height: 18px;
-  margin: 0 0.5rem 0 0;
-  position: relative;
-  cursor: pointer;
-
-  // Base styles
-  background: linear-gradient(135deg,
-      rgba(98, 58, 149, 0.15) 0%,
-      rgba(76, 45, 117, 0.1) 50%,
-      rgba(54, 32, 84, 0.15) 100%);
-  border: 1px solid rgba(147, 107, 192, 0.3);
-  border-radius: 4px;
-  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
-  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-
-  // Checked state
-  &:checked {
-    background: linear-gradient(135deg,
-        rgba(98, 58, 149, 0.4) 0%,
-        rgba(76, 45, 117, 0.3) 50%,
-        rgba(54, 32, 84, 0.4) 100%);
-    border-color: rgba(147, 107, 192, 0.6);
-
-    &:after {
-      content: "";
-      position: absolute;
-      left: 5px;
-      top: 2px;
-      width: 6px;
-      height: 10px;
-      border: solid #E0D4F7;
-      border-width: 0 2px 2px 0;
-      transform: rotate(45deg);
-    }
-
-    &:hover {
-      border-color: rgba(147, 107, 192, 0.5);
-      background: linear-gradient(135deg,
-          rgba(98, 58, 149, 0.25) 0%,
-          rgba(76, 45, 117, 0.2) 50%,
-          rgba(54, 32, 84, 0.25) 100%);
-    }
-
-    // Focus state
-    &:focus {
-      outline: none;
-      box-shadow:
-        inset 0 1px 3px rgba(0, 0, 0, 0.2),
-        0 0 0 2px rgba(147, 107, 192, 0.2);
-    }
-  }
-}
-
-.checkbox-container {
-  display: flex;
-  align-items: center;
-  margin-bottom: 1rem;
-
-  label {
-    margin-bottom: 0;
-    cursor: pointer;
-    color: #E0D4F7;
-    font-weight: 500;
-    font-size: 0.9rem;
-    letter-spacing: 0.3px;
-    text-transform: uppercase;
-    opacity: 0.9;
-  }
-}
-
-/* Star Rating Component */
-.star-rating {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.star-slider {
-  width: 100%;
-  appearance: none;
-  background: linear-gradient(135deg,
-      rgba(98, 58, 149, 0.2),
-      rgba(76, 45, 117, 0.2));
-  border-radius: 6px;
-  height: 6px;
-  outline: none;
-  transition: background 0.3s ease;
-  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3);
-}
-
-.star-slider::-webkit-slider-thumb {
-  appearance: none;
-  width: 16px;
-  height: 16px;
-  background-color: #E0D4F7;
-  border: 2px solid #623A95;
-  border-radius: 50%;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.star-slider::-moz-range-thumb {
-  width: 16px;
-  height: 16px;
-  background-color: #E0D4F7;
-  border: 2px solid #623A95;
-  border-radius: 50%;
-  cursor: pointer;
-}
-
-.star-output {
-  color: #E0D4F7;
-  font-weight: 500;
-  min-width: 3rem;
-  text-align: center;
-}
-
-/* ===== MAIN LAYOUT ===== */
+// ========================================
+// GLOBAL STYLES
+// ========================================
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  color: #E0D4F7;
-  background: linear-gradient(135deg,
-      #1a1a1a 0%,
-      #2d2d2d 50%,
-      #1a1a1a 100%);
-  min-height: 100vh;
-}
-
-html,
-body {
-  height: 100%;
-  margin: 0;
-}
-
-
 body,
 html {
-  background: #1a1a1a !important;
+  height: 100%;
+  margin: 0;
+  background: $bg-dark !important;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  color: $text-primary;
+  background: linear-gradient(135deg, $bg-dark 0%, $bg-medium 50%, $bg-dark 100%);
+  min-height: 100vh;
 }
 
 .container,
 .container-fluid {
   padding-top: 0;
+}
+
+// ========================================
+// TYPOGRAPHY
+// ========================================
+.form-title {
+  color: #fff;
+  @include text-glow;
+  font-weight: 300;
+  letter-spacing: $letter-spacing-lg;
+}
+
+// ========================================
+// BUTTONS (mixins)
+// ========================================
+.btn-dark-purple {
+  @include button-dark-purple;
+}
+
+// ========================================
+// FORM ELEMENTS
+// ========================================
+.form-input {
+  display: block;
+  margin-bottom: $spacing-sm;
+  color: $text-primary;
+  font-weight: $font-weight-medium;
+  font-size: $font-size-sm;
+  letter-spacing: $letter-spacing-sm;
+  text-transform: uppercase;
+  opacity: 0.9;
+}
+
+// Global input styles
+input[type="text"],
+input[type="number"],
+input[type="date"],
+textarea {
+  @include input-styles;
+}
+
+textarea {
+  resize: vertical;
+  min-height: 80px;
+  font-family: inherit;
+}
+
+// ========================================
+// DATE INPUT SPECIFIC
+// ========================================
+input[type="date"] {
+  color-scheme: dark;
+
+  &::-webkit-calendar-picker-indicator {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='%23E0D4F7' d='M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM2 2a1 1 0 0 0-1 1v1h14V3a1 1 0 0 0-1-1H2zm13 3H1v9a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V5z'/%3e%3c/svg%3e");
+    background-size: 14px 14px;
+    background-repeat: no-repeat;
+    background-position: center;
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+    filter: brightness(0.8) contrast(1.2);
+
+    &:hover {
+      opacity: 1;
+      filter: brightness(1) contrast(1.2);
+    }
+  }
+}
+
+// ========================================
+// NUMBER INPUT
+// ========================================
+input[type="number"] {
+
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+}
+
+// ========================================
+// CHECKBOX
+// ========================================
+input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  margin: 0 $spacing-sm 0 0;
+  position: relative;
+  cursor: pointer;
+  background: $gradient-base;
+  border: $border-base;
+  border-radius: $border-radius-sm;
+  box-shadow: $shadow-inset;
+  transition: $transition-base;
+
+  &:checked {
+    background: linear-gradient(135deg,
+        rgba(98, 58, 149, 0.4) 0%,
+        rgba(76, 45, 117, 0.3) 50%,
+        rgba(54, 32, 84, 0.4) 100%);
+    border-color: $border-focus-color;
+
+    &::after {
+      content: "";
+      position: absolute;
+      left: 5px;
+      top: 2px;
+      width: 6px;
+      height: 10px;
+      border: solid $text-primary;
+      border-width: 0 2px 2px 0;
+      transform: rotate(45deg);
+    }
+  }
+
+  &:hover {
+    border-color: $border-hover-color;
+    background: $gradient-hover;
+  }
+
+  &:focus {
+    outline: none;
+    box-shadow: $shadow-inset, $shadow-focus;
+  }
+}
+
+.checkbox-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: $spacing-md;
+
+  label {
+    margin-bottom: 0;
+    cursor: pointer;
+    color: $text-primary;
+    font-weight: $font-weight-medium;
+    font-size: $font-size-sm;
+    letter-spacing: $letter-spacing-sm;
+    text-transform: uppercase;
+    opacity: 0.9;
+  }
 }

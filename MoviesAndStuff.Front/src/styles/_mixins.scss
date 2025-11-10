@@ -1,0 +1,238 @@
+@import 'variables';
+
+// ========================================
+// INPUT STATES
+// ========================================
+@mixin input-base {
+  width: 100%;
+  padding: $spacing-sm 0.75rem;
+  background: $gradient-base;
+  border: $border-base;
+  border-radius: $border-radius-md;
+  color: $text-primary;
+  font-size: $font-size-base;
+  font-weight: $font-weight-normal;
+  transition: $transition-base;
+  box-shadow: $shadow-inset;
+  line-height: 1.4;
+}
+
+@mixin input-focus {
+  outline: none;
+  background: $gradient-focus;
+  border-color: $border-focus-color;
+  box-shadow: $shadow-inset, $shadow-focus;
+  transform: translateY(-1px);
+}
+
+@mixin input-hover {
+  border-color: $border-hover-color;
+  background: $gradient-hover;
+}
+
+@mixin input-placeholder {
+  color: $text-muted;
+  font-style: italic;
+}
+
+// Mixin input
+@mixin input-styles {
+  @include input-base;
+
+  &:focus {
+    @include input-focus;
+  }
+
+  &:hover {
+    @include input-hover;
+  }
+
+  &::placeholder {
+    @include input-placeholder;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+// ========================================
+// BUTTON STYLES
+// ========================================
+@mixin button-base {
+  border-radius: $border-radius-pill;
+  padding: $spacing-sm 1.5rem;
+  font-weight: $font-weight-medium;
+  letter-spacing: $letter-spacing-md;
+  text-transform: uppercase;
+  font-size: $font-size-sm;
+  transition: $transition-base;
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-sm;
+  box-shadow: $shadow-sm;
+  cursor: pointer;
+}
+
+@mixin button-dark-purple {
+  @include button-base;
+  background: $gradient-button;
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+
+  &:hover {
+    background: $gradient-button-hover;
+    transform: translateY(-1px);
+    box-shadow: $shadow-md;
+    border-color: rgba(255, 255, 255, 0.2);
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.3);
+  }
+
+  i {
+    filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.3));
+  }
+}
+
+@mixin action-button {
+  background: transparent;
+  border: $border-base;
+  color: $text-primary;
+  width: 32px;
+  height: 32px;
+  border-radius: $border-radius-md;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: $transition-base;
+  font-size: $font-size-sm;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(147, 107, 192, 0.3);
+  }
+}
+
+// ========================================
+// SCROLLBAR
+// ========================================
+@mixin scrollbar-purple {
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: rgba(54, 32, 84, 0.3);
+    border-radius: 3px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba(147, 107, 192, 0.4);
+    border-radius: 3px;
+
+    &:hover {
+      background: rgba(147, 107, 192, 0.6);
+    }
+  }
+
+  scrollbar-width: thin;
+  scrollbar-color: rgba(147, 107, 192, 0.4) rgba(54, 32, 84, 0.3);
+}
+
+// ========================================
+// ANIMATIONS
+// ========================================
+@mixin fade-in($duration: 0.2s) {
+  animation: fadeIn $duration ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@mixin slide-down($duration: 0.3s) {
+  animation: slideDown $duration ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-30px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@mixin dropdown-slide-in {
+  animation: dropdownSlideIn 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+@keyframes dropdownSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+// ========================================
+// BACKDROP BLUR
+// ========================================
+@mixin backdrop-blur($blur: 10px) {
+  backdrop-filter: blur($blur);
+  -webkit-backdrop-filter: blur($blur);
+}
+
+// ========================================
+// GLOW EFFECTS
+// ========================================
+@mixin text-glow {
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+}
+
+@mixin icon-glow($color: rgba(147, 107, 192, 0.3)) {
+  filter: drop-shadow(0 0 4px $color);
+}
+
+@mixin icon-glow-strong($color: rgba(147, 107, 192, 0.5)) {
+  filter: drop-shadow(0 0 8px $color);
+}
+
+// ========================================
+// RESPONSIVE BREAKPOINTS
+// ========================================
+@mixin mobile {
+  @media (max-width: 576px) {
+    @content;
+  }
+}
+
+@mixin tablet {
+  @media (max-width: 768px) {
+    @content;
+  }
+}
+
+@mixin desktop {
+  @media (min-width: 769px) {
+    @content;
+  }
+}

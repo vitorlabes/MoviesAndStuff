@@ -1,48 +1,24 @@
+@import '../../../styles/variables';
+@import '../../../styles/mixins';
+
 .modal {
-  animation: fadeIn 0.2s ease-in;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: 1;
-  }
+  @include fade-in;
 }
 
 .modal-dialog {
-  animation: slideDown 0.3s ease-out;
-}
-
-@keyframes slideDown {
-  from {
-    transform: translateY(-30px);
-    opacity: 0;
-  }
-
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
+  @include slide-down;
 }
 
 .modal-content {
-  background: linear-gradient(135deg,
-      rgba(98, 58, 149, 0.25) 0%,
-      rgba(76, 45, 117, 0.2) 50%,
-      rgba(54, 32, 84, 0.25) 100%);
-  backdrop-filter: blur(10px);
+  background: $gradient-focus;
+  @include backdrop-blur;
   border: 1px solid rgba(147, 107, 192, 0.4);
-  border-radius: 12px;
-  box-shadow:
-    0 0 30px rgba(147, 107, 192, 0.3),
-    0 10px 40px rgba(0, 0, 0, 0.5);
+  border-radius: $border-radius-xl;
+  box-shadow: $shadow-glow, $shadow-lg;
 }
 
 .modal-header {
-  border-bottom: 1px solid rgba(147, 107, 192, 0.3);
+  border-bottom: 1px solid $border-base-color;
   padding: 1.25rem 1.5rem;
   background: linear-gradient(to right,
       rgba(147, 107, 192, 0.1) 0%,
@@ -50,18 +26,18 @@
       rgba(147, 107, 192, 0.1) 100%);
 
   .modal-title {
-    color: #E0D4F7;
-    font-weight: 500;
-    letter-spacing: 0.5px;
+    color: $text-primary;
+    font-weight: $font-weight-medium;
+    letter-spacing: $letter-spacing-md;
     text-transform: uppercase;
-    font-size: 1rem;
+    font-size: $font-size-md;
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
   }
 
   .btn-close {
     background: transparent url("data:image/svg+xml,%3csvg ... %3e") center/1em auto no-repeat;
     opacity: 0.6;
-    transition: all 0.3s ease;
+    transition: $transition-base;
     filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
 
     &:hover {
@@ -76,11 +52,11 @@
 }
 
 .modal-body {
-  padding: 2rem 1.5rem;
-  color: #E0D4F7;
+  padding: $spacing-xl 1.5rem;
+  color: $text-primary;
 
   p {
-    font-size: 1rem;
+    font-size: $font-size-md;
     line-height: 1.6;
     color: rgba(224, 212, 247, 0.9);
     text-align: center;
@@ -89,32 +65,21 @@
 }
 
 .modal-footer {
-  border-top: 1px solid rgba(147, 107, 192, 0.3);
-  padding: 1rem 1.5rem;
+  border-top: 1px solid $border-base-color;
+  padding: $spacing-md 1.5rem;
   background: linear-gradient(to right,
       rgba(147, 107, 192, 0.05) 0%,
       rgba(147, 107, 192, 0.02) 50%,
       rgba(147, 107, 192, 0.05) 100%);
   display: flex;
   justify-content: center;
-  gap: 1rem;
+  gap: $spacing-md;
 }
 
+// Footer buttons
 .modal-footer .btn {
-  border-radius: 50px;
-  padding: 0.5rem 1.75rem;
-  font-weight: 500;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
-  font-size: 0.9rem;
-  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-  border: 1px solid transparent;
+  @include button-base;
   min-width: 100px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
 }
 
 .modal-footer .btn-secondary {
@@ -122,44 +87,29 @@
       rgba(98, 58, 149, 0.3) 0%,
       rgba(76, 45, 117, 0.3) 50%,
       rgba(54, 32, 84, 0.3) 100%);
-  color: #E0D4F7;
-  border-color: rgba(147, 107, 192, 0.4);
+  color: $text-primary;
+  border: 1px solid $border-base-color;
 
   &:hover {
     background: linear-gradient(135deg,
         rgba(98, 58, 149, 0.4) 0%,
         rgba(76, 45, 117, 0.4) 50%,
         rgba(54, 32, 84, 0.4) 100%);
-    border-color: rgba(147, 107, 192, 0.6);
+    border-color: $border-hover-color;
     transform: translateY(-1px);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+    box-shadow: $shadow-md;
     color: #fff;
   }
 }
 
 .modal-footer .btn-danger {
-  background: linear-gradient(135deg,
-      hsl(270, 50%, 20%) 0%,
-      hsl(270, 30%, 15%) 50%,
-      hsl(270, 50%, 10%) 100%);
-  color: white;
-  border-color: rgba(255, 255, 255, 0.1);
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-
-  &:hover {
-    background: linear-gradient(135deg,
-        hsl(270, 50%, 25%) 0%,
-        hsl(270, 30%, 20%) 50%,
-        hsl(270, 50%, 15%) 100%);
-    border-color: rgba(255, 255, 255, 0.2);
-    transform: translateY(-1px);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
-  }
+  @include button-dark-purple;
 }
 
-@media (max-width: 576px) {
+// Responsive
+@include mobile {
   .modal-dialog {
-    margin: 1rem;
+    margin: $spacing-md;
   }
 
   .modal-footer {
@@ -173,7 +123,7 @@
   }
 
   .modal-body {
-    padding: 1.5rem 1rem;
+    padding: 1.5rem $spacing-md;
 
     p {
       font-size: 0.95rem;
