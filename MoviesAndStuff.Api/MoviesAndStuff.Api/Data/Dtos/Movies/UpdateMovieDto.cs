@@ -1,8 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using MoviesAndStuff.Api.Services.Contracts;
+using System.ComponentModel.DataAnnotations;
 
 namespace MoviesAndStuff.Api.Data.Dtos.Movies
 {
-    public class UpdateMovieDto
+    public class UpdateMovieDto : IHasGenre
     {
         [Required]
         [StringLength(100)]

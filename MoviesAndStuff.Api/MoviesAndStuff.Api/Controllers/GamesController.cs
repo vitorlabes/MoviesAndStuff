@@ -7,11 +7,11 @@ using MoviesAndStuff.Api.Services.Interfaces;
 namespace MoviesAndStuff.Api.Controllers
 {
     /// <summary>
-    /// Controller for Game operations
-    /// Inherits common CRUD operations from BaseMediaController
+    /// Controller for Game operations.
     /// </summary>
     [ApiController]
     [Route("api/[controller]")]
+    [Produces("application/json")]
     public class GamesController : BaseMediaController<
         Game,
         GameListDto,
@@ -21,12 +21,10 @@ namespace MoviesAndStuff.Api.Controllers
         PlayFilter?,
         IGameService>
     {
-        public GamesController(IGameService service) : base(service) {}
+        public GamesController(IGameService service) : base(service) { }
 
-        /// <summary>
-        /// Override GetAll to handle optional PlayFilter
-        /// </summary>
         [HttpGet]
+        [ProducesResponseType(typeof(List<GameListDto>), StatusCodes.Status200OK)]
         public override async Task<ActionResult<List<GameListDto>>> GetAll(
             [FromQuery] string? search = null,
             [FromQuery] long? genreId = null,
@@ -35,23 +33,49 @@ namespace MoviesAndStuff.Api.Controllers
             return await base.GetAll(search, genreId, filter);
         }
 
-        /// <summary>
-        /// Custom route for toggling played status
-        /// </summary>
-        [HttpPatch("{id}/played")]
+        [HttpGet("{id:long}")]
+        [ProducesResponseType(typeof(GameDetailDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public override async Task<ActionResult<GameDetailDto>> GetById(long id)
+        {
+            return await base.GetById(id);
+        }
+
+        [HttpPost]
+        [ProducesResponseType(typeof(GameDetailDto), StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public override async Task<ActionResult<GameDetailDto>> Create([FromBody] CreateGameDto dto)
+        {
+            return await base.Create(dto);
+        }
+
+        [HttpPut("{id:long}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public override async Task<ActionResult> Update(long id, [FromBody] UpdateGameDto dto)
+        {
+            return await base.Update(id, dto);
+        }
+
+        [HttpPatch("{id:long}/played")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult> TogglePlayStatus(long id)
         {
             return await ToggleStatus(id);
         }
 
-        protected override long GetIdFromDetailDto(GameDetailDto dto)
+        [HttpDelete("{id:long}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public override async Task<ActionResult> Delete(long id)
         {
-            return dto.Id;
+            return await base.Delete(id);
         }
 
-        protected override string GetMediaTypeName()
-        {
-            return "Game";
-        }
+        protected override long GetIdFromDetailDto(GameDetailDto dto) => dto.Id;
+        protected override string GetMediaTypeName() => "Game";
     }
 }

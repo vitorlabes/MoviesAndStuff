@@ -12,14 +12,19 @@ namespace MoviesAndStuff.Api.Services
     {
         public GameService(AppDbContext context) : base(context) {}
 
-        protected override IQueryable<Game> GetBaseQuery()
+        private IQueryable<Game> IncludeGenre()
         {
             return Context.Games.Include(g => g.Genre);
         }
 
+        protected override IQueryable<Game> GetBaseQuery()
+        {
+            return IncludeGenre();
+        }
+
         protected override IQueryable<Game> GetDetailQuery()
         {
-            return Context.Games.Include(g => g.Genre);
+            return IncludeGenre();
         }
 
         protected override Expression<Func<Game, GameListDto>> MapToListDto()
@@ -86,11 +91,6 @@ namespace MoviesAndStuff.Api.Services
             {
                 game.PlayDate = DateTime.UtcNow;
             }
-        }
-
-        protected override long GetEntityId(Game game)
-        {
-            return game.Id;
         }
     }
 }

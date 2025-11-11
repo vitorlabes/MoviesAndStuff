@@ -1,9 +1,10 @@
 ﻿using MoviesAndStuff.Api.Models;
+using MoviesAndStuff.Api.Services.Contracts;
 using System.ComponentModel.DataAnnotations;
 
 namespace MoviesAndStuff.Api.Data.Models
 {
-    public class Game
+    public class Game : IEntity, IHasCreatedAt
     {
         public long Id { get; set; }
 

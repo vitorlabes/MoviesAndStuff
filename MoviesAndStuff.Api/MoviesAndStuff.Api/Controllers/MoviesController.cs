@@ -7,11 +7,11 @@ using MoviesAndStuff.Api.Services.Interfaces;
 namespace MoviesAndStuff.Api.Controllers
 {
     /// <summary>
-    /// Controller for Movie operations
-    /// Inherits common CRUD operations from BaseMediaController
+    /// Controller for Movie operations.
     /// </summary>
     [ApiController]
     [Route("api/[controller]")]
+    [Produces("application/json")]
     public class MoviesController : BaseMediaController<
         Movie,
         MovieListDto,
@@ -21,12 +21,13 @@ namespace MoviesAndStuff.Api.Controllers
         WatchFilter?,
         IMovieService>
     {
-        public MoviesController(IMovieService service) : base(service) {}
+        public MoviesController(IMovieService service) : base(service) { }
 
         /// <summary>
-        /// Override GetAll to handle optional WatchFilter
+        /// Gets all movies with optional filters.
         /// </summary>
         [HttpGet]
+        [ProducesResponseType(typeof(List<MovieListDto>), StatusCodes.Status200OK)]
         public override async Task<ActionResult<List<MovieListDto>>> GetAll(
             [FromQuery] string? search = null,
             [FromQuery] long? genreId = null,
@@ -36,22 +37,63 @@ namespace MoviesAndStuff.Api.Controllers
         }
 
         /// <summary>
-        /// Custom route for toggling watched status
+        /// Gets a movie by ID.
         /// </summary>
-        [HttpPatch("{id}/watched")]
+        [HttpGet("{id:long}")]
+        [ProducesResponseType(typeof(MovieDetailDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public override async Task<ActionResult<MovieDetailDto>> GetById(long id)
+        {
+            return await base.GetById(id);
+        }
+
+        /// <summary>
+        /// Creates a new movie.
+        /// </summary>
+        [HttpPost]
+        [ProducesResponseType(typeof(MovieDetailDto), StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public override async Task<ActionResult<MovieDetailDto>> Create([FromBody] CreateMovieDto dto)
+        {
+            return await base.Create(dto);
+        }
+
+        /// <summary>
+        /// Updates an existing movie.
+        /// </summary>
+        [HttpPut("{id:long}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public override async Task<ActionResult> Update(long id, [FromBody] UpdateMovieDto dto)
+        {
+            return await base.Update(id, dto);
+        }
+
+        /// <summary>
+        /// Toggles the "watched" status of a movie.
+        /// </summary>
+        [HttpPatch("{id:long}/watched")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult> ToggleWatchStatus(long id)
         {
             return await ToggleStatus(id);
         }
 
-        protected override long GetIdFromDetailDto(MovieDetailDto dto)
+        /// <summary>
+        /// Deletes a movie.
+        /// </summary>
+        [HttpDelete("{id:long}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public override async Task<ActionResult> Delete(long id)
         {
-            return dto.Id;
+            return await base.Delete(id);
         }
 
-        protected override string GetMediaTypeName()
-        {
-            return "Movie";
-        }
+        protected override long GetIdFromDetailDto(MovieDetailDto dto) => dto.Id;
+        protected override string GetMediaTypeName() => "Movie";
     }
 }

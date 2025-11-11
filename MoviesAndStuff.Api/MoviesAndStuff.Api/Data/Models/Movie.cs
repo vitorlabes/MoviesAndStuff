@@ -1,8 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using MoviesAndStuff.Api.Services.Contracts;
+using System.ComponentModel.DataAnnotations;
 
 namespace MoviesAndStuff.Api.Models
 {
-    public class Movie
+    public class Movie : IEntity, IHasCreatedAt
     {
         public long Id { get; set; }
 

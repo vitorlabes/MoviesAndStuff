@@ -17,6 +17,7 @@ builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
         options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+        options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
     });
 
@@ -38,6 +39,8 @@ builder.Services.AddSwaggerGen(c =>
         Version = "v1",
         Description = "API for tracking movies, games, and series"
     });
+
+    c.UseInlineDefinitionsForEnums();
 });
 
 //CORS
@@ -67,8 +70,28 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI(c =>
     {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "Media Tracker API V1");
-    });
+        c.RoutePrefix = string.Empty;
+    }); 
 }
+
+//Global error
+
+app.UseExceptionHandler(errorApp =>
+{
+    errorApp.Run(async context =>
+    {
+        context.Response.ContentType = "application/json";
+        context.Response.StatusCode = 500;
+
+        var errorResponse = new
+        {
+            message = "An unexpected error occurred.",
+            userMessage = "An internal server error occurred. Please try again later."
+        };
+
+        await context.Response.WriteAsJsonAsync(errorResponse);
+    });
+});
 
 //Middlewares
 app.UseHttpsRedirection();

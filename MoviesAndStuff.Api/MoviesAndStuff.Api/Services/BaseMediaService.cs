@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MoviesAndStuff.Api.Data;
+using MoviesAndStuff.Api.Services.Contracts;
 using MoviesAndStuff.Api.Services.Interfaces;
 using System.Linq.Expressions;
 
@@ -8,10 +9,11 @@ namespace MoviesAndStuff.Api.Services
     /// <summary>
     /// Base service class for media entities
     /// Implements common CRUD operations with template method pattern
+    /// Derived services only need to implement entity-specific mappings.
     /// </summary>
     public abstract class BaseMediaService<TEntity, TListDto, TDetailDto, TCreateDto, TUpdateDto, TFilter>
         : IBaseMediaService<TListDto, TDetailDto, TCreateDto, TUpdateDto, TFilter>
-        where TEntity : class
+        where TEntity : class, IEntity
     {
         protected readonly AppDbContext Context;
 
@@ -60,7 +62,7 @@ namespace MoviesAndStuff.Api.Services
             Context.Set<TEntity>().Add(entity);
             await Context.SaveChangesAsync();
 
-            long id = GetEntityId(entity);
+            long id = entity.Id;
             return (await GetByIdAsync(id))!;
         }
 
@@ -122,9 +124,7 @@ namespace MoviesAndStuff.Api.Services
         protected abstract TEntity MapToEntity(TCreateDto dto);
         protected abstract void UpdateEntityFromDto(TEntity entity, TUpdateDto dto);
         protected abstract void ToggleEntityStatus(TEntity entity);
-        protected abstract long GetEntityId(TEntity entity);
 
-        // Virtual methods with default implementations
         protected virtual IQueryable<TEntity> ApplySearchFilter(IQueryable<TEntity> query, string? search)
         {
             if (string.IsNullOrWhiteSpace(search))
@@ -144,44 +144,30 @@ namespace MoviesAndStuff.Api.Services
 
         protected virtual IQueryable<TEntity> ApplyCustomFilter(IQueryable<TEntity> query, TFilter? filter)
         {
-            // Default implementation does nothing - override in derived classes if needed
             return query;
         }
 
         protected virtual async Task ValidateCreateDto(TCreateDto dto)
         {
-            // Get GenreId using reflection
-            var genreIdProp = dto?.GetType().GetProperty("GenreId");
-            if (genreIdProp != null)
+            if (dto is IHasGenre genreDto && genreDto.GenreId.HasValue)
             {
-                var genreId = genreIdProp.GetValue(dto) as long?;
-                if (genreId.HasValue)
-                {
-                    await ValidateGenreAsync(genreId.Value);
-                }
+                await ValidateGenreAsync(genreDto.GenreId.Value);
             }
         }
 
         protected virtual async Task ValidateUpdateDto(TUpdateDto dto)
         {
-            // Get GenreId using reflection
-            var genreIdProp = dto?.GetType().GetProperty("GenreId");
-            if (genreIdProp != null)
+            if (dto is IHasGenre genreDto && genreDto.GenreId.HasValue)
             {
-                var genreId = genreIdProp.GetValue(dto) as long?;
-                if (genreId.HasValue)
-                {
-                    await ValidateGenreAsync(genreId.Value);
-                }
+                await ValidateGenreAsync(genreDto.GenreId.Value);
             }
         }
 
         protected virtual void SetCreatedAt(TEntity entity)
         {
-            var createdAtProp = entity.GetType().GetProperty("CreatedAt");
-            if (createdAtProp != null && createdAtProp.CanWrite)
+            if (entity is IHasCreatedAt hasCreatedAt)
             {
-                createdAtProp.SetValue(entity, DateTime.UtcNow);
+                hasCreatedAt.CreatedAt = DateTime.UtcNow;
             }
         }
 
