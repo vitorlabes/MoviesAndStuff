@@ -103,7 +103,8 @@ To adhere to the **DRY principle** and avoid duplicating genre IDs across differ
 | ✅ Completed | **Movies CRUD** | Full implementation of listing, forms, and services. |
 | ✅ Completed | **Games CRUD** | Full implementation of listing, forms, and services. |
 | 🚧 **In Progress** | **Genres CRUD** | Implementing dynamic management and relationship handling for genres. |
-| 💡 Next Up | **TV Series CRUD** | Adding a new `Series` entity to validate the overall DRY architecture. |
-| 🔮 Future | **Advanced Features** | User accounts, statistics. |
+| 💡 Future | **Tests** | Rehashing back end tests. | Add front end tests. |
+| 💡 Further on | **TV Series CRUD** | Adding a new `Series` entity to validate the overall DRY architecture. |
+| 🔮 Even further | **Advanced Features** | User accounts, statistics. |
 
 ---
