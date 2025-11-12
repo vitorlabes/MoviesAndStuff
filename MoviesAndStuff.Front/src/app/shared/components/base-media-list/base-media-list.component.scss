@@ -1,5 +1,5 @@
 // ========================================
-// VARIÁVEIS DO TEMA
+// THEME VARIABLES
 // ========================================
 $purple-primary: #936BC0;
 $purple-light: #A577D1;
@@ -17,10 +17,9 @@ $border-hover: rgba(147, 107, 192, 0.5);
 $border-active: rgba(147, 107, 192, 0.7);
 
 // ========================================
-// COMPONENTES
+// COMPONENTS
 // ========================================
 
-// Badge de Gênero
 .genre-badge {
   display: inline-block;
   background: linear-gradient(135deg, rgba(147, 107, 192, 0.2) 0%, rgba(147, 107, 192, 0.1) 100%);
@@ -33,7 +32,6 @@ $border-active: rgba(147, 107, 192, 0.7);
   white-space: nowrap;
 }
 
-// Status de Reprodução
 .play-status {
   display: inline-flex;
   align-items: center;
@@ -60,7 +58,6 @@ $border-active: rgba(147, 107, 192, 0.7);
     transform: scale(1.1);
   }
 
-  // Estado: Assistido
   &.watched {
     background: rgba(147, 107, 192, 0.15);
     border-color: rgba(147, 107, 192, 0.3);
@@ -83,7 +80,6 @@ $border-active: rgba(147, 107, 192, 0.7);
     }
   }
 
-  // Estado: Não Assistido
   &.unwatched {
     background: rgba(224, 212, 247, 0.1);
     border-color: rgba(224, 212, 247, 0.2);
@@ -111,7 +107,6 @@ $border-active: rgba(147, 107, 192, 0.7);
   }
 }
 
-// Estado Vazio
 .empty-state {
   padding: 3rem;
   text-align: center;
@@ -132,7 +127,6 @@ $border-active: rgba(147, 107, 192, 0.7);
   }
 }
 
-// Botões de Ação
 .action-buttons {
   display: inline-flex;
   gap: 0.5rem;
@@ -171,7 +165,6 @@ $border-active: rgba(147, 107, 192, 0.7);
   }
 }
 
-// Input de Busca
 .search-input {
   background: $gradient-base;
   border: $border-base;
@@ -199,7 +192,6 @@ $border-active: rgba(147, 107, 192, 0.7);
       0 2px 8px rgba(147, 107, 192, 0.1);
   }
 
-  // Fix para autofill
   &:-webkit-autofill,
   &:-webkit-autofill:hover,
   &:-webkit-autofill:focus {
@@ -209,7 +201,6 @@ $border-active: rgba(147, 107, 192, 0.7);
   }
 }
 
-// Grupo de Toggle de Filtros
 .filter-toggle-group {
   .toggle-btn {
     background: $gradient-base;

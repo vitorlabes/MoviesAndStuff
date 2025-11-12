@@ -2,14 +2,15 @@
 
   <div class="d-flex justify-content-between align-items-start mb-4">
     <h2 class="form-title mb-0">
-      <i class="bi bi-film"></i> {{ editingMode() ? 'Edit' : 'Add' }} Movie
+      <i class="ri-gamepad-line"></i> {{ editingMode() ? 'Edit' : 'Add' }} Game
     </h2>
     <div>
       <button class="btn btn-dark-purple" (click)="returnToList()">
-        <i class="bi bi-x-lg"></i> Cancel
+        <i class="ri-close-line"></i> Cancel
       </button>
       <button class="btn btn-dark-purple" (click)="saveGame()" style="margin-left: 0.5rem;">
-        <i class="bi" [class.bi-plus-lg]="!editingMode()" [class.bi-check-lg]="editingMode()"></i>
+        <i class="ri-add-line" *ngIf="!editingMode()"></i>
+        <i class="ri-check-line" *ngIf="editingMode()"></i>
         {{ editingMode() ? 'Update' : 'Add' }}
       </button>
     </div>
@@ -27,22 +28,22 @@
       </div>
 
       <div class="col-4">
-        <app-dropdown [options]="genreDropdown()" [selectedValue]="selectedGenre()" label="Movie Genre"
+        <app-dropdown [options]="genreDropdown()" [selectedValue]="selectedGenre()" label="Game Genre"
           placeholder="Select a genre..." [searchable]="true" (selectionChange)="onGenreChange($event)">
         </app-dropdown>
       </div>
 
       <div class="col-4">
-        <label class="form-input">Director</label>
-        <input type="text" id="director" formControlName="director">
+        <label class="form-input">Developer</label>
+        <input type="text" id="developer" formControlName="developer">
       </div>
 
     </div>
 
     <div class="row">
       <div class="col-4">
-        <label class="form-input">Watch Date</label>
-        <input type="date" id="watchDate" formControlName="watchDate">
+        <label class="form-input">Play Date</label>
+        <input type="date" id="playDate" formControlName="playDate">
       </div>
 
       <div class="col-4">
@@ -53,8 +54,8 @@
       <div class="col-4">
         <div class="d-flex align-items-center" style="height: 100%;">
           <div class="checkbox-container d-flex align-items-center">
-            <input type="checkbox" id="isWatched" formControlName="isWatched" style="margin-right: 0.5rem;">
-            <label for="isWatched" class="form-input mb-0">Watched</label>
+            <input type="checkbox" id="isPlayed" formControlName="isPlayed" style="margin-right: 0.5rem;">
+            <label for="isPlayed" class="form-input mb-0">Played</label>
           </div>
         </div>
       </div>
@@ -63,8 +64,8 @@
     <div class="row">
 
       <div class="col-4">
-        <label class="form-input">Premiere Date</label>
-        <input type="date" id="premiereDate" formControlName="premiereDate">
+        <label class="form-input">Release Date</label>
+        <input type="date" id="releaseDate" formControlName="releaseDate">
       </div>
     </div>
 

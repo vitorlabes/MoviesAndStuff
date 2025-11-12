@@ -5,7 +5,7 @@ import { WATCH_FILTER_OPTIONS } from '../constants/watch-filter-options';
 export const MOVIE_LIST_CONFIG: MediaListConfig<WatchFilter> = {
   mediaTypeId: 'MOVIE',
   routePrefix: '/movies',
-  icon: 'bi-film',
+  icon: 'ri-film-line',
   collectionName: 'Movie Collection',
   singularName: 'Movie',
   searchPlaceholder: 'Search movie by title...',

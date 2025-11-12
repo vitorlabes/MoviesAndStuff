@@ -1,10 +1,12 @@
 <aside [class.open]="isOpen()" class="sidebar">
 
   <div class="sidebar-header">
-    <h2>Movies & Stuff</h2>
     <button class="toggle-btn" (click)="onToggle()" aria-label="Toggle menu">
-      {{ isOpen() ? '❮' : '❯' }}
+      <i class="ri-menu-line"></i>
     </button>
+    @if (isOpen()) {
+    <h2>Movies & Stuff</h2>
+    }
   </div>
 
   <nav class="sidebar-nav">
@@ -12,8 +14,8 @@
       @for (item of menuItems; track item.route) {
       <li>
         <a [routerLink]="item.route" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: item.route === '/' }"
-          class="nav-link" [class.collapsed]="!isOpen()">
-          <span class="icon">{{ item.icon }}</span>
+          class="nav-link">
+          <i [class]="item.icon + ' icon'"></i>
           @if (isOpen()) {
           <span class="label">{{ item.label }}</span>
           }

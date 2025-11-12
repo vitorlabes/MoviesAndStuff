@@ -5,7 +5,7 @@ import { PLAY_FILTER_OPTIONS } from './play-filter-options';
 export const GAME_LIST_CONFIG: MediaListConfig<PlayFilter> = {
   mediaTypeId: 'GAME',
   routePrefix: '/games',
-  icon: 'bi-controller',
+  icon: 'ri-gamepad-line',
   collectionName: 'Game Collection',
   singularName: 'Game',
   searchPlaceholder: 'Search game by title...',

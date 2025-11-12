@@ -20,11 +20,11 @@ export class SidebarComponent {
   toggleSidebar = output<void>();
 
   menuItems: MenuItem[] = [
-    { label: 'Movies', icon: '🎬', route: '/movies' },
-    { label: 'Games', icon: '🎮', route: '/games' },
-    { label: 'Series', icon: '📺', route: '/series' },
-    { label: 'Favorites', icon: '⭐', route: '/favorites' },
-    { label: 'Statistics', icon: '📊', route: '/stats' }
+    { label: 'Movies', icon: 'ri-film-line', route: '/movies' },
+    { label: 'Games', icon: 'ri-gamepad-line', route: '/games' },
+    { label: 'Series', icon: 'ri-tv-2-line', route: '/series' },
+    { label: 'Favorites', icon: 'ri-star-line', route: '/favorites' },
+    { label: 'Statistics', icon: 'ri-bar-chart-line', route: '/stats' }
   ];
 
   onToggle() {

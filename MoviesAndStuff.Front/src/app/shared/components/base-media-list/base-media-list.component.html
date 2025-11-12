@@ -2,11 +2,11 @@
   <!-- Header -->
   <div class="d-flex justify-content-between align-items-start mb-4">
     <h2 class="form-title mb-0">
-      <i class="bi" [ngClass]="config.icon"></i> {{ config.collectionName }}
+      <i [class]="config.icon"></i> {{ config.collectionName }}
     </h2>
 
     <button class="btn btn-dark-purple" (click)="navigateToNew()">
-      <i class="bi bi-plus-lg"></i> Add {{ config.singularName }}
+      <i class="ri-add-line"></i> Add {{ config.singularName }}
     </button>
   </div>
 
@@ -29,7 +29,7 @@
     @for (option of config.filterOptions; track option.value) {
     <button type="button" class="toggle-btn" [class.active]="selectedFilter() === option.value"
       (click)="setFilter(option.value)">
-      <i class="bi" [ngClass]="option.icon"></i> {{ option.label }}
+      <i [class]="option.icon"></i> {{ option.label }}
     </button>
     }
   </div>
@@ -50,7 +50,7 @@
   <!-- No result on list -->
   @if(showEmptySearch()) {
   <div class="empty-state">
-    <i class="bi bi-search"></i>
+    <i class="ri-search-line"></i>
     <p>No results found for "{{ currentSearch() }}"</p>
   </div>
   }
@@ -74,8 +74,8 @@
       <div class="play-status mx-auto" [class.watched]="getItemStatus(item)" [class.unwatched]="!getItemStatus(item)"
         (click)="toggleStatus(item); $event.stopPropagation()" role="button" tabindex="0"
         [attr.aria-label]="'Toggle ' + (getItemStatus(item) ? config.statusLabel.inactive : config.statusLabel.active)">
-        <i class="bi play-icon" [class.bi-play-circle-fill]="getItemStatus(item)"
-          [class.bi-play-circle]="!getItemStatus(item)">
+        <i class="play-icon" [class.ri-play-circle-fill]="getItemStatus(item)"
+          [class.ri-play-circle-line]="!getItemStatus(item)">
         </i>
         <span class="status-text">
           {{ getItemStatus(item) ? config.statusLabel.active : config.statusLabel.inactive }}
@@ -83,7 +83,7 @@
       </div>
     </ng-template>
 
-    <!-- Date Column (conditional) -->
+    <!-- Date Column -->
     @if(config.showDateColumn) {
     <ng-template appTableColumn [header]="config.dateColumnLabel || 'Date'" width="20%" headerClass="text-end pe-4"
       cellClass="text-end pe-4" let-item>
@@ -96,11 +96,11 @@
       <div class="action-buttons">
         <button class="action-btn edit-btn" [attr.aria-label]="'Edit ' + config.singularName"
           (click)="navigateToEdit(item.id); $event.stopPropagation()">
-          <i class="bi bi-pencil"></i>
+          <i class="ri-pencil-line"></i>
         </button>
         <button class="action-btn delete-btn" [attr.aria-label]="'Delete ' + config.singularName"
           (click)="openDeleteModal(item.id); $event.stopPropagation()">
-          <i class="bi bi-trash"></i>
+          <i class="ri-delete-bin-line"></i>
         </button>
       </div>
     </ng-template>
@@ -111,12 +111,11 @@
   <!-- Empty state -->
   @if(showEmptyState()) {
   <div class="empty-state">
-    <i class="bi" [ngClass]="config.icon"></i>
+    <i [class]="config.icon"></i>
     <p>{{ config.emptyStateMessage }}</p>
   </div>
   }
   }
 </div>
 
-<!-- Confirm modal -->
 <app-confirm-modal #confirmModal (confirm)="confirmDelete()"></app-confirm-modal>

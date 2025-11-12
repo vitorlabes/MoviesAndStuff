@@ -1,3 +1,6 @@
+@use 'variables' as *;
+@use 'mixins' as *;
+
 .sidebar {
   position: fixed;
   left: 0;
@@ -9,90 +12,87 @@
       rgba(26, 26, 26, 0.98) 100%);
   backdrop-filter: blur(10px);
   border-right: 1px solid rgba(147, 107, 192, 0.2);
-  color: #E0D4F7;
+  color: $text-primary;
   transition: width 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
   width: 70px;
   overflow-x: hidden;
   overflow-y: auto;
   z-index: 1000;
   box-shadow: 2px 0 20px rgba(147, 107, 192, 0.1);
+  @include scrollbar-purple;
 
   &.open {
-    width: 260px;
+    width: 240px;
   }
 
   .sidebar-header {
     display: flex;
     align-items: center;
-    justify-content: center;
-    transition: all 0.3s ease;
-    padding: 1.5rem 1rem;
-    border-bottom: 1px solid rgba(147, 107, 192, 0.2);
+    gap: $spacing-md;
+    padding: 1.5rem 1.25rem;
+    border-bottom: 1px solid rgba(147, 107, 192, 0.15);
     background: linear-gradient(135deg,
-        rgba(98, 58, 149, 0.15) 0%,
-        rgba(76, 45, 117, 0.1) 50%,
-        rgba(54, 32, 84, 0.15) 100%);
-    height: 64px;
-
-    h2 {
-      margin: 0;
-      font-size: 1.25rem;
-      font-weight: 300;
-      letter-spacing: 1px;
-      white-space: nowrap;
-      overflow: hidden;
-      color: #fff;
-      text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
-      visibility: hidden;
-      transition: all 0.3s ease;
-    }
-
-    .sidebar.open & h2 {
-      opacity: 1;
-      visibility: visible;
-      width: auto;
-    }
+        rgba(98, 58, 149, 0.1) 0%,
+        rgba(76, 45, 117, 0.08) 50%,
+        rgba(54, 32, 84, 0.1) 100%);
+    height: auto;
+    min-height: 70px;
+    position: relative;
 
     .toggle-btn {
-      background: linear-gradient(135deg,
-          rgba(98, 58, 149, 0.2) 0%,
-          rgba(76, 45, 117, 0.15) 50%,
-          rgba(54, 32, 84, 0.2) 100%);
-      border: 1px solid rgba(147, 107, 192, 0.3);
-      color: #E0D4F7;
+      background: $gradient-base;
+      border: $border-base;
+      color: $text-primary;
       cursor: pointer;
-      font-size: 1rem;
-      padding: 0.5rem;
-      border-radius: 6px;
-      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+      font-size: 1.25rem;
+      padding: 0;
+      border-radius: $border-radius-md;
+      transition: $transition-base;
       flex-shrink: 0;
-      width: 32px;
-      height: 32px;
+      width: 40px;
+      height: 40px;
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
+      box-shadow: $shadow-inset;
+
+      i {
+        transition: $transition-base;
+        filter: drop-shadow(0 0 4px rgba(147, 107, 192, 0.3));
+      }
 
       &:hover {
-        background: linear-gradient(135deg,
-            rgba(98, 58, 149, 0.3) 0%,
-            rgba(76, 45, 117, 0.25) 50%,
-            rgba(54, 32, 84, 0.3) 100%);
-        border-color: rgba(147, 107, 192, 0.5);
+        background: $gradient-hover;
+        border-color: $border-hover-color;
         transform: translateY(-1px);
         box-shadow:
-          inset 0 1px 3px rgba(0, 0, 0, 0.2),
+          $shadow-inset,
           0 2px 8px rgba(147, 107, 192, 0.2);
+
+        i {
+          @include icon-glow-strong;
+        }
       }
 
       &:active {
         transform: translateY(0);
       }
     }
+
+    h2 {
+      margin: 0;
+      font-size: 1.1rem;
+      font-weight: 500;
+      letter-spacing: $letter-spacing-md;
+      white-space: nowrap;
+      color: #fff;
+      @include text-glow;
+      animation: fadeInRight 0.3s ease-out;
+    }
   }
 
   .sidebar-nav {
-    padding: 1.5rem 0;
+    padding: $spacing-xl 0;
 
     ul {
       list-style: none;
@@ -101,68 +101,127 @@
     }
 
     li {
-      margin: 0.5rem 0;
-      padding: 0 0.75rem;
+      margin: $spacing-sm 0;
+      padding: 0 $spacing-sm;
+      overflow: visible;
+      position: relative;
     }
 
     .nav-link {
       display: flex;
       align-items: center;
-      justify-content: center;
-      padding: 0.75rem 1rem;
-      color: rgba(224, 212, 247, 0.8);
+      justify-content: flex-start;
+      padding: 1rem $spacing-sm;
+      color: $text-secondary;
       text-decoration: none;
-      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-      border-left: 3px solid transparent;
-      border-radius: 6px;
-      gap: 1rem;
+      transition: $transition-base;
+      border-radius: $border-radius-md;
+      gap: $spacing-lg;
       background: transparent;
-      font-weight: 400;
-      letter-spacing: 0.3px;
+      position: relative;
+      overflow: visible;
+      min-height: 48px;
+      will-change: transform, background-color;
+
+      &::before {
+        content: '';
+        position: absolute;
+        left: -$spacing-sm;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 3px;
+        height: 0;
+        background: $purple-primary;
+        transition: height 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        border-radius: 0 2px 2px 0;
+        z-index: 1;
+      }
 
       .icon {
         font-size: 1.5rem;
         flex-shrink: 0;
-        width: 32px;
-        text-align: center;
-        filter: drop-shadow(0 0 4px rgba(147, 107, 192, 0.3));
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: $transition-base;
+        filter: drop-shadow(0 0 3px rgba(147, 107, 192, 0.2));
+        position: relative;
       }
 
       .label {
         white-space: nowrap;
-        overflow: hidden;
-        font-size: 0.9rem;
+        font-size: $font-size-sm;
         text-transform: uppercase;
-        font-weight: 500;
+        font-weight: $font-weight-medium;
+        letter-spacing: $letter-spacing-sm;
+        opacity: 0.9;
+        animation: fadeInRight 0.3s ease-out;
       }
 
       &:hover {
-        background: linear-gradient(135deg,
-            rgba(98, 58, 149, 0.2) 0%,
-            rgba(76, 45, 117, 0.15) 50%,
-            rgba(54, 32, 84, 0.2) 100%);
-        color: #E0D4F7;
-        border-left-color: rgba(147, 107, 192, 0.4);
+        background: $gradient-hover;
+        color: $text-primary;
         transform: translateX(2px);
-        box-shadow: 0 2px 8px rgba(147, 107, 192, 0.1);
+        box-shadow: 0 2px 8px rgba(147, 107, 192, 0.15);
+
+        &::before {
+          height: 60%;
+        }
+
+        .icon {
+          @include icon-glow;
+          transform: scale(1.1);
+        }
       }
 
       &.active {
         background: linear-gradient(135deg,
-            rgba(147, 107, 192, 0.3) 0%,
-            rgba(98, 58, 149, 0.25) 50%,
-            rgba(76, 45, 117, 0.3) 100%);
-        border-left-color: #936BC0;
+            rgba(147, 107, 192, 0.25) 0%,
+            rgba(98, 58, 149, 0.2) 50%,
+            rgba(76, 45, 117, 0.25) 100%);
         color: #fff;
         box-shadow:
-          0 0 10px rgba(147, 107, 192, 0.3),
-          inset 0 0 8px rgba(147, 107, 192, 0.2);
+          0 0 12px rgba(147, 107, 192, 0.25),
+          inset 0 0 8px rgba(147, 107, 192, 0.15);
+
+        &::before {
+          height: 80%;
+          box-shadow: 0 0 8px rgba(147, 107, 192, 0.5);
+        }
 
         .icon {
-          filter: drop-shadow(0 0 8px rgba(147, 107, 192, 0.5));
+          @include icon-glow-strong;
+          color: $purple-lighter;
+        }
+
+        .label {
+          opacity: 1;
+          font-weight: $font-weight-semibold;
         }
       }
     }
+  }
+
+  &:not(.open) {
+    .nav-link {
+      justify-content: center;
+      padding-left: 0;
+      padding-right: 0;
+    }
+  }
+}
+
+@keyframes fadeInRight {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
   }
 }
 
@@ -170,11 +229,12 @@
   .sidebar {
     width: 0;
     border-right: none;
+    box-shadow: none;
 
     &.open {
-      width: 260px;
+      width: 240px;
       border-right: 1px solid rgba(147, 107, 192, 0.2);
-      box-shadow: 2px 0 20px rgba(0, 0, 0, 0.5);
+      box-shadow: 2px 0 30px rgba(0, 0, 0, 0.6);
     }
   }
 }

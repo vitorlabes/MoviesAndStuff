@@ -7,7 +7,7 @@ export interface WatchFilterOption {
 }
 
 export const WATCH_FILTER_OPTIONS: WatchFilterOption[] = [
-  { label: 'All', value: WatchFilter.All, icon: 'bi-collection-play' },
-  { label: 'Watched', value: WatchFilter.Watched, icon: 'bi-check-circle' },
-  { label: 'On Queue', value: WatchFilter.Queue, icon: 'bi-clock-history' }
+  { label: 'All', value: WatchFilter.All, icon: 'ri-list-check' },
+  { label: 'Watched', value: WatchFilter.Watched, icon: 'ri-play-circle-line' },
+  { label: 'On Queue', value: WatchFilter.Queue, icon: 'ri-check-line' }
 ];

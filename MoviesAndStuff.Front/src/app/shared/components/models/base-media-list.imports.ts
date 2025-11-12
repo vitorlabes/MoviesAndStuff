@@ -1,4 +1,3 @@
-// src/app/shared/components/base-media-list/base-media-list.imports.ts
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { DropdownComponent } from '../../../components/dropdown/dropdown.component';

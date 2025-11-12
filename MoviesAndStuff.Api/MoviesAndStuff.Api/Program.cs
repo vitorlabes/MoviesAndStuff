@@ -70,12 +70,11 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI(c =>
     {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "Media Tracker API V1");
-        c.RoutePrefix = string.Empty;
-    }); 
+        c.RoutePrefix = "swagger";
+    });
 }
 
-//Global error
-
+//Global errors
 app.UseExceptionHandler(errorApp =>
 {
     errorApp.Run(async context =>
