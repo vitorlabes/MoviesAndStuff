@@ -1,112 +1,110 @@
-# MoviesAndStuff
+# 🎬 MoviesAndStuff: Media Review Manager
 
-🎬 Movie Reviews CRUD
+A personal full-stack application for managing **movie and game reviews**, built with **.NET 8** and **Angular 19 (with Signals)**.
 
-A personal system for managing movie reviews, developed for learning and personal organization. Allows you to register, view, edit, and delete movie reviews with information like title, director, genre, rating, and watch status.
+This is a learning project that prioritizes **clean architecture**, **code reusability (DRY)**, and **modern frontend patterns**.
 
+---
 
-✨ Features
+## ✨ Features
 
-🎥 Complete Movie CRUD: Create, list, edit, and delete reviews
+MoviesAndStuff allows you to create, view, edit, and delete movies and games — keeping track of details like **title, genre, rating, duration, and watched/played status**.
 
-🔍 Filter System: Search by title, filter by genre and status (watched/queue)
+* **Full CRUD:** Implemented for **Movies** and **Games**.
+* **Smart Filters:** Search and filter items by name, genre, and watched/played status.
+* **Genre Management:** **Genre CRUD is in progress** to allow dynamic management of categories (moving from static data).
+* **Optimized UX:** Reusable components and fluid navigation using **route lazy loading**.
 
-🏷️ Genre Management: Categorize movies by genre
+---
 
-👀 Watch Control: Mark movies as watched or in queue
+## 🧱 Architecture: Focused on DRY Principles
 
-⭐ Rating System: Rate movies with scores
+The project layers, in both the backend and frontend, share the core goal of **centralizing logic and avoiding code repetition**.
 
-📱 Responsive Interface: Reusable components and modals
+| Layer | Stack | Key Focus |
+|:------|:------|:----------|
+| **Backend** | ASP.NET Core 8 REST API (C#) | Centralization of business and persistence logic. |
+| **Frontend** | Angular 19 (TypeScript) | Modern reactivity (Signals) and shared component structure. |
+| **Database** | SQL Server (via EF Core) | Code-First migrations and optimized relational modeling. |
 
+### 🧠 Backend: Logic Centralization
 
-🛠️ Technologies
+The **DRY** approach is applied using generics to extract common CRUD logic:
 
-Backend
+* `BaseMediaController`: Handles generic HTTP operations for all media entities.
+* `BaseMediaService`: Contains **all common CRUD logic** (listing, get by ID, creation, update, deletion).
+* Specific Services: (e.g., `MovieService`, `GameService`) inherit from `BaseMediaService` and deal only with **minor mapping differences or entity-specific rules**.
 
-ASP.NET Core with Entity Framework
+> **Benefit:** Adding a new entity (e.g., "Series") requires only a new model, a minimal service, and a new controller, without rewriting core logic.
 
-SQL Server (or other relational database)
+### 💻 Frontend: Shared Components
 
-REST API with complete CRUD endpoints
+Built with **Angular 19** using **Signals, Computed, and Effect** for reactive and modern state management.
 
-Frontend
+Every media module (Movies, Games) uses the same structure of shared components:
 
-Angular with TypeScript
+* `BaseMediaList`: Encapsulates generic listing logic (filters, search, pagination, and delete confirmation).
+* `BaseMediaForm`: Shared form structure for create and edit operations.
 
-RxJS for reactive state management
+#### 🧩 Reusable UI Components
 
-Reusable Components: Dropdown and Modal
+| Component | Description | Primary Use |
+|:------------|:----------|:--------------|
+| `Sidebar` | Main navigation component. | Navigation between modules. |
+| `ConfirmModal` | Generic modal for confirmations. | Used for delete actions. |
+| `DropdownSearch` | Dropdown with search filter. | Genre selection in the form and filtering in the list. |
+| `MediaTable` | System's global data table. | Used inside `BaseMediaList`. |
+| `StarRating` | Rating display and input component. | `Rating` property for movies/games. |
+| `Toast` | Reusable notification system. | Success/error feedback. |
 
-Reactive Forms with validations
+---
 
+## 💾 Data Modeling (Entity Framework Core)
 
-📋 API Endpoints
+The persistence layer uses EF Core. The model is designed for flexibility and code reuse, particularly in the management of Genres.
 
-Movies
+### Genre Modeling Overview
 
-GET /api/movies - List movies (with optional filters)
+To adhere to the **DRY principle** and avoid duplicating genre IDs across different media types, an explicit many-to-many relationship was implemented using a junction entity (`GenreMediaType`):
 
-GET /api/movies/{id} - Get movie by ID
+* `Genre`: Unique entity for the genre name (e.g., "Action").
+* `MediaType`: Static media types (e.g., "Movie", "Game").
+* `GenreMediaType`: Junction table that defines **which genres are available for which media types**.
 
-POST /api/movies - Create new movie
+**Key Entities:**
+* `Movies`
+* `Games`
+* `Genres`
+* `MediaTypes`
+* `GenreMediaTypes` (junction table)
 
-PUT /api/movies/{id} - Update movie
+---
 
-PATCH /api/movies/{id}/watched - Toggle watch status
+## 🛠️ Tech Stack
 
-DELETE /api/movies/{id} - Delete movie
+### Backend
+* ASP.NET Core 8
+* Entity Framework Core
+* SQL Server
+* Swagger / OpenAPI
 
-Genres
+### Frontend
+* Angular 19 (with Signals)
+* TypeScript
+* Bootstrap
+* RxJS
 
-GET /api/movies/genres - List all genres
+---
 
-🎯 Key Components
+## 📋 Project Status and Next Steps
 
+| Status | Module | Description |
+|:-------|:-------|:----------|
+| ✅ Completed | **Movies CRUD** | Full implementation of listing, forms, and services. |
+| ✅ Completed | **Games CRUD** | Full implementation of listing, forms, and services. |
+| 🚧 **In Progress** | **Genres CRUD** | Implementing dynamic management and relationship handling for genres. |
+| 💡 Future | **Tests** | Rehashing back end tests. | Add front end tests. |
+| 💡 Further on | **TV Series CRUD** | Adding a new `Series` entity to validate the overall DRY architecture. |
+| 🔮 Even further | **Advanced Features** | User accounts, statistics. |
 
-MoviesListComponent
-
-Listing with search, genre, and status filters
-
-Confirmation modal for deletion
-
-Quick toggle for "watched" status
-
-MoviesFormComponent
-
-Form to create/edit movies
-
-Genre dropdown
-
-Form validations
-
-Reusable Components
-
-DropdownComponent: Option selection with consistent interface
-
-ConfirmModalComponent: Confirmation modal for destructive actions
-
-🔮 Upcoming Features
-
-
-TV Series: CRUD for series reviews
-
-Games: CRUD for game reviews
-
-User System: Personal reviews
-
-Reports: Viewing statistics
-
-Import/Export: Data backup
-
-💡 Motivation
-
-
-
-Learn and practice fullstack development
-
-Organize personal movie reviews
-
-Implement code patterns and architecture
-
-Create reusable components
+---
