@@ -27,6 +27,19 @@ namespace MoviesAndStuff.Api.Services
             return IncludeGenre();
         }
 
+        protected override IQueryable<Game> ApplyCustomFilter(IQueryable<Game> query, PlayFilter? filter)
+        {
+            if (filter == null || filter == PlayFilter.All)
+                return query;
+
+            return filter switch
+            {
+                PlayFilter.Played => query.Where(g => g.IsPlayed),
+                PlayFilter.Queue => query.Where(g => !g.IsPlayed),
+                _ => query
+            };
+        }
+
         protected override Expression<Func<Game, GameListDto>> MapToListDto()
         {
             return g => new GameListDto

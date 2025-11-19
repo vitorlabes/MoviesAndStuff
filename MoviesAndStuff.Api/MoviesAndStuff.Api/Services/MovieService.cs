@@ -2,6 +2,7 @@
 using MoviesAndStuff.Api.Data;
 using MoviesAndStuff.Api.Data.Dtos.Movies;
 using MoviesAndStuff.Api.Data.Enums;
+using MoviesAndStuff.Api.Data.Models;
 using MoviesAndStuff.Api.Models;
 using MoviesAndStuff.Api.Services.Interfaces;
 using System.Linq.Expressions;
@@ -25,6 +26,19 @@ namespace MoviesAndStuff.Api.Services
         protected override IQueryable<Movie> GetDetailQuery()
         {
             return IncludeGenre();
+        }
+
+        protected override IQueryable<Movie> ApplyCustomFilter(IQueryable<Movie> query, WatchFilter? filter)
+        {
+            if (filter == null || filter == WatchFilter.All)
+                return query;
+
+            return filter switch
+            {
+                WatchFilter.Watched => query.Where(g => g.IsWatched),
+                WatchFilter.Queue => query.Where(g => !g.IsWatched),
+                _ => query
+            };
         }
 
         protected override Expression<Func<Movie, MovieListDto>> MapToListDto()
