@@ -43,7 +43,9 @@
     <div class="row">
       <div class="col-4">
         <label class="form-input">Watch Date</label>
-        <input type="date" id="watchDate" formControlName="watchDate">
+        <input type="date" formControlName="watchDate" id="watchDate"
+          [value]="movieForm.get('watchDate')?.value | date:'yyyy-MM-dd'"
+          (input)="movieForm.get('watchDate')?.setValue($any($event.target).valueAsDate)">
       </div>
 
       <div class="col-4">
@@ -77,7 +79,9 @@
 
       <div class="col-4">
         <label class="form-input">Premiere Date</label>
-        <input type="date" id="premiereDate" formControlName="premiereDate">
+        <input type="date" formControlName="premiereDate" id="premiereDate"
+          [value]="movieForm.get('premiereDate')?.value | date:'yyyy-MM-dd'"
+          (input)="movieForm.get('premiereDate')?.setValue($any($event.target).valueAsDate)">
       </div>
     </div>
 
