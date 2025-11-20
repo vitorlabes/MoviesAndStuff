@@ -8,10 +8,10 @@ import { MovieDetailDto } from '../dtos/movie-detail-dto';
 import { CreateMovieDto } from '../dtos/movie-create-dto';
 import { UpdateMovieDto } from '../dtos/movie-update-dto';
 import { MediaFormConfig } from '../../shared/components/models/base-media-form.models';
-import { DropdownComponent } from '../../components/dropdown/dropdown.component';
+import { DropdownComponent } from '../../shared/components/ui/dropdown/dropdown.component';
 import { DurationPipe } from '../../pipes/duration.pipe';
-import { DurationInputComponent } from '../../components/duration-input/duration-input.component';
-import { StarRatingComponent } from '../../components/star-rating/star-rating.component';
+import { DurationInputComponent } from '../../shared/components/ui/duration-input/duration-input.component';
+import { StarRatingComponent } from '../../shared/components/ui/star-rating/star-rating.component';
 
 @Component({
   selector: 'app-movies-form',

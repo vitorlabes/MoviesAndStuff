@@ -8,8 +8,8 @@ import { GameDetailDto } from '../dtos/game-detail-dto';
 import { CreateGameDto } from '../dtos/game-create-dto';
 import { UpdateGameDto } from '../dtos/game-update-dto';
 import { MediaFormConfig } from '../../shared/components/models/base-media-form.models';
-import { DropdownComponent } from '../../components/dropdown/dropdown.component';
-import { StarRatingComponent } from '../../components/star-rating/star-rating.component';
+import { DropdownComponent } from '../../shared/components/ui/dropdown/dropdown.component';
+import { StarRatingComponent } from '../../shared/components/ui/star-rating/star-rating.component';
 
 @Component({
   selector: 'app-games-form',

@@ -3,7 +3,7 @@ import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
 import { CommonModule } from '@angular/common';
-import { ToastService } from '../../../components/toast/toast.service';
+import { ToastService } from '../ui/toast/toast.service';
 import { GenresService } from '../../../genres/services/genres.service';
 import { Genre } from '../../../genres/models/genres';
 import { MediaFormConfig } from '../models/base-media-form.models';

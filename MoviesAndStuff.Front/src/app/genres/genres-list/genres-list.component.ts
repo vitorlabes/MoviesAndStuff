@@ -5,9 +5,9 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { debounceTime, distinctUntilChanged, map, startWith } from 'rxjs';
 import { GenresService } from '../services/genres.service';
-import { MediaTableComponent } from "../../components/media-table/media-table.component";
+import { MediaTableComponent } from "../../shared/components/ui/media-table/media-table.component";
 import { GenreListDto } from '../dtos/genre-list-dto';
-import { TableColumnDirective } from '../../components/media-table/table-column.directive';
+import { TableColumnDirective } from '../../shared/components/ui/media-table/table-column.directive';
 import { BadgeComponent } from '../../shared/components/ui/badge/badge.component';
 
 @Component({
