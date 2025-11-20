@@ -1,4 +1,4 @@
-import { MediaListConfig } from '../../shared/components/models/base-media-list.models';
+import { MediaListConfig } from '../../shared/components/base-media-list/models/base-media-list.models';
 import { WatchFilter } from '../enums/watch-filter';
 import { WATCH_FILTER_OPTIONS } from '../constants/watch-filter-options';
 

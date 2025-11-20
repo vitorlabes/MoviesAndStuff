@@ -6,7 +6,7 @@ import { CommonModule } from '@angular/common';
 import { ToastService } from '../ui/toast/toast.service';
 import { GenresService } from '../../../genres/services/genres.service';
 import { Genre } from '../../../genres/models/genres';
-import { MediaFormConfig } from '../models/base-media-form.models';
+import { MediaFormConfig } from './models/base-media-form.models';
 
 /**
  * Base component for media forms (Movie, Game, etc.)

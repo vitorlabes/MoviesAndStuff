@@ -1,7 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable, catchError } from 'rxjs';
-import { ErrorHandlerService } from '../../shared/error-handler.service';
+import { ErrorHandlerService } from '../../core/services/error-handler.service';
 import { GenreListDto } from '../dtos/genre-list-dto';
 
 @Injectable({

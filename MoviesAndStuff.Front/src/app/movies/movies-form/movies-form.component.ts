@@ -7,9 +7,9 @@ import { MoviesService } from '../services/movies.service';
 import { MovieDetailDto } from '../dtos/movie-detail-dto';
 import { CreateMovieDto } from '../dtos/movie-create-dto';
 import { UpdateMovieDto } from '../dtos/movie-update-dto';
-import { MediaFormConfig } from '../../shared/components/models/base-media-form.models';
+import { MediaFormConfig } from '../../shared/components/base-media-form/models/base-media-form.models';
 import { DropdownComponent } from '../../shared/components/ui/dropdown/dropdown.component';
-import { DurationPipe } from '../../pipes/duration.pipe';
+import { DurationPipe } from '../../shared/pipes/duration.pipe';
 import { DurationInputComponent } from '../../shared/components/ui/duration-input/duration-input.component';
 import { StarRatingComponent } from '../../shared/components/ui/star-rating/star-rating.component';
 

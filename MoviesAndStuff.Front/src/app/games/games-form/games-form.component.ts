@@ -7,7 +7,7 @@ import { GamesService } from '../services/games.service';
 import { GameDetailDto } from '../dtos/game-detail-dto';
 import { CreateGameDto } from '../dtos/game-create-dto';
 import { UpdateGameDto } from '../dtos/game-update-dto';
-import { MediaFormConfig } from '../../shared/components/models/base-media-form.models';
+import { MediaFormConfig } from '../../shared/components/base-media-form/models/base-media-form.models';
 import { DropdownComponent } from '../../shared/components/ui/dropdown/dropdown.component';
 import { StarRatingComponent } from '../../shared/components/ui/star-rating/star-rating.component';
 

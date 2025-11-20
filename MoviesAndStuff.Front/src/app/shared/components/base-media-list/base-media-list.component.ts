@@ -6,8 +6,8 @@ import { debounceTime, distinctUntilChanged, map, startWith } from 'rxjs';
 import { DropdownOption } from '../ui/dropdown/models/dropdown';
 import { ConfirmModalComponent } from '../ui/confirm-modal/confirm-modal.component';
 import { GenresService } from '../../../genres/services/genres.service';
-import { MediaItem, MediaListConfig } from '../models/base-media-list.models';
-import { BASE_MEDIA_LIST_IMPORTS } from '../models/base-media-list.imports';
+import { MediaItem, MediaListConfig } from './models/base-media-list.models';
+import { BASE_MEDIA_LIST_IMPORTS } from './models/base-media-list.imports';
 
 @Component({
   selector: 'app-base-media-list',

@@ -3,7 +3,7 @@ import { BaseMediaListComponent } from '../../shared/components/base-media-list/
 import { GameListDto } from '../dtos/game-list-dto';
 import { PlayFilter } from '../enums/play-filter';
 import { GamesService } from '../services/games.service';
-import { BASE_MEDIA_LIST_IMPORTS } from '../../shared/components/models/base-media-list.imports';
+import { BASE_MEDIA_LIST_IMPORTS } from '../../shared/components/base-media-list/models/base-media-list.imports';
 import { GAME_LIST_CONFIG } from '../constants/game-list.config';
 
 @Component({

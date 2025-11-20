@@ -6,7 +6,7 @@ import { WatchFilter } from '../enums/watch-filter';
 import { CreateMovieDto } from '../dtos/movie-create-dto';
 import { UpdateMovieDto } from '../dtos/movie-update-dto';
 import { MovieDetailDto } from '../dtos/movie-detail-dto';
-import { ErrorHandlerService } from '../../shared/error-handler.service';
+import { ErrorHandlerService } from '../../core/services/error-handler.service';
 
 @Injectable({
   providedIn: 'root'

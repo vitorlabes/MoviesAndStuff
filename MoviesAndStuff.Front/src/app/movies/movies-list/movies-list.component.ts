@@ -3,7 +3,7 @@ import { BaseMediaListComponent } from '../../shared/components/base-media-list/
 import { MovieListDto } from '../dtos/movie-list-dto';
 import { WatchFilter } from '../enums/watch-filter';
 import { MoviesService } from '../services/movies.service';
-import { BASE_MEDIA_LIST_IMPORTS } from '../../shared/components/models/base-media-list.imports';
+import { BASE_MEDIA_LIST_IMPORTS } from '../../shared/components/base-media-list/models/base-media-list.imports';
 import { MOVIE_LIST_CONFIG } from '../constants/movie-list.config';
 
 @Component({

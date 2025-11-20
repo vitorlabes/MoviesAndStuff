@@ -1,4 +1,4 @@
-import { MediaListConfig } from './../../shared/components/models/base-media-list.models';
+import { MediaListConfig } from '../../shared/components/base-media-list/models/base-media-list.models';
 import { PlayFilter } from '../enums/play-filter';
 import { PLAY_FILTER_OPTIONS } from './play-filter-options';
 
