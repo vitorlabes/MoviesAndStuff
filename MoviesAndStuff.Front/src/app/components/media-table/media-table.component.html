@@ -23,7 +23,8 @@
       <tr class="movie-row" (click)="onRowClick(item)">
         @for (column of columns(); track column.header()) {
         <td [class]="column.cellClass()">
-          <ng-container *ngTemplateOutlet="column.template; context: { $implicit: item, index: $index }" />
+          <ng-container [ngTemplateOutlet]="column.template"
+            [ngTemplateOutletContext]="{ $implicit: item, index: $index }" />
         </td>
         }
       </tr>

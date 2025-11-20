@@ -13,7 +13,11 @@ export const routes: Routes = [
       },
       {
         path: 'games',
-        loadChildren: () => import('./games/games.routes').then(m => m.GAMES_ROUTES)
+        loadChildren: () => import('./games/games.routes').then(g => g.GAMES_ROUTES)
+      },
+      {
+        path: 'genres',
+        loadChildren: () => import('./genres/genres.routes').then(g => g.GENRES_ROUTES)
       }
     ]
   }

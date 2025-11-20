@@ -1,4 +1,4 @@
-import { Directive, input, TemplateRef } from '@angular/core';
+import { Directive, inject, input, TemplateRef } from '@angular/core';
 
 @Directive({
   selector: '[appTableColumn]',
@@ -6,9 +6,9 @@ import { Directive, input, TemplateRef } from '@angular/core';
 })
 export class TableColumnDirective<T = any> {
   public header = input.required<string>();
-  public width = input<string>(); // Aceita % ou px
-  public headerClass = input<string>(''); // Classes Bootstrap para header
-  public cellClass = input<string>(''); // Classes Bootstrap para células
+  public width = input<string>(); // % or px
+  public headerClass = input<string>(''); // Header bootstrap classes
+  public cellClass = input<string>(''); // Cell eader bootstrap classes
 
-  constructor(public template: TemplateRef<{ $implicit: T; index: number }>) { }
+  public readonly template = inject(TemplateRef<{ $implicit: T; index: number }>);
 }

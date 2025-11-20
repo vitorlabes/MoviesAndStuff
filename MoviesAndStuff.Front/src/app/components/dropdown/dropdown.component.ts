@@ -1,6 +1,6 @@
 import { Component, ElementRef, HostListener, OnDestroy, inject, input, output, viewChild, signal, effect, computed } from '@angular/core';
-import { DropdownOption } from './models/dropdown';
 import { Subject, debounceTime, distinctUntilChanged, takeUntil } from 'rxjs';
+import { DropdownOption } from './models/dropdown';
 
 @Component({
   selector: 'app-dropdown',
@@ -28,12 +28,12 @@ export class DropdownComponent implements OnDestroy {
   public searchInput = viewChild.required<ElementRef>('searchInput');
   public dropdownSearchInput = viewChild<ElementRef>('dropdownSearchInput');
 
-  // States (signals)
+  // Signals
   public isOpen = signal(false);
   public searchTerm = signal('');
   public highlightedIndex = signal(-1);
 
-  // Computed signals
+  // Computed
   public filteredOptions = computed(() => {
     const term = this.searchTerm().trim().toLowerCase();
     const opts = this.options();
@@ -54,7 +54,6 @@ export class DropdownComponent implements OnDestroy {
 
   private searchSubject = new Subject<string>();
   private destroy$ = new Subject<void>();
-  private clickedInside = false;
 
   constructor() {
     this.searchSubject.pipe(
@@ -79,11 +78,10 @@ export class DropdownComponent implements OnDestroy {
     this.searchSubject.complete();
   }
 
-  toggleDropdown(event: Event) {
+  protected toggleDropdown(event: Event) {
     if (this.disabled()) return;
 
     event.stopPropagation();
-    this.clickedInside = true;
 
     if (this.isOpen()) {
       this.closeDropdown();
@@ -92,7 +90,7 @@ export class DropdownComponent implements OnDestroy {
     }
   }
 
-  openDropdown() {
+  private openDropdown() {
     if (this.disabled()) return;
 
     this.isOpen.set(true);
@@ -106,20 +104,20 @@ export class DropdownComponent implements OnDestroy {
     }, 0);
   }
 
-  closeDropdown() {
+  private closeDropdown() {
     this.isOpen.set(false);
     this.searchTerm.set('');
     this.highlightedIndex.set(-1);
   }
 
-  onSearchInput(event: Event) {
+  protected onSearchInput(event: Event) {
     const target = event.target as HTMLInputElement;
     const value = target.value;
     this.searchTerm.set(value);
     this.searchSubject.next(value);
   }
 
-  onKeyDown(event: KeyboardEvent) {
+  protected onKeyDown(event: KeyboardEvent) {
     switch (event.key) {
       case 'ArrowDown':
         event.preventDefault();
@@ -147,7 +145,7 @@ export class DropdownComponent implements OnDestroy {
     }
   }
 
-  navigateOptions(direction: number) {
+  private navigateOptions(direction: number) {
     if (!this.isOpen()) {
       this.openDropdown();
       return;
@@ -168,7 +166,7 @@ export class DropdownComponent implements OnDestroy {
     }
   }
 
-  selectOption(option: DropdownOption, event: MouseEvent | KeyboardEvent) {
+  protected selectOption(option: DropdownOption, event: MouseEvent | KeyboardEvent) {
     if (option.disabled) return;
 
     event.stopPropagation();
@@ -183,7 +181,7 @@ export class DropdownComponent implements OnDestroy {
     }, 0);
   }
 
-  isSelected(option: DropdownOption): boolean {
+  protected isSelected(option: DropdownOption): boolean {
     return this.selectedValue() === option.value;
   }
 

@@ -1,4 +1,4 @@
-import { Component, input, output, signal, viewChild, ElementRef } from '@angular/core';
+import { Component, input, output, signal } from '@angular/core';
 
 @Component({
   selector: 'app-confirm-modal',
@@ -19,7 +19,7 @@ export class ConfirmModalComponent {
   public confirm = output<void>();
   public cancel = output<void>();
 
-  open(customMessage?: string, customTitle?: string) {
+  public open(customMessage?: string, customTitle?: string) {
     this._currentMessage.set(customMessage || this.message());
     this._currentTitle.set(customTitle || this.title());
     this.show.set(true);
@@ -27,30 +27,30 @@ export class ConfirmModalComponent {
     document.body.style.overflow = 'hidden';
   }
 
-  close() {
+  public close() {
     this.show.set(false);
     document.body.style.overflow = '';
   }
 
-  getCurrentMessage() {
+  public getCurrentMessage() {
     return this._currentMessage() || this.message();
   }
 
-  getCurrentTitle() {
+  public getCurrentTitle() {
     return this._currentTitle() || this.title();
   }
 
-  onConfirm() {
+  public onConfirm() {
     this.confirm.emit();
     this.close();
   }
 
-  onCancel() {
+  public onCancel() {
     this.cancel.emit();
     this.close();
   }
 
-  onBackdropClick(event: MouseEvent) {
+  public onBackdropClick(event: MouseEvent) {
     if ((event.target as HTMLElement).classList.contains('modal')) {
       this.onCancel();
     }

@@ -1,11 +1,11 @@
 import { Component, input, output, contentChildren } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgTemplateOutlet } from '@angular/common';
 import { TableColumnDirective } from './table-column.directive';
 
 @Component({
   selector: 'app-media-table',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, NgTemplateOutlet],
   templateUrl: './media-table.component.html',
   styleUrls: ['./media-table.component.scss']
 })

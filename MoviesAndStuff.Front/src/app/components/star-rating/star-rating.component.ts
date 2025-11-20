@@ -69,19 +69,19 @@ export class StarRatingComponent implements ControlValueAccessor {
     return 'empty';
   }
 
-  writeValue(value: number): void {
+  public writeValue(value: number): void {
     this.rating.set(value || 0);
   }
 
-  registerOnChange(fn: (value: number) => void): void {
+  public registerOnChange(fn: (value: number) => void): void {
     this.onChange = fn;
   }
 
-  registerOnTouched(fn: () => void): void {
+  public registerOnTouched(fn: () => void): void {
     this.onTouched = fn;
   }
 
-  setDisabledState(isDisabled: boolean): void {
+  public setDisabledState(isDisabled: boolean): void {
     this.disabled = isDisabled;
   }
 }

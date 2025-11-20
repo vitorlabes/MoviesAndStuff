@@ -8,7 +8,7 @@ using MoviesAndStuff.Api.Services.Interfaces;
 
 namespace MoviesAndStuff.Api.Services
 {
-    public class GenreService: IGenreService
+    public class GenreService : IGenreService
     {
         private readonly AppDbContext _context;
 
@@ -21,7 +21,7 @@ namespace MoviesAndStuff.Api.Services
         {
             IQueryable<Genre> query = _context.Genres
                 .Include(g => g.GenreMediaTypes)
-                    .ThenInclude(gmt => gmt.MediaType)
+                .ThenInclude(gmt => gmt.MediaType)
                 .AsQueryable();
 
             if (isActive.HasValue)

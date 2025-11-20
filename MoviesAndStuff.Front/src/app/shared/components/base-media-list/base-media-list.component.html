@@ -66,7 +66,9 @@
 
     <!-- Genre Column -->
     <ng-template appTableColumn header="Genre" width="20%" headerClass="text-center" cellClass="text-center" let-item>
-      <span class="genre-badge">{{ item.genreName || 'N/A' }}</span>
+      <app-badge>
+        {{ item.genreName }}
+      </app-badge>
     </ng-template>
 
     <!-- Status Column -->

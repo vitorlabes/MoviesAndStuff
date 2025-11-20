@@ -3,7 +3,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 /**
  * Duration format pipe
  *
- * Uso:
+ * Use:
  * {{ movie.duration | duration }} => "2h 30m"
  * {{ movie.duration | duration:'short' }} => "2:30"
  * {{ movie.duration | duration:'long' }} => "2 hours 30 minutes"

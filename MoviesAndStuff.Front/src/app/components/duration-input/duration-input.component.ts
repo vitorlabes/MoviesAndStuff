@@ -24,7 +24,7 @@ export class DurationInputComponent implements ControlValueAccessor {
   private onChange: (value: number | null) => void = () => { };
   private onTouched: () => void = () => { };
 
-  onInputChange(event: Event): void {
+  protected onInputChange(event: Event): void {
     const input = event.target as HTMLInputElement;
     let value = input.value.replace(/\D/g, '');
 
@@ -48,7 +48,7 @@ export class DurationInputComponent implements ControlValueAccessor {
     this.onChange(minutes > 0 ? minutes : null);
   }
 
-  onBlur(): void {
+  protected onBlur(): void {
     this.onTouched();
 
     const currentDisplay = this.displayValue();
@@ -58,20 +58,20 @@ export class DurationInputComponent implements ControlValueAccessor {
     }
   }
 
-  writeValue(value: number | null): void {
+  public writeValue(value: number | null): void {
     const formatted = value ? this.minutesToHHMM(value) : '';
     this.displayValue.set(formatted);
   }
 
-  registerOnChange(fn: (value: number | null) => void): void {
+  public registerOnChange(fn: (value: number | null) => void): void {
     this.onChange = fn;
   }
 
-  registerOnTouched(fn: () => void): void {
+  public registerOnTouched(fn: () => void): void {
     this.onTouched = fn;
   }
 
-  setDisabledState(isDisabled: boolean): void {
+  public setDisabledState(isDisabled: boolean): void {
     this.isDisabled.set(isDisabled);
   }
 

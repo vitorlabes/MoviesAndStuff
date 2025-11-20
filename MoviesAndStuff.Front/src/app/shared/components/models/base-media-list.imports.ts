@@ -4,6 +4,7 @@ import { DropdownComponent } from '../../../components/dropdown/dropdown.compone
 import { ConfirmModalComponent } from '../../../components/confirm-modal/confirm-modal.component';
 import { MediaTableComponent } from '../../../components/media-table/media-table.component';
 import { TableColumnDirective } from '../../../components/media-table/table-column.directive';
+import { BadgeComponent } from '../ui/badge/badge.component';
 
 export const BASE_MEDIA_LIST_IMPORTS = [
   CommonModule,
@@ -11,5 +12,6 @@ export const BASE_MEDIA_LIST_IMPORTS = [
   DropdownComponent,
   ConfirmModalComponent,
   MediaTableComponent,
-  TableColumnDirective
+  TableColumnDirective,
+  BadgeComponent
 ] as const;

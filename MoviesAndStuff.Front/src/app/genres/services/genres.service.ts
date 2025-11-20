@@ -2,7 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable, catchError } from 'rxjs';
 import { ErrorHandlerService } from '../../shared/error-handler.service';
-import { Genre } from '../models/genres';
+import { GenreListDto } from '../dtos/genre-list-dto';
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +14,7 @@ export class GenresService {
 
   private api = 'https://localhost:5102/api/genres';
 
-  getGenresList(params?: { mediaTypeId?: string; isActive?: boolean }): Observable<Genre[]> {
+  public getGenresList(params?: { mediaTypeId?: string; isActive?: boolean }): Observable<GenreListDto[]> {
     let httpParams = new HttpParams();
 
     if (params?.mediaTypeId)
@@ -23,7 +23,7 @@ export class GenresService {
     if (params?.isActive !== undefined)
       httpParams = httpParams.set('isActive', params.isActive.toString());
 
-    return this.http.get<Genre[]>(this.api, {
+    return this.http.get<GenreListDto[]>(this.api, {
       params: httpParams,
       withCredentials: true
     }).pipe(

@@ -1,0 +1,93 @@
+<div class="container-fluid py-4">
+
+  <!-- Header -->
+  <div class="d-flex justify-content-between align-items-start mb-4">
+    <h2 class="form-title mb-0">
+      <i class="ri-bookmark-line"></i> Genres
+    </h2>
+
+    <button class="btn btn-dark-purple">
+      <i class="ri-add-line"></i> Add Genre
+    </button>
+  </div>
+
+  <!-- Search bar -->
+  <div class="row align-items-center mb-3 g-2">
+    <div class="col-md-12">
+      <input class="form-control text-light search-input" placeholder="Search genres..." [formControl]="searchControl">
+    </div>
+  </div>
+
+  <!-- Loading -->
+  @if (isLoading()) {
+  <div class="d-flex justify-content-center align-items-center py-5">
+    <div class="text-center">
+      <div class="spinner-border text-light mb-3" role="status" style="width: 3rem; height: 3rem;">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <p class="text-light">Loading genres...</p>
+    </div>
+  </div>
+  }
+
+  @if (!isLoading()) {
+
+  <!-- No search results -->
+  @if (showEmptySearch()) {
+  <div class="empty-state">
+    <i class="ri-search-line"></i>
+    <p>No results found for "{{ currentSearch() }}"</p>
+  </div>
+  }
+
+  <!-- Table -->
+  @if (hasResults()) {
+  <app-media-table [items]="items()" [isLoading]="false">
+
+    <!-- Name Column -->
+    <ng-template appTableColumn header="Name" width="40%" headerClass="ps-4" cellClass="ps-4" let-item>
+      <span class="fw-bold">{{ item.name }}</span>
+    </ng-template>
+
+    <!-- Media Types Column -->
+    <ng-template appTableColumn header="Media Types" width="40%" headerClass="ps-4" cellClass="ps-4" let-item>
+      <div class="d-flex flex-wrap gap-1">
+        @for (mediaType of item.mediaTypes; track $index) {
+        <app-badge>
+          {{ mediaType }}
+        </app-badge>
+        }
+      </div>
+    </ng-template>
+
+    <!-- Actions Column -->
+    <ng-template appTableColumn header="" width="20%" headerClass="text-end pe-4" cellClass="text-end pe-4" let-item>
+      <!-- <div class="action-buttons">
+
+          <button class="action-btn edit-btn" aria-label="Edit genre"
+            (click)="navigateToEdit(item.id); $event.stopPropagation()">
+            <i class="ri-pencil-line"></i>
+          </button>
+
+          <button class="action-btn delete-btn" aria-label="Delete genre"
+            (click)="openDeleteModal(item.id); $event.stopPropagation()">
+            <i class="ri-delete-bin-line"></i>
+          </button>
+
+        </div> -->
+    </ng-template>
+
+  </app-media-table>
+  }
+
+  <!-- Empty list -->
+  @if (showEmptyState()) {
+  <div class="empty-state">
+    <i class="ri-bookmark-line"></i>
+    <p>No genres found</p>
+  </div>
+  }
+
+  }
+
+</div>

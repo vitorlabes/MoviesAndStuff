@@ -23,7 +23,7 @@ export class SidebarComponent {
     { label: 'Movies', icon: 'ri-film-line', route: '/movies' },
     { label: 'Games', icon: 'ri-gamepad-line', route: '/games' },
     { label: 'Series', icon: 'ri-tv-2-line', route: '/series' },
-    { label: 'Favorites', icon: 'ri-star-line', route: '/favorites' },
+    { label: 'Genres', icon: 'ri-bookmark-line', route: '/genres' },
     { label: 'Statistics', icon: 'ri-bar-chart-line', route: '/stats' }
   ];
 
