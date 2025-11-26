@@ -53,7 +53,7 @@ namespace MoviesAndStuff.Api.Services
         {
             var genre = await _context.Genres
                 .Include(g => g.GenreMediaTypes)
-                    .ThenInclude(gmt => gmt.MediaType)
+                .ThenInclude(gmt => gmt.MediaType)
                 .FirstOrDefaultAsync(g => g.Id == id);
 
             if (genre == null)
@@ -79,7 +79,7 @@ namespace MoviesAndStuff.Api.Services
             };
         }
 
-        public async Task<GenreDetailDto> CreateAsync(CreateGenreDto dto)
+        public async Task<GenreDetailDto> CreateAsync(GenreFormDto dto)
         {
             List<string>? validMediaTypes = await _context.MediaTypes
                 .Where(mt => dto.MediaTypeIds.Contains(mt.Id))
@@ -94,8 +94,6 @@ namespace MoviesAndStuff.Api.Services
             var genre = new Genre
             {
                 Name = dto.Name,
-                Order = dto.Order,
-                IsActive = dto.IsActive,
                 CreatedAt = DateTime.UtcNow
             };
 
@@ -117,7 +115,7 @@ namespace MoviesAndStuff.Api.Services
             return (await GetByIdAsync(genre.Id))!;
         }
 
-        public async Task<bool> UpdateAsync(long id, UpdateGenreDto dto)
+        public async Task<bool> UpdateAsync(long id, GenreFormDto dto)
         {
             Genre? genre = await _context.Genres
                 .Include(g => g.GenreMediaTypes)
@@ -138,8 +136,6 @@ namespace MoviesAndStuff.Api.Services
 
             // Update genre properties
             genre.Name = dto.Name;
-            genre.Order = dto.Order;
-            genre.IsActive = dto.IsActive;
             genre.UpdatedAt = DateTime.UtcNow;
 
             // Remove old associations
@@ -176,6 +172,17 @@ namespace MoviesAndStuff.Api.Services
         public async Task<bool> ExistsAsync(long id)
         {
             return await _context.Genres.AnyAsync(g => g.Id == id);
+        }
+
+        public async Task<List<MediaTypeListDto>> GetAllMediaTypes()
+        {
+            return await _context.MediaTypes
+                .Select(mt => new MediaTypeListDto
+                {
+                    Id = mt.Id,
+                    Name = mt.Name,
+                })
+                .ToListAsync();
         }
     }
 }

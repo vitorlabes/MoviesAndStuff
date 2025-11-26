@@ -22,7 +22,7 @@ import { MediaFormConfig } from './models/base-media-form.models';
   template: '',
   styles: []
 })
-export abstract class BaseMediaFormComponent<TDetailDto, TCreateDto, TUpdateDto> implements OnInit {
+export abstract class BaseMediaFormComponent<TDetailDto, TFormDto> implements OnInit {
   // Services
   protected readonly router = inject(Router);
   protected readonly route = inject(ActivatedRoute);
@@ -35,10 +35,9 @@ export abstract class BaseMediaFormComponent<TDetailDto, TCreateDto, TUpdateDto>
 
   protected abstract loadItemById(id: number): Observable<TDetailDto>;
   protected abstract patchFormWithItem(item: TDetailDto): void;
-  protected abstract mapFormToCreateDto(): TCreateDto;
-  protected abstract mapFormToUpdateDto(): TUpdateDto;
-  protected abstract createItem(dto: TCreateDto): Observable<any>;
-  protected abstract updateItem(id: number, dto: TUpdateDto): Observable<any>;
+  protected abstract mapFormToDto(): TFormDto;
+  protected abstract createItem(dto: TFormDto): Observable<any>;
+  protected abstract updateItem(id: number, dto: TFormDto): Observable<any>;
 
   // Signals
   protected readonly itemId = signal<number>(0);
@@ -105,8 +104,8 @@ export abstract class BaseMediaFormComponent<TDetailDto, TCreateDto, TUpdateDto>
     }
 
     const save$ = this.editingMode()
-      ? this.updateItem(this.itemId(), this.mapFormToUpdateDto())
-      : this.createItem(this.mapFormToCreateDto());
+      ? this.updateItem(this.itemId(), this.mapFormToDto())
+      : this.createItem(this.mapFormToDto());
 
     save$.subscribe({
       next: () => {

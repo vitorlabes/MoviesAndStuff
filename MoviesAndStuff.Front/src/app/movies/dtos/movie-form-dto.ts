@@ -1,4 +1,4 @@
-export interface CreateMovieDto {
+export interface MovieFormDto {
   title: string;
   review?: string;
   director?: string;

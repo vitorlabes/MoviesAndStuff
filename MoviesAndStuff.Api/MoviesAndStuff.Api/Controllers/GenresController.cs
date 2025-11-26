@@ -44,7 +44,7 @@ namespace MoviesAndStuff.Api.Controllers
         /// Creates a new genre
         /// </summary>
         [HttpPost]
-        public async Task<ActionResult<GenreDetailDto>> Create(CreateGenreDto dto)
+        public async Task<ActionResult<GenreDetailDto>> Create(GenreFormDto dto)
         {
             if (!ModelState.IsValid)
             {
@@ -70,7 +70,7 @@ namespace MoviesAndStuff.Api.Controllers
         /// Updates an existing genre
         /// </summary>
         [HttpPut("{id}")]
-        public async Task<ActionResult> Update(long id, UpdateGenreDto dto)
+        public async Task<ActionResult> Update(long id, GenreFormDto dto)
         {
             if (!ModelState.IsValid)
             {
@@ -100,6 +100,16 @@ namespace MoviesAndStuff.Api.Controllers
         {
             bool deleted = await _service.DeleteAsync(id);
             return deleted ? NoContent() : NotFound();
+        }
+        
+        /// <summary>
+        /// Gets all media types
+        /// </summary>
+        [HttpGet("mediaTypes")]
+        public async Task<ActionResult> GetAllMediaTypes()
+        {
+            List<MediaTypeListDto> mediaTypes = await _service.GetAllMediaTypes();
+            return Ok(mediaTypes);
         }
 
     }

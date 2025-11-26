@@ -11,8 +11,8 @@ namespace MoviesAndStuff.Api.Services
     /// Implements common CRUD operations with template method pattern
     /// Derived services only need to implement entity-specific mappings.
     /// </summary>
-    public abstract class BaseMediaService<TEntity, TListDto, TDetailDto, TCreateDto, TUpdateDto, TFilter>
-        : IBaseMediaService<TListDto, TDetailDto, TCreateDto, TUpdateDto, TFilter>
+    public abstract class BaseMediaService<TEntity, TListDto, TDetailDto, TFormDto, TFilter>
+        : IBaseMediaService<TListDto, TDetailDto, TFormDto, TFilter>
         where TEntity : class, IEntity
     {
         protected readonly AppDbContext Context;
@@ -52,7 +52,7 @@ namespace MoviesAndStuff.Api.Services
         /// <summary>
         /// Creates a new media item
         /// </summary>
-        public virtual async Task<TDetailDto> CreateAsync(TCreateDto dto)
+        public virtual async Task<TDetailDto> CreateAsync(TFormDto dto)
         {
             await ValidateCreateDto(dto);
 
@@ -69,7 +69,7 @@ namespace MoviesAndStuff.Api.Services
         /// <summary>
         /// Updates an existing media item
         /// </summary>
-        public virtual async Task<bool> UpdateAsync(long id, TUpdateDto dto)
+        public virtual async Task<bool> UpdateAsync(long id, TFormDto dto)
         {
             TEntity? entity = await Context.Set<TEntity>().FindAsync(id);
 
@@ -121,8 +121,8 @@ namespace MoviesAndStuff.Api.Services
         protected abstract IQueryable<TEntity> GetDetailQuery();
         protected abstract Expression<Func<TEntity, TListDto>> MapToListDto();
         protected abstract TDetailDto MapToDetailDto(TEntity entity);
-        protected abstract TEntity MapToEntity(TCreateDto dto);
-        protected abstract void UpdateEntityFromDto(TEntity entity, TUpdateDto dto);
+        protected abstract TEntity MapToEntity(TFormDto dto);
+        protected abstract void UpdateEntityFromDto(TEntity entity, TFormDto dto);
         protected abstract void ToggleEntityStatus(TEntity entity);
 
         protected virtual IQueryable<TEntity> ApplySearchFilter(IQueryable<TEntity> query, string? search)
@@ -147,7 +147,7 @@ namespace MoviesAndStuff.Api.Services
             return query;
         }
 
-        protected virtual async Task ValidateCreateDto(TCreateDto dto)
+        protected virtual async Task ValidateCreateDto(TFormDto dto)
         {
             if (dto is IHasGenre genreDto && genreDto.GenreId.HasValue)
             {
@@ -155,7 +155,7 @@ namespace MoviesAndStuff.Api.Services
             }
         }
 
-        protected virtual async Task ValidateUpdateDto(TUpdateDto dto)
+        protected virtual async Task ValidateUpdateDto(TFormDto dto)
         {
             if (dto is IHasGenre genreDto && genreDto.GenreId.HasValue)
             {

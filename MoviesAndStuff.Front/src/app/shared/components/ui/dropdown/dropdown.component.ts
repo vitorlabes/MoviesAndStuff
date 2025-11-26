@@ -9,6 +9,7 @@ import { DropdownOption } from './models/dropdown';
   styleUrl: './dropdown.component.scss'
 })
 export class DropdownComponent implements OnDestroy {
+  // Injects
   private _eleRef = inject(ElementRef);
 
   // Inputs
@@ -48,8 +49,20 @@ export class DropdownComponent implements OnDestroy {
   });
 
   public displayValue = computed(() => {
-    const selected = this.options().find(opt => opt.value === this.selectedValue());
-    return selected ? selected.label : '';
+    const value = this.selectedValue();
+    const options = this.options();
+
+    if (!this.multiple()) {
+      const selected = this.options().find(opt => opt.value === this.selectedValue());
+      return selected ? selected.label : '';
+    }
+
+    if (!Array.isArray(value)) return '';
+
+    return options
+      .filter(o => value.includes(o.value))
+      .map(o => o.label)
+      .join(', ');
   });
 
   private searchSubject = new Subject<string>();
@@ -171,18 +184,53 @@ export class DropdownComponent implements OnDestroy {
 
     event.stopPropagation();
 
+    if (!this.multiple()) {
+      this.handleSingleSelection(option);
+      return;
+    }
+
+    this.handleMultipleSelection(option);
+  }
+
+  private handleSingleSelection(option: DropdownOption): void {
+    const current = this.selectedValue();
+
+    if (current === option.value) {
+      this.selectionChange.emit(null);
+      this.closeDropdown();
+      return;
+    }
+
     this.selectionChange.emit(option.value);
     this.closeDropdown();
+  }
 
-    setTimeout(() => {
-      if (this.searchInput()) {
-        this.searchInput().nativeElement.focus();
-      }
-    }, 0);
+  private handleMultipleSelection(option: DropdownOption): void {
+    const current = Array.isArray(this.selectedValue())
+      ? [...this.selectedValue()]
+      : [];
+
+    const index = current.indexOf(option.value);
+
+    if (index >= 0) {
+      current.splice(index, 1);
+      this.selectionChange.emit(current);
+      return;
+    }
+
+    current.push(option.value);
+    this.selectionChange.emit(current);
+
   }
 
   protected isSelected(option: DropdownOption): boolean {
-    return this.selectedValue() === option.value;
+    const value = this.selectedValue();
+
+    if (!this.multiple()) {
+      return value === option.value;
+    }
+
+    return Array.isArray(value) && value.includes(option.value);
   }
 
   @HostListener('document:click', ['$event'])

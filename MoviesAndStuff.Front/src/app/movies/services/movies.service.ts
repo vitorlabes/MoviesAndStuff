@@ -3,8 +3,7 @@ import { Injectable, inject } from '@angular/core';
 import { Observable, catchError } from 'rxjs';
 import { MovieListDto } from '../dtos/movie-list-dto';
 import { WatchFilter } from '../enums/watch-filter';
-import { CreateMovieDto } from '../dtos/movie-create-dto';
-import { UpdateMovieDto } from '../dtos/movie-update-dto';
+import { MovieFormDto } from '../dtos/movie-form-dto';
 import { MovieDetailDto } from '../dtos/movie-detail-dto';
 import { ErrorHandlerService } from '../../core/services/error-handler.service';
 
@@ -23,7 +22,7 @@ export class MoviesService {
    * @param params - Optional criteria for filtering the movie list.
    * @returns An Observable of the filtered movie list DTOs.
    */
-  getMoviesList(params?: {
+  public getMoviesList(params?: {
     search?: string;
     genreId?: string;
     watchFilter?: WatchFilter;
@@ -53,7 +52,7 @@ export class MoviesService {
    * @param id - The unique identifier of the movie.
    * @returns An Observable of the movie detail DTO.
    */
-  getMovieById(id: number): Observable<MovieDetailDto> {
+  public getMovieById(id: number): Observable<MovieDetailDto> {
     return this.http.get<MovieDetailDto>(`${this.api}/${id}`)
       .pipe(
         catchError(error => this.errorHandler.handleError(error, 'Movie'))
@@ -66,7 +65,7 @@ export class MoviesService {
    * @param movie - The data transfer object (DTO) containing new movie details.
    * @returns An Observable with the created movie's full detail DTO.
    */
-  createMovie(movie: CreateMovieDto): Observable<MovieDetailDto> {
+  public createMovie(movie: MovieFormDto): Observable<MovieDetailDto> {
     return this.http.post<MovieDetailDto>(this.api, movie)
       .pipe(
         catchError(error => this.errorHandler.handleError(error, 'Movie'))
@@ -80,7 +79,7 @@ export class MoviesService {
    * @param movie - The DTO containing the updated movie details.
    * @returns An Observable that completes upon successful update.
    */
-  updateMovie(id: number, movie: UpdateMovieDto): Observable<void> {
+  public updateMovie(id: number, movie: MovieFormDto): Observable<void> {
     return this.http.put<void>(`${this.api}/${id}`, movie)
       .pipe(
         catchError(error => this.errorHandler.handleError(error, 'Movie'))
@@ -93,7 +92,7 @@ export class MoviesService {
    * @param id - The ID of the movie to modify.
    * @returns An Observable that completes when the status is updated.
    */
-  toggleWatched(id: number): Observable<void> {
+  public toggleWatched(id: number): Observable<void> {
     return this.http.patch<void>(`${this.api}/${id}/watched`, null, {
       withCredentials: true
     })
@@ -108,7 +107,7 @@ export class MoviesService {
    * @param id - The ID of the movie to delete.
    * @returns An Observable that completes upon successful deletion.
    */
-  deleteMovie(id: number): Observable<void> {
+  public deleteMovie(id: number): Observable<void> {
     return this.http.delete<void>(`${this.api}/${id}`)
       .pipe(
         catchError(error => this.errorHandler.handleError(error, 'Movie'))

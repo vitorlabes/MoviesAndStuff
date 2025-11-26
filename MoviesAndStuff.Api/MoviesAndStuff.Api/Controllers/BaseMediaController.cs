@@ -12,16 +12,15 @@ namespace MoviesAndStuff.Api.Controllers
     /// <typeparam name="TEntity">Entity type (Movie, Game)</typeparam>
     /// <typeparam name="TListDto">DTO for list operations</typeparam>
     /// <typeparam name="TDetailDto">DTO for detail operations</typeparam>
-    /// <typeparam name="TCreateDto">DTO for create operations</typeparam>
-    /// <typeparam name="TUpdateDto">DTO for update operations</typeparam>
+    /// <typeparam name="TFormDto">DTO for create/update operations</typeparam>
     /// <typeparam name="TFilter">Filter enum type (WatchFilter, PlayFilter)</typeparam>
     /// <typeparam name="TService">Service interface type</typeparam>
     [ApiController]
     [Route("api/[controller]")]
     [Produces("application/json")]
-    public abstract class BaseMediaController<TEntity, TListDto, TDetailDto, TCreateDto, TUpdateDto, TFilter, TService> : ControllerBase
+    public abstract class BaseMediaController<TEntity, TListDto, TDetailDto, TFormDto, TFilter, TService> : ControllerBase
         where TEntity : class
-        where TService : IBaseMediaService<TListDto, TDetailDto, TCreateDto, TUpdateDto, TFilter>
+        where TService : IBaseMediaService<TListDto, TDetailDto, TFormDto, TFilter>
     {
         protected readonly TService Service;
 
@@ -44,7 +43,7 @@ namespace MoviesAndStuff.Api.Controllers
             [FromQuery] long? genreId = null,
             [FromQuery] TFilter? filter = default)
         {
-            var items = await Service.GetAllAsync(search, genreId, filter);
+            List<TListDto> items = await Service.GetAllAsync(search, genreId, filter);
             return Ok(items);
         }
 
@@ -56,7 +55,7 @@ namespace MoviesAndStuff.Api.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public virtual async Task<ActionResult<TDetailDto>> GetById(long id)
         {
-            var item = await Service.GetByIdAsync(id);
+            TDetailDto? item = await Service.GetByIdAsync(id);
             return item == null ? NotFound() : Ok(item);
         }
 
@@ -65,14 +64,14 @@ namespace MoviesAndStuff.Api.Controllers
         /// </summary>
         /// <param name="dto">Data for the new item.</param>
         [HttpPost]
-        public virtual async Task<ActionResult<TDetailDto>> Create([FromBody] TCreateDto dto)
+        public virtual async Task<ActionResult<TDetailDto>> Create([FromBody] TFormDto dto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
             try
             {
-                var created = await Service.CreateAsync(dto);
+                TDetailDto created = await Service.CreateAsync(dto);
                 return CreatedAtAction(nameof(GetById),
                     new { id = GetIdFromDetailDto(created) }, created);
             }
@@ -92,14 +91,14 @@ namespace MoviesAndStuff.Api.Controllers
         /// <param name="id">Item ID.</param>
         /// <param name="dto">Updated data.</param>
         [HttpPut("{id:long}")]
-        public virtual async Task<ActionResult> Update(long id, [FromBody] TUpdateDto dto)
+        public virtual async Task<ActionResult> Update(long id, [FromBody] TFormDto dto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
             try
             {
-                var updated = await Service.UpdateAsync(id, dto);
+                bool updated = await Service.UpdateAsync(id, dto);
                 return updated ? NoContent() : NotFound();
             }
             catch (ArgumentException ex)
@@ -123,7 +122,7 @@ namespace MoviesAndStuff.Api.Controllers
         [HttpPatch("{id:long}/status")]
         public virtual async Task<ActionResult> ToggleStatus(long id)
         {
-            var result = await Service.ToggleStatusAsync(id);
+            bool result = await Service.ToggleStatusAsync(id);
             return result ? NoContent() : NotFound();
         }
 
@@ -134,7 +133,7 @@ namespace MoviesAndStuff.Api.Controllers
         [HttpDelete("{id:long}")]
         public virtual async Task<ActionResult> Delete(long id)
         {
-            var deleted = await Service.DeleteAsync(id);
+            bool deleted = await Service.DeleteAsync(id);
             return deleted ? NoContent() : NotFound();
         }
 

@@ -1,5 +1,6 @@
 @use 'variables' as *;
 @use 'mixins' as *;
+@use 'modal-shared';
 
 // ========================================
 // GLOBAL STYLES
@@ -49,7 +50,7 @@ body {
 // ========================================
 // FORM ELEMENTS
 // ========================================
-.form-input {
+.form-label {
   display: block;
   margin-bottom: $spacing-sm;
   color: $text-primary;

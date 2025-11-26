@@ -6,15 +6,14 @@
     /// </summary>
     /// <typeparam name="TListDto">DTO for list operations</typeparam>
     /// <typeparam name="TDetailDto">DTO for detail operations</typeparam>
-    /// <typeparam name="TCreateDto">DTO for create operations</typeparam>
-    /// <typeparam name="TUpdateDto">DTO for update operations</typeparam>
+    /// <typeparam name="TFormDto">DTO for create/update operations</typeparam>
     /// <typeparam name="TFilter">Filter type (can be enum or nullable)</typeparam>
-    public interface IBaseMediaService<TListDto, TDetailDto, TCreateDto, TUpdateDto, TFilter>
+    public interface IBaseMediaService<TListDto, TDetailDto, TFormDto, TFilter>
     {
         Task<List<TListDto>> GetAllAsync(string? search, long? genreId, TFilter? filter);
         Task<TDetailDto?> GetByIdAsync(long id);
-        Task<TDetailDto> CreateAsync(TCreateDto dto);
-        Task<bool> UpdateAsync(long id, TUpdateDto dto);
+        Task<TDetailDto> CreateAsync(TFormDto dto);
+        Task<bool> UpdateAsync(long id, TFormDto dto);
         Task<bool> ToggleStatusAsync(long id);
         Task<bool> DeleteAsync(long id);
     }

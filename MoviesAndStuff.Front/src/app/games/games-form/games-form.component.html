@@ -20,7 +20,7 @@
     <div class="row">
 
       <div class="col-4">
-        <label class="form-input">Title</label>
+        <label class="form-label">Title</label>
         <input type="text" id="title" formControlName="title">
         @if(titleHasError){
         <small class="text-danger">Title is mandatory</small>
@@ -34,7 +34,7 @@
       </div>
 
       <div class="col-4">
-        <label class="form-input">Developer</label>
+        <label class="form-label">Developer</label>
         <input type="text" id="developer" formControlName="developer">
       </div>
 
@@ -42,14 +42,14 @@
 
     <div class="row">
       <div class="col-4">
-        <label class="form-input">Play Date</label>
+        <label class="form-label">Play Date</label>
         <input type="date" formControlName="playDate" id="playDate"
           [value]="gameForm.get('playDate')?.value | date:'yyyy-MM-dd'"
           (input)="gameForm.get('playDate')?.setValue($any($event.target).valueAsDate)">
       </div>
 
       <div class="col-4">
-        <label class="form-input">Rating</label>
+        <label class="form-label">Rating</label>
         <app-star-rating formControlName="rating"></app-star-rating>
       </div>
 
@@ -57,7 +57,7 @@
         <div class="d-flex align-items-center" style="height: 100%;">
           <div class="checkbox-container d-flex align-items-center">
             <input type="checkbox" id="isPlayed" formControlName="isPlayed" style="margin-right: 0.5rem;">
-            <label for="isPlayed" class="form-input mb-0">Played</label>
+            <label for="isPlayed" class="form-label mb-0">Played</label>
           </div>
         </div>
       </div>
@@ -66,8 +66,7 @@
     <div class="row">
 
       <div class="col-4">
-        <label class="form-input">Release Date</label>
-        <input type="date" id="releaseDate" formControlName="releaseDate">
+        <label class="form-label">Release Date</label>
         <input type="date" formControlName="releaseDate" id="releaseDate"
           [value]="gameForm.get('releaseDate')?.value | date:'yyyy-MM-dd'"
           (input)="gameForm.get('releaseDate')?.setValue($any($event.target).valueAsDate)">
@@ -76,7 +75,7 @@
 
     <div class="row">
       <div class="col-12">
-        <label class="form-input">Review</label>
+        <label class="form-label">Review</label>
         <textarea rows="3" id="review" formControlName="review" placeholder="Enter review..."></textarea>
       </div>
     </div>

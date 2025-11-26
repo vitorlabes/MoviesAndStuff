@@ -2,14 +2,13 @@
 using MoviesAndStuff.Api.Data;
 using MoviesAndStuff.Api.Data.Dtos.Movies;
 using MoviesAndStuff.Api.Data.Enums;
-using MoviesAndStuff.Api.Data.Models;
 using MoviesAndStuff.Api.Models;
 using MoviesAndStuff.Api.Services.Interfaces;
 using System.Linq.Expressions;
 
 namespace MoviesAndStuff.Api.Services
 {
-    public class MovieService : BaseMediaService<Movie, MovieListDto, MovieDetailDto, CreateMovieDto, UpdateMovieDto, WatchFilter?>, IMovieService
+    public class MovieService : BaseMediaService<Movie, MovieListDto, MovieDetailDto, MovieFormDto, WatchFilter?>, IMovieService
     {
         public MovieService(AppDbContext context) : base(context) {}
 
@@ -71,7 +70,7 @@ namespace MoviesAndStuff.Api.Services
             };
         }
 
-        protected override Movie MapToEntity(CreateMovieDto dto)
+        protected override Movie MapToEntity(MovieFormDto dto)
         {
             return new Movie
             {
@@ -87,7 +86,7 @@ namespace MoviesAndStuff.Api.Services
             };
         }
 
-        protected override void UpdateEntityFromDto(Movie movie, UpdateMovieDto dto)
+        protected override void UpdateEntityFromDto(Movie movie, MovieFormDto dto)
         {
             movie.Title = dto.Title;
             movie.Review = dto.Review;

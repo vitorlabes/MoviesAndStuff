@@ -5,8 +5,7 @@ import { CommonModule } from '@angular/common';
 import { BaseMediaFormComponent } from '../../shared/components/base-media-form/base-media-form.component';
 import { GamesService } from '../services/games.service';
 import { GameDetailDto } from '../dtos/game-detail-dto';
-import { CreateGameDto } from '../dtos/game-create-dto';
-import { UpdateGameDto } from '../dtos/game-update-dto';
+import { GameFormDto } from '../dtos/game-form-dto';
 import { MediaFormConfig } from '../../shared/components/base-media-form/models/base-media-form.models';
 import { DropdownComponent } from '../../shared/components/ui/dropdown/dropdown.component';
 import { StarRatingComponent } from '../../shared/components/ui/star-rating/star-rating.component';
@@ -23,7 +22,7 @@ import { StarRatingComponent } from '../../shared/components/ui/star-rating/star
   templateUrl: './games-form.component.html',
   styleUrl: '../../shared/components/base-media-form/base-media-form.component.scss'
 })
-export class GamesFormComponent extends BaseMediaFormComponent<GameDetailDto, CreateGameDto, UpdateGameDto> {
+export class GamesFormComponent extends BaseMediaFormComponent<GameDetailDto, GameFormDto> {
   protected readonly config: MediaFormConfig = {
     mediaTypeId: 'GAME',
     routePrefix: '/games',
@@ -72,7 +71,7 @@ export class GamesFormComponent extends BaseMediaFormComponent<GameDetailDto, Cr
     this.selectedGenre.set(game.genreId ?? null);
   }
 
-  protected mapFormToCreateDto(): CreateGameDto {
+  protected mapFormToDto(): GameFormDto {
     const form = this.form.value;
     return {
       title: form.title!,
@@ -86,25 +85,11 @@ export class GamesFormComponent extends BaseMediaFormComponent<GameDetailDto, Cr
     };
   }
 
-  protected mapFormToUpdateDto(): UpdateGameDto {
-    const form = this.form.value;
-    return {
-      title: form.title!,
-      review: form.review || undefined,
-      developer: form.developer || undefined,
-      genreId: this.selectedGenre() || undefined,
-      rating: form.rating || undefined,
-      releaseDate: form.releaseDate || undefined,
-      playDate: form.playDate || undefined,
-      isPlayed: form.isPlayed ?? false
-    };
-  }
-
-  protected createItem(dto: CreateGameDto): Observable<any> {
+  protected createItem(dto: GameFormDto): Observable<any> {
     return this.gamesService.createGame(dto);
   }
 
-  protected updateItem(id: number, dto: UpdateGameDto): Observable<any> {
+  protected updateItem(id: number, dto: GameFormDto): Observable<any> {
     return this.gamesService.updateGame(id, dto);
   }
 

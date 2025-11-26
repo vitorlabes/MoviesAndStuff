@@ -1,4 +1,4 @@
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal, viewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
@@ -9,11 +9,12 @@ import { MediaTableComponent } from "../../shared/components/ui/media-table/medi
 import { GenreListDto } from '../dtos/genre-list-dto';
 import { TableColumnDirective } from '../../shared/components/ui/media-table/table-column.directive';
 import { BadgeComponent } from '../../shared/components/ui/badge/badge.component';
+import { GenreModalComponent } from '../genres-form/genres-modal.component';
 
 @Component({
   selector: 'app-genres-list',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, MediaTableComponent, TableColumnDirective, BadgeComponent],
+  imports: [CommonModule, ReactiveFormsModule, MediaTableComponent, TableColumnDirective, BadgeComponent, GenreModalComponent],
   templateUrl: './genres-list.component.html',
   styleUrls: ['../../shared/components/base-media-list/base-media-list.component.scss']
 })
@@ -21,6 +22,9 @@ export class GenresListComponent implements OnInit {
   // Services
   protected readonly genresService = inject(GenresService);
   protected readonly router = inject(Router);
+
+  // ViewChilds
+  protected readonly genreModal = viewChild.required<GenreModalComponent>('genreModal');
 
   // Signals
   protected readonly isLoading = signal(true);
@@ -66,4 +70,13 @@ export class GenresListComponent implements OnInit {
       }
     });
   }
+
+  protected reloadGenres(): void {
+    this.loadGenres();
+  }
+
+  protected openModal(id?: number): void {
+    this.genreModal().open(id);
+  }
+
 }

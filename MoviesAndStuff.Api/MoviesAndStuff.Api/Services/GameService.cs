@@ -8,7 +8,7 @@ using System.Linq.Expressions;
 
 namespace MoviesAndStuff.Api.Services
 {
-    public class GameService : BaseMediaService<Game, GameListDto, GameDetailDto, CreateGameDto, UpdateGameDto, PlayFilter?>, IGameService
+    public class GameService : BaseMediaService<Game, GameListDto, GameDetailDto, GameFormDto, PlayFilter?>, IGameService
     {
         public GameService(AppDbContext context) : base(context) {}
 
@@ -69,7 +69,7 @@ namespace MoviesAndStuff.Api.Services
             };
         }
 
-        protected override Game MapToEntity(CreateGameDto dto)
+        protected override Game MapToEntity(GameFormDto dto)
         {
             return new Game
             {
@@ -84,7 +84,7 @@ namespace MoviesAndStuff.Api.Services
             };
         }
 
-        protected override void UpdateEntityFromDto(Game game, UpdateGameDto dto)
+        protected override void UpdateEntityFromDto(Game game, GameFormDto dto)
         {
             game.Title = dto.Title;
             game.Review = dto.Review;

@@ -1,6 +1,10 @@
 @use 'variables' as *;
 @use 'mixins' as *;
 
+// ========================================
+// MODAL BASE STYLES
+// ========================================
+
 .modal {
   @include fade-in;
 }
@@ -33,22 +37,6 @@
     font-size: $font-size-md;
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
   }
-
-  .btn-close {
-    background: transparent url("data:image/svg+xml,%3csvg ... %3e") center/1em auto no-repeat;
-    opacity: 0.6;
-    transition: $transition-base;
-    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
-
-    &:hover {
-      opacity: 1;
-      transform: rotate(90deg);
-    }
-
-    &:focus {
-      box-shadow: 0 0 0 0.25rem rgba(147, 107, 192, 0.25);
-    }
-  }
 }
 
 .modal-body {
@@ -74,39 +62,40 @@
   display: flex;
   justify-content: center;
   gap: $spacing-md;
-}
 
-// Footer buttons
-.modal-footer .btn {
-  @include button-base;
-  min-width: 100px;
-}
+  .btn {
+    @include button-base;
+    min-width: 100px;
+  }
 
-.modal-footer .btn-secondary {
-  background: linear-gradient(135deg,
-      rgba(98, 58, 149, 0.3) 0%,
-      rgba(76, 45, 117, 0.3) 50%,
-      rgba(54, 32, 84, 0.3) 100%);
-  color: $text-primary;
-  border: 1px solid $border-base-color;
-
-  &:hover {
+  .btn-secondary {
     background: linear-gradient(135deg,
-        rgba(98, 58, 149, 0.4) 0%,
-        rgba(76, 45, 117, 0.4) 50%,
-        rgba(54, 32, 84, 0.4) 100%);
-    border-color: $border-hover-color;
-    transform: translateY(-1px);
-    box-shadow: $shadow-md;
-    color: #fff;
+        rgba(98, 58, 149, 0.3) 0%,
+        rgba(76, 45, 117, 0.3) 50%,
+        rgba(54, 32, 84, 0.3) 100%);
+    color: $text-primary;
+    border: 1px solid $border-base-color;
+
+    &:hover {
+      background: linear-gradient(135deg,
+          rgba(98, 58, 149, 0.4) 0%,
+          rgba(76, 45, 117, 0.4) 50%,
+          rgba(54, 32, 84, 0.4) 100%);
+      border-color: $border-hover-color;
+      transform: translateY(-1px);
+      box-shadow: $shadow-md;
+      color: #fff;
+    }
+  }
+
+  .btn-danger {
+    @include button-dark-purple;
   }
 }
 
-.modal-footer .btn-danger {
-  @include button-dark-purple;
-}
-
-// Responsive
+// ========================================
+// RESPONSIVE
+// ========================================
 @include mobile {
   .modal-dialog {
     margin: $spacing-md;

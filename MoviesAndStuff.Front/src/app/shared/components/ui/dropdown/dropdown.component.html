@@ -1,6 +1,6 @@
 <div class="dropdown-container" [class.open]="isOpen()">
   @if (label()) {
-  <label class="form-input">{{ label() }}</label>
+  <label class="form-label">{{ label() }}</label>
   }
   <div class="dropdown-wrapper">
     <input #searchInput type="text" class="dropdown-input" [placeholder]="placeholder()" [value]="displayValue()"

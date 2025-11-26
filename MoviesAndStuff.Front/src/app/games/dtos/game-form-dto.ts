@@ -1,4 +1,4 @@
-export interface CreateGameDto {
+export interface GameFormDto {
   title: string;
   review?: string;
   developer?: string;

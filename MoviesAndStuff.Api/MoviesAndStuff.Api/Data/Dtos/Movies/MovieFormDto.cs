@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace MoviesAndStuff.Api.Data.Dtos.Movies
 {
-    public class CreateMovieDto : IHasGenre
+    public class MovieFormDto : IHasGenre
     {
         [Required]
         [StringLength(100)]

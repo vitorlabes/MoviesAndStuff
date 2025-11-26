@@ -16,8 +16,7 @@ namespace MoviesAndStuff.Api.Controllers
         Movie,
         MovieListDto,
         MovieDetailDto,
-        CreateMovieDto,
-        UpdateMovieDto,
+        MovieFormDto,
         WatchFilter?,
         IMovieService>
     {
@@ -54,7 +53,7 @@ namespace MoviesAndStuff.Api.Controllers
         [ProducesResponseType(typeof(MovieDetailDto), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public override async Task<ActionResult<MovieDetailDto>> Create([FromBody] CreateMovieDto dto)
+        public override async Task<ActionResult<MovieDetailDto>> Create([FromBody] MovieFormDto dto)
         {
             return await base.Create(dto);
         }
@@ -66,7 +65,7 @@ namespace MoviesAndStuff.Api.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public override async Task<ActionResult> Update(long id, [FromBody] UpdateMovieDto dto)
+        public override async Task<ActionResult> Update(long id, [FromBody] MovieFormDto dto)
         {
             return await base.Update(id, dto);
         }

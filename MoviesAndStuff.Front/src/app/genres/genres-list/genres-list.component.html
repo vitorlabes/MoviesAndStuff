@@ -6,7 +6,7 @@
       <i class="ri-bookmark-line"></i> Genres
     </h2>
 
-    <button class="btn btn-dark-purple">
+    <button class="btn btn-dark-purple" (click)="openModal(); $event.stopPropagation()">
       <i class="ri-add-line"></i> Add Genre
     </button>
   </div>
@@ -62,19 +62,19 @@
 
     <!-- Actions Column -->
     <ng-template appTableColumn header="" width="20%" headerClass="text-end pe-4" cellClass="text-end pe-4" let-item>
-      <!-- <div class="action-buttons">
+      <div class="action-buttons">
 
-          <button class="action-btn edit-btn" aria-label="Edit genre"
-            (click)="navigateToEdit(item.id); $event.stopPropagation()">
-            <i class="ri-pencil-line"></i>
-          </button>
+        <button class="action-btn edit-btn" aria-label="Edit genre"
+          (click)="openModal(item.id); $event.stopPropagation()">
+          <i class="ri-pencil-line"></i>
+        </button>
 
-          <button class="action-btn delete-btn" aria-label="Delete genre"
-            (click)="openDeleteModal(item.id); $event.stopPropagation()">
-            <i class="ri-delete-bin-line"></i>
-          </button>
+        <!-- <button class="action-btn delete-btn" aria-label="Delete genre"
+          (click)="openDeleteModal(item.id); $event.stopPropagation()">
+          <i class="ri-delete-bin-line"></i>
+        </button> -->
 
-        </div> -->
+      </div>
     </ng-template>
 
   </app-media-table>
@@ -91,3 +91,5 @@
   }
 
 </div>
+
+<app-genres-modal #genreModal (saved)="reloadGenres()"></app-genres-modal>

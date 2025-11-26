@@ -16,8 +16,7 @@ namespace MoviesAndStuff.Api.Controllers
         Game,
         GameListDto,
         GameDetailDto,
-        CreateGameDto,
-        UpdateGameDto,
+        GameFormDto,
         PlayFilter?,
         IGameService>
     {
@@ -45,7 +44,7 @@ namespace MoviesAndStuff.Api.Controllers
         [ProducesResponseType(typeof(GameDetailDto), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public override async Task<ActionResult<GameDetailDto>> Create([FromBody] CreateGameDto dto)
+        public override async Task<ActionResult<GameDetailDto>> Create([FromBody] GameFormDto dto)
         {
             return await base.Create(dto);
         }
@@ -54,7 +53,7 @@ namespace MoviesAndStuff.Api.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public override async Task<ActionResult> Update(long id, [FromBody] UpdateGameDto dto)
+        public override async Task<ActionResult> Update(long id, [FromBody] GameFormDto dto)
         {
             return await base.Update(id, dto);
         }

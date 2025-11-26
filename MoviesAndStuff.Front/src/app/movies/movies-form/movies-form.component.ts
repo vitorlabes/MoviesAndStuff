@@ -5,8 +5,7 @@ import { CommonModule } from '@angular/common';
 import { BaseMediaFormComponent } from '../../shared/components/base-media-form/base-media-form.component';
 import { MoviesService } from '../services/movies.service';
 import { MovieDetailDto } from '../dtos/movie-detail-dto';
-import { CreateMovieDto } from '../dtos/movie-create-dto';
-import { UpdateMovieDto } from '../dtos/movie-update-dto';
+import { MovieFormDto } from '../dtos/movie-form-dto';
 import { MediaFormConfig } from '../../shared/components/base-media-form/models/base-media-form.models';
 import { DropdownComponent } from '../../shared/components/ui/dropdown/dropdown.component';
 import { DurationPipe } from '../../shared/pipes/duration.pipe';
@@ -27,7 +26,7 @@ import { StarRatingComponent } from '../../shared/components/ui/star-rating/star
   templateUrl: './movies-form.component.html',
   styleUrl: '../../shared/components/base-media-form/base-media-form.component.scss'
 })
-export class MoviesFormComponent extends BaseMediaFormComponent<MovieDetailDto, CreateMovieDto, UpdateMovieDto> {
+export class MoviesFormComponent extends BaseMediaFormComponent<MovieDetailDto, MovieFormDto> {
   protected readonly config: MediaFormConfig = {
     mediaTypeId: 'MOVIE',
     routePrefix: '/movies',
@@ -80,7 +79,7 @@ export class MoviesFormComponent extends BaseMediaFormComponent<MovieDetailDto, 
     this.selectedGenre.set(movie.genreId ?? null);
   }
 
-  protected mapFormToCreateDto(): CreateMovieDto {
+  protected mapFormToDto(): MovieFormDto {
     const form = this.form.value;
     return {
       title: form.title!,
@@ -95,26 +94,11 @@ export class MoviesFormComponent extends BaseMediaFormComponent<MovieDetailDto, 
     };
   }
 
-  protected mapFormToUpdateDto(): UpdateMovieDto {
-    const form = this.form.value;
-    return {
-      title: form.title!,
-      review: form.review || undefined,
-      director: form.director || undefined,
-      genreId: this.selectedGenre() || undefined,
-      duration: form.duration || undefined,
-      rating: form.rating || undefined,
-      premiereDate: form.premiereDate || undefined,
-      watchDate: form.watchDate || undefined,
-      isWatched: form.isWatched ?? false
-    };
-  }
-
-  protected createItem(dto: CreateMovieDto): Observable<any> {
+  protected createItem(dto: MovieFormDto): Observable<any> {
     return this.moviesService.createMovie(dto);
   }
 
-  protected updateItem(id: number, dto: UpdateMovieDto): Observable<any> {
+  protected updateItem(id: number, dto: MovieFormDto): Observable<any> {
     return this.moviesService.updateMovie(id, dto);
   }
 

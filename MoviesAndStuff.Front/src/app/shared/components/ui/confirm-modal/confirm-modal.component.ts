@@ -3,8 +3,7 @@ import { Component, input, output, signal } from '@angular/core';
 @Component({
   selector: 'app-confirm-modal',
   imports: [],
-  templateUrl: './confirm-modal.component.html',
-  styleUrl: './confirm-modal.component.scss'
+  templateUrl: './confirm-modal.component.html'
 })
 export class ConfirmModalComponent {
   public message = input<string>('Do you wish to delete this registry?');

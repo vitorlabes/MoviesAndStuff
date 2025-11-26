@@ -4,8 +4,7 @@ import { Observable, catchError } from 'rxjs';
 import { ErrorHandlerService } from '../../core/services/error-handler.service';
 import { GameListDto } from '../dtos/game-list-dto';
 import { GameDetailDto } from '../dtos/game-detail-dto';
-import { CreateGameDto } from '../dtos/game-create-dto';
-import { UpdateGameDto } from '../dtos/game-update-dto';
+import { GameFormDto } from '../dtos/game-form-dto';
 import { PlayFilter } from '../enums/play-filter';
 
 @Injectable({
@@ -65,7 +64,7 @@ export class GamesService {
     * @param movie - The data transfer object (DTO) containing new game details.
     * @returns An Observable with the created game's full detail DTO.
     */
-  createGame(game: CreateGameDto): Observable<GameDetailDto> {
+  createGame(game: GameFormDto): Observable<GameDetailDto> {
     return this.http.post<GameDetailDto>(this.api, game)
       .pipe(
         catchError(error => this.errorHandler.handleError(error, 'Game'))
@@ -79,7 +78,7 @@ export class GamesService {
    * @param movie - The DTO containing the updated game details.
    * @returns An Observable that completes upon successful update.
    */
-  updateGame(id: number, game: UpdateGameDto): Observable<void> {
+  updateGame(id: number, game: GameFormDto): Observable<void> {
     return this.http.put<void>(`${this.api}/${id}`, game)
       .pipe(
         catchError(error => this.errorHandler.handleError(error, 'Game'))
